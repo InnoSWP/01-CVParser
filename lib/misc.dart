@@ -1,7 +1,10 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:cvparser_b21_01/models/cv_match.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
+import 'package:http/http.dart' as http;
 
 class FileData {
   final String name;
@@ -51,5 +54,35 @@ Future<String> pdfToText(Uint8List bytes) async {
   );
   String res = PdfTextExtractor(document).extractText();
   document.dispose();
+  return res;
+}
+
+/// Given [String] of text, sends it to IExtract API and returns it's result
+/// Note: web requires some walk around CORS
+Future<List<CVMatch>> parseCv(String text) async {
+  final _apiUrl =
+      Uri.parse("https://aqueous-anchorage-93443.herokuapp.com/CvParser");
+
+  final Map data = {
+    "text": text,
+    "keywords": "string",
+    "pattern": 11,
+  };
+
+  final body = json.encode(data);
+  final response = await http.post(_apiUrl,
+      headers: {"Content-Type": "application/json"}, body: body);
+
+  if (response.statusCode != 200) {
+    throw response;
+  }
+
+  final parsed = jsonDecode(response.body) as List<dynamic>;
+
+  List<CVMatch> res = [];
+  for (dynamic elem in parsed) {
+    res.add(CVMatch.fromJson(elem));
+  }
+
   return res;
 }
