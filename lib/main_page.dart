@@ -8,7 +8,7 @@ class MainPage extends StatelessWidget {
   void _upload() async {
     List<FileData> uploaded = await askUserToUploadFiles(["pdf"]);
     for (FileData file in uploaded) {
-      String text = await pdfToText(file.bytes);
+      String text = pdfToText(file.bytes);
       print(await parseCv(text));
     }
   }
