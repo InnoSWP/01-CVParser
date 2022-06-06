@@ -21,28 +21,36 @@ class MainPage extends StatelessWidget {
       body: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
+          buildParseResult(context),
+          buildRightTab(context),
+        ],
+      ),
+    );
+  }
+
+  Widget buildParseResult(BuildContext context) {
+    return const Expanded(
+      child: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
+
+  Widget buildRightTab(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(_desired_padding),
+      width: 400,
+      color: Theme.of(context).colorScheme.secondary,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          buildTopBar(context),
           const Expanded(
             child: Center(
-              child: CircularProgressIndicator(),
+              child: Text("< scrollable view here >"),
             ),
           ),
-          Container(
-            padding: const EdgeInsets.all(_desired_padding),
-            width: 400,
-            color: Theme.of(context).colorScheme.secondary,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                buildTopBar(context),
-                const Expanded(
-                  child: Center(
-                    child: Text("< scrollable view here >"),
-                  ),
-                ),
-                buildBottomBar(context),
-              ],
-            ),
-          ),
+          buildBottomBar(context),
         ],
       ),
     );

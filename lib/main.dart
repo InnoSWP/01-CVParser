@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cvparser_b21_01/main_page.dart';
-import 'colors.dart';
+import 'colors.dart' as my_colors;
 
 void main() {
   runApp(const CVParserApp());
@@ -11,36 +11,28 @@ class CVParserApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'CV Parser',
-      theme: ThemeData(
-        colorScheme: const ColorScheme(
-          brightness: Brightness.light,
-          primary: colorPrimaryRedCaramel,
-          onPrimary: colorPrimaryRedCaramelDark,
-          secondary: colorSecondaryGreenPlant,
-          onSecondary: colorSecondaryLightGreenPlant,
-          surface: colorSurfaceSmoothGreenPlant,
-          onSurface: colorPrimaryLightRedCaramel,
-          error: colorPrimaryLightRedCaramel,
-          onError: colorPrimaryRedCaramel,
-          background: colorSurfaceSmoothGreenPlant,
-          onBackground: colorPrimaryLightRedCaramel,
-        ),
-        fontFamily: "Merriweather",
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ButtonStyle(
-            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30.0),
-              ),
-            ),
-            backgroundColor: MaterialStateProperty.all<Color>(
-              colorSecondaryLightGreenPlant,
-            ),
+    final mainButtonTheme = ElevatedButtonThemeData(
+      style: ButtonStyle(
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30.0),
           ),
         ),
+        backgroundColor: MaterialStateProperty.all<Color>(
+          my_colors.colorSecondaryLightGreenPlant,
+        ),
       ),
+    );
+
+    final mainTheme = ThemeData(
+      colorScheme: my_colors.colorScheme,
+      elevatedButtonTheme: mainButtonTheme,
+      fontFamily: "Merriweather",
+    );
+
+    return MaterialApp(
+      title: 'CV Parser',
+      theme: mainTheme,
       home: const MainPage(),
     );
   }
