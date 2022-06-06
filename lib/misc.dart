@@ -1,10 +1,16 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:cvparser_b21_01/models/cv_match.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:http/http.dart' as http;
+
+class CVMatch {
+  String match;
+  String sentence;
+
+  CVMatch({required this.match, required this.sentence});
+}
 
 class FileData {
   final String name;
@@ -35,7 +41,9 @@ Future<List<FileData>> askUserToUploadFiles([
       res.add(
         FileData(
           name: file.name,
-          bytes: file.bytes!,
+          bytes:
+              file.bytes!, // just because it's web, we cannot store file path,
+          // but we can only get the file data itself
         ),
       );
     }
@@ -47,7 +55,7 @@ Future<List<FileData>> askUserToUploadFiles([
 }
 
 /// Given [Uint8List] of a pdf document bytes, extracts text from it
-Future<String> pdfToText(Uint8List bytes) async {
+String pdfToText(Uint8List bytes) {
   // TODO: to isolate
   final PdfDocument document = PdfDocument(
     inputBytes: bytes,
@@ -58,9 +66,12 @@ Future<String> pdfToText(Uint8List bytes) async {
 }
 
 /// Given [String] of text, sends it to IExtract API and returns it's result
+/// in a little bit refactored format that Map represents:
+/// label => [{match1, sentence1}, {match2, sentence2}, ...]
+///
 /// Note: web requires some walk around CORS
-Future<List<CVMatch>> parseCv(String text) async {
-  final _apiUrl =
+Future<Map<String, List<CVMatch>>> parseCv(String text) async {
+  final apiUrl =
       Uri.parse("https://aqueous-anchorage-93443.herokuapp.com/CvParser");
 
   final Map data = {
@@ -70,7 +81,7 @@ Future<List<CVMatch>> parseCv(String text) async {
   };
 
   final body = json.encode(data);
-  final response = await http.post(_apiUrl,
+  final response = await http.post(apiUrl,
       headers: {"Content-Type": "application/json"}, body: body);
 
   if (response.statusCode != 200) {
@@ -79,9 +90,17 @@ Future<List<CVMatch>> parseCv(String text) async {
 
   final parsed = jsonDecode(response.body) as List<dynamic>;
 
-  List<CVMatch> res = [];
+  // group entries by label
+
+  Map<String, List<CVMatch>> res = {};
+
   for (dynamic elem in parsed) {
-    res.add(CVMatch.fromJson(elem));
+    res.putIfAbsent(elem["label"], () => []).add(
+          CVMatch(
+            match: elem["match"],
+            sentence: elem["sentence"],
+          ),
+        );
   }
 
   return res;
