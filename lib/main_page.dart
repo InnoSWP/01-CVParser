@@ -16,13 +16,20 @@ class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: const Center(
-        child: CircularProgressIndicator(),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _upload,
-        tooltip: "upload cv's",
-        child: const Icon(Icons.upload_file_rounded),
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      body: Row(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          const Expanded(
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          ),
+          Container(
+            width: 400,
+            color: Theme.of(context).colorScheme.secondary,
+          ),
+        ],
       ),
     );
   }

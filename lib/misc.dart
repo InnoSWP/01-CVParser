@@ -41,7 +41,9 @@ Future<List<FileData>> askUserToUploadFiles([
       res.add(
         FileData(
           name: file.name,
-          bytes: file.bytes!,
+          bytes:
+              file.bytes!, // just because it's web, we cannot store file path,
+          // but we can only get the file data itself
         ),
       );
     }
@@ -69,7 +71,7 @@ String pdfToText(Uint8List bytes) {
 ///
 /// Note: web requires some walk around CORS
 Future<Map<String, List<CVMatch>>> parseCv(String text) async {
-  final _apiUrl =
+  final apiUrl =
       Uri.parse("https://aqueous-anchorage-93443.herokuapp.com/CvParser");
 
   final Map data = {
@@ -79,7 +81,7 @@ Future<Map<String, List<CVMatch>>> parseCv(String text) async {
   };
 
   final body = json.encode(data);
-  final response = await http.post(_apiUrl,
+  final response = await http.post(apiUrl,
       headers: {"Content-Type": "application/json"}, body: body);
 
   if (response.statusCode != 200) {
