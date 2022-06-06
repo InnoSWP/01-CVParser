@@ -28,6 +28,17 @@ class MainPage extends StatelessWidget {
           Container(
             width: 400,
             color: Theme.of(context).colorScheme.secondary,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Center(
+                  child: ElevatedButton(
+                    onPressed: _upload,
+                    child: const Text("ADD RESUMES"),
+                  ),
+                )
+              ],
+            ),
           ),
         ],
       ),

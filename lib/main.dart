@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cvparser_b21_01/main_page.dart';
+import 'colors.dart';
 
 void main() {
   runApp(const CVParserApp());
@@ -15,16 +16,29 @@ class CVParserApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: const ColorScheme(
           brightness: Brightness.light,
-          primary: Color(0xFF864921),
-          onPrimary: Color(0xFF864921),
-          secondary: Color(0xFF4D6658),
-          onSecondary: Color(0xFF4D6658),
-          surface: Color(0xFFFBFDF7),
-          onSurface: Color(0xFFF2EEE1),
-          error: Color.fromARGB(255, 134, 38, 33),
-          onError: Color.fromARGB(255, 134, 38, 33),
-          background: Color(0xFFFBFDF7),
-          onBackground: Color(0xFFFBFDF7),
+          primary: colorPrimaryRedCaramel,
+          onPrimary: colorPrimaryRedCaramelDark,
+          secondary: colorSecondaryGreenPlant,
+          onSecondary: colorSecondaryLightGreenPlant,
+          surface: colorSurfaceSmoothGreenPlant,
+          onSurface: colorPrimaryLightRedCaramel,
+          error: colorPrimaryLightRedCaramel,
+          onError: colorPrimaryRedCaramel,
+          background: colorSurfaceSmoothGreenPlant,
+          onBackground: colorPrimaryLightRedCaramel,
+        ),
+        fontFamily: "Merriweather",
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ButtonStyle(
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+            ),
+            backgroundColor: MaterialStateProperty.all<Color>(
+              colorSecondaryLightGreenPlant,
+            ),
+          ),
         ),
       ),
       home: const MainPage(),

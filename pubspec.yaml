@@ -25,3 +25,18 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  fonts:
+    - family: Eczar
+      fonts:
+        - asset: fonts/Eczar/Eczar-Bold.ttf
+        - asset: fonts/Eczar/Eczar-ExtraBold.ttf
+        - asset: fonts/Eczar/Eczar-Medium.ttf
+        - asset: fonts/Eczar/Eczar-Regular.ttf
+        - asset: fonts/Eczar/Eczar-SemiBold.ttf
+    - family: Merriweather
+      fonts:
+        - asset: fonts/Merriweather/Merriweather-Black.ttf
+        - asset: fonts/Merriweather/Merriweather-Bold.ttf
+        - asset: fonts/Merriweather/Merriweather-Light.ttf
+        - asset: fonts/Merriweather/Merriweather-Regular.ttf
