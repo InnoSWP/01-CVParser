@@ -1,14 +1,15 @@
 # CV Parser Project
 
+Web interface to the [CvParser](https://aqueous-anchorage-93443.herokuapp.com/docs#/default/extractCsSkills_CvParser_post) functionality of [iExtract API](https://aqueous-anchorage-93443.herokuapp.com/docs).
+
+You can access the latest stable version [here](https://cv-parser-ca402.web.app/#/).
+
 # Our team
 
 1) Nikita Grigorenko - Team Lead, Developer;
 2) Konstantin Fedorov - UX Developer;
 3) Vitaly Mahonin - UI Developer;
 4) David Eje - Core Developer.
-
-Web interface to the [CvParser](https://aqueous-anchorage-93443.herokuapp.com/docs#/default/extractCsSkills_CvParser_post) functionality of [iExtract API](https://aqueous-anchorage-93443.herokuapp.com/docs).
-
 
 # Our prototype
 ![Alt text](https://github.com/InnoSWP/cvparser_b21_01/blob/main/photos/2.jpg)
