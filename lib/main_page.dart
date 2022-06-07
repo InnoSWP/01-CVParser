@@ -48,18 +48,7 @@ class MainPage extends StatelessWidget {
           buildTopBar(context),
           const SizedBox(height: _desiredPadding),
           Expanded(
-            child: GridView.builder(
-              itemCount: 20,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                mainAxisSpacing: 1,
-                crossAxisSpacing: 1,
-                childAspectRatio: 1,
-              ),
-              itemBuilder: (context, index) {
-                return buildPdfIconButton("kek${index + 1}.pdf", false);
-              },
-            ),
+            child: buildFileExplorer(context),
           ),
           const SizedBox(height: _desiredPadding),
           buildBottomBar(context),
@@ -68,19 +57,66 @@ class MainPage extends StatelessWidget {
     );
   }
 
+  Widget buildFileExplorer(BuildContext context) {
+    return GridView.builder(
+      itemCount: 20,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        mainAxisSpacing: 1,
+        crossAxisSpacing: 1,
+        childAspectRatio: 1,
+      ),
+      itemBuilder: (context, index) {
+        return buildPdfIconButton(
+            "kekuskurum_bus_kus_kus_${index + 1}.pdf", index < 5);
+      },
+    );
+  }
+
   Widget buildPdfIconButton(String name, bool isSelected) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(10),
-          child: SvgPicture.asset(
-            "icons/pdf.svg",
-            width: 43,
-            height: 52,
+    final BoxDecoration decor = isSelected
+        ? BoxDecoration(
+            color: const Color.fromARGB(10, 218, 225, 226),
+            border: Border.all(
+              color: const Color.fromARGB(30, 218, 225, 226),
+            ),
+          )
+        : const BoxDecoration();
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      child: Tooltip(
+        // TODO: make tooltip more pleasant
+        message: name,
+        child: Container(
+          decoration: decor.copyWith(
+            borderRadius: const BorderRadius.all(
+              Radius.circular(8),
+            ),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(10),
+                child: SvgPicture.asset(
+                  "icons/pdf.svg",
+                  width: 43,
+                  height: 52,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                child: Text(
+                  name,
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
           ),
         ),
-        Text(name),
-      ],
+      ),
     );
   }
 
