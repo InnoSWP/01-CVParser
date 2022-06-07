@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
 import 'package:cvparser_b21_01/misc.dart';
+import 'package:flutter_svg/svg.dart';
 
 class MainPage extends StatelessWidget {
-  static const _desired_padding = 18.0;
+  static const _desiredPadding = 18.0;
   const MainPage({Key? key}) : super(key: key);
 
   void _upload() async {
@@ -38,21 +39,48 @@ class MainPage extends StatelessWidget {
 
   Widget buildRightTab(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(_desired_padding),
+      padding: const EdgeInsets.all(_desiredPadding),
       width: 400,
       color: Theme.of(context).colorScheme.secondary,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           buildTopBar(context),
-          const Expanded(
-            child: Center(
-              child: Text("< scrollable view here >"),
+          const SizedBox(height: _desiredPadding),
+          Expanded(
+            child: GridView.builder(
+              itemCount: 20,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                mainAxisSpacing: 1,
+                crossAxisSpacing: 1,
+                childAspectRatio: 1,
+              ),
+              itemBuilder: (context, index) {
+                return buildPdfIconButton("kek${index + 1}.pdf", false);
+              },
             ),
           ),
+          const SizedBox(height: _desiredPadding),
           buildBottomBar(context),
         ],
       ),
+    );
+  }
+
+  Widget buildPdfIconButton(String name, bool isSelected) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(10),
+          child: SvgPicture.asset(
+            "icons/pdf.svg",
+            width: 43,
+            height: 52,
+          ),
+        ),
+        Text(name),
+      ],
     );
   }
 
@@ -72,7 +100,7 @@ class MainPage extends StatelessWidget {
             contentPadding: const EdgeInsets.all(0),
           ),
         ),
-        const SizedBox(height: _desired_padding),
+        const SizedBox(height: _desiredPadding),
         ElevatedButton(
           style: ButtonStyle(
             textStyle: MaterialStateProperty.all<TextStyle>(
@@ -99,7 +127,7 @@ class MainPage extends StatelessWidget {
           onPressed: () {},
           child: const Text("EXPORT SELECTED AS JSON"),
         ),
-        const SizedBox(height: _desired_padding),
+        const SizedBox(height: _desiredPadding),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [

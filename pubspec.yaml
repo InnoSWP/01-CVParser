@@ -16,6 +16,7 @@ dependencies:
   file_picker: ^4.6.1
   syncfusion_flutter_pdf: ^20.1.58-beta
   http: ^0.13.4
+  flutter_svg: ^0.23.0+1
 
 dev_dependencies:
   flutter_test:
@@ -25,6 +26,9 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  assets:
+      - icons/pdf.svg
 
   fonts:
     - family: Eczar
