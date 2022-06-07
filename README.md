@@ -2,3 +2,4 @@
 
 Web interface to the [CvParser](https://aqueous-anchorage-93443.herokuapp.com/docs#/default/extractCsSkills_CvParser_post) functionality of [iExtract API](https://aqueous-anchorage-93443.herokuapp.com/docs).
 
+You can access the latest stable version [here](https://cv-parser-ca402.web.app/#/).
