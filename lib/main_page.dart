@@ -30,9 +30,15 @@ class MainPage extends StatelessWidget {
   }
 
   Widget buildParseResult(BuildContext context) {
-    return const Expanded(
+    return Expanded(
       child: Center(
-        child: CircularProgressIndicator(),
+        child: ListView(
+          children: [Row(
+            children: [Text("label-first"),TextButton(onPressed: ()=>"aboba",child:Text("giga-button"))],
+          ),Row(
+            children: [Text("label-some-bullshit"),TextButton(onPressed: ()=>"aboba",child:Text("giga-button"))],
+          )],
+        )
       ),
     );
   }
