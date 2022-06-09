@@ -17,6 +17,7 @@ dependencies:
   syncfusion_flutter_pdf: ^20.1.58-beta
   http: ^0.13.4
   flutter_svg: ^0.23.0+1
+  get: ^4.6.5
 
 dev_dependencies:
   flutter_test:

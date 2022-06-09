@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cvparser_b21_01/main_page.dart';
+import 'package:cvparser_b21_01/views/main_page.dart';
 import 'colors.dart' as my_colors;
 
 void main() {
@@ -33,7 +33,7 @@ class CVParserApp extends StatelessWidget {
     return MaterialApp(
       title: 'CV Parser',
       theme: mainTheme,
-      home: const MainPage(),
+      home: MainPage(),
     );
   }
 }
