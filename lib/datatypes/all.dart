@@ -1,4 +1,5 @@
 export 'misc/selectable.dart';
+export 'misc/bytes_stream_reader.dart';
 
 export 'cv/cv_base.dart';
 

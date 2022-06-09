@@ -1,20 +1,15 @@
-import '../not_parsed_cv.dart';
-
-// TODO: extract from the hierarhy
-class RawBytesCV extends NotParsedCV {
+class BytesStreamReader {
   final List<int> _drained = [];
   final Stream<List<int>> _readStream;
   final int _size;
 
   /// Important: providing an incorrect size may lead
   /// to infinite loop in [bytes] getter
-  RawBytesCV({
-    required filename,
+  BytesStreamReader({
     required readStream,
     required size,
   })  : _readStream = readStream,
-        _size = size,
-        super(filename);
+        _size = size;
 
   Future<List<int>> get bytes async {
     // TODO: big files loading error

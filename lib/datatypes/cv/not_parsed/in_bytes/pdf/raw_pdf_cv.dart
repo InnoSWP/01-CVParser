@@ -3,28 +3,26 @@ import 'package:cvparser_b21_01/services/i_extract.dart';
 import 'package:cvparser_b21_01/services/pdf_to_text.dart';
 import 'package:get/get.dart';
 
-import '../../../parsed/parsed_cv.dart';
-import '../raw_bytes_cv.dart';
-
-class RawPdfCV extends RawBytesCV {
+class RawPdfCV extends NotParsedCV {
   final textExtracter = Get.find<PdfToText>();
   final cvParser = Get.find<IExtract>();
+  final BytesStreamReader data;
 
   RawPdfCV({
     required filename,
     required readStream,
     required size,
-  }) : super(
-          filename: filename,
+  })  : data = BytesStreamReader(
           readStream: readStream,
           size: size,
-        );
+        ),
+        super(filename);
 
   @override
   Future<ParsedCV> parse() async {
     // extract text
     String text = textExtracter.extractTextFromPdfBytes(
-      await bytes, // NOTE: may be infinite if size was provided incorrect
+      await data.bytes, // NOTE: may be infinite if size was provided incorrect
     );
 
     // parse the text using iExtract API
