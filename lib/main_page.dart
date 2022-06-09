@@ -197,17 +197,25 @@ class MainPage extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        TextField(
-          // TODO: beutify it
-          cursorColor: colorSecondaryLightGreenPlant,
-          decoration: InputDecoration(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30.0),
+        Theme(
+          data: Theme.of(context).copyWith(primaryColor: colorSecondaryLightGreenPlant),
+          child:TextField(
+            // TODO: beutify it
+            cursorColor: colorSecondaryLightGreenPlant,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
+                borderSide: const BorderSide(color: colorSecondaryLightGreenPlant),
+              ),
+              // focusColor: colorSecondaryLightGreenPlant,
+              hintText: "Search",
+              prefixIcon: const Icon(Icons.search),
+              constraints: const BoxConstraints(maxHeight: 40, maxWidth: 450),
+              contentPadding: const EdgeInsets.all(0),
             ),
-            hintText: "Search",
-            prefixIcon: const Icon(Icons.search),
-            constraints: const BoxConstraints(maxHeight: 40, maxWidth: 450),
-            contentPadding: const EdgeInsets.all(0),
           ),
         ),
         const SizedBox(height: _desiredPadding),
