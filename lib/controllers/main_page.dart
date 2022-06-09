@@ -72,7 +72,7 @@ class MainPageController extends GetxController {
   }
 
   /// Switches select of cv
-  Future<void> switchSelect(int index) async {
+  void switchSelect(int index) {
     cvs[index].isSelected = !cvs[index].isSelected;
     // here `Rx` knows only that we invoked getter of list,
     // but did not know what did we do with the element itself
