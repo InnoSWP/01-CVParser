@@ -1,3 +1,7 @@
+import 'dart:html';
+
+import 'package:cvparser_b21_01/colors.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:cvparser_b21_01/misc.dart';
@@ -31,11 +35,15 @@ class _CardWidgetState extends State<CardWidget> {
                 setState(() => _showData = !_showData);
               },
               child: Container(
-                  width: MediaQuery.of(context).size.width,
+                  width: 900,
+                  height: 100,
+
+                  margin: EdgeInsets.symmetric(vertical: 5),
                   decoration: BoxDecoration(
-                      color: Colors.white,
-                      boxShadow: [BoxShadow(color: Colors.grey, offset: Offset(0.0, 3.0))]
+                      color: Theme.of(context).colorScheme.onSecondary,
+                      borderRadius: BorderRadius.circular(10)
                   ),
+
                   child: Padding(
                       padding: EdgeInsets.all(15.0),
                       child: Row(
@@ -91,14 +99,14 @@ class MainPage extends StatelessWidget {
   Widget buildParseResult(BuildContext context) {
     return Expanded(
       child: Center(
-        child: Padding(
+        child: Container(
           child:Column(
-              children: ['Korea', 'China', 'Japan', 'USA', 'India'].map((country){
+              children: ['Skills', 'Organization', 'Language', 'Countries', 'Publication', 'Links'].map((country){
                 // returning the CardWidget passing only title
                 return CardWidget(title: country);
               }).toList()
           ),
-          padding: EdgeInsets.all(12)
+          padding: EdgeInsets.all(50)
         ),
       ),
     );
@@ -107,7 +115,7 @@ class MainPage extends StatelessWidget {
   Widget buildRightTab(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(_desiredPadding),
-      width: 400,
+      width: 520,
       color: Theme.of(context).colorScheme.secondary,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -193,13 +201,14 @@ class MainPage extends StatelessWidget {
       children: [
         TextField(
           // TODO: beutify it
+          cursorColor: colorSecondaryLightGreenPlant,
           decoration: InputDecoration(
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(30.0),
             ),
             hintText: "Search",
             prefixIcon: const Icon(Icons.search),
-            constraints: const BoxConstraints(maxHeight: 40, maxWidth: 400),
+            constraints: const BoxConstraints(maxHeight: 40, maxWidth: 450),
             contentPadding: const EdgeInsets.all(0),
           ),
         ),
@@ -213,7 +222,7 @@ class MainPage extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            fixedSize: MaterialStateProperty.all<Size>(const Size(200, 45)),
+            fixedSize: MaterialStateProperty.all<Size>(const Size(250, 55)),
           ),
           onPressed: _upload,
           child: const Text("ADD RESUMES"),
@@ -227,6 +236,9 @@ class MainPage extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         ElevatedButton(
+          style: ButtonStyle(
+            fixedSize: MaterialStateProperty.all<Size>(const Size(250, 35)),
+          ),
           onPressed: () {},
           child: const Text("EXPORT SELECTED AS JSON"),
         ),
@@ -235,10 +247,16 @@ class MainPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             ElevatedButton(
+              style: ButtonStyle(
+                fixedSize: MaterialStateProperty.all<Size>(const Size(200, 35)),
+              ),
               onPressed: () {},
               child: const Text("SELECT ALL"),
             ),
             ElevatedButton(
+              style: ButtonStyle(
+                fixedSize: MaterialStateProperty.all<Size>(const Size(200, 35)),
+              ),
               onPressed: () {},
               child: const Text("DELETE SELECTED"),
             ),
