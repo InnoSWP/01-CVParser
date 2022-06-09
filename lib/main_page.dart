@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:cvparser_b21_01/colors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +19,7 @@ class CardWidget extends StatefulWidget {
 class _CardWidgetState extends State<CardWidget> {
   // responsible for toggle
   bool _showData = false;
+  bool aboba = true;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -32,11 +31,11 @@ class _CardWidgetState extends State<CardWidget> {
           GestureDetector(
               onTap: (){
                 setState(() => _showData = !_showData);
+                setState(() => aboba = !aboba);
               },
               child: Container(
                   width: 900,
                   height: 100,
-
                   margin: const EdgeInsets.symmetric(vertical: 5),
                   decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.onSecondary,
@@ -46,10 +45,13 @@ class _CardWidgetState extends State<CardWidget> {
                   child: Padding(
                       padding: EdgeInsets.fromLTRB(15, 2, 5, 5),
                       child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            // add your other icon here
                             Text(widget.title, style: TextStyle(fontSize: 60, fontFamily: "Eczar", fontWeight: FontWeight.w400, color:  colorTextSmoothBlack)),
+                            if (aboba)
+                              Icon(Icons.keyboard_arrow_down_rounded, size: 55, color: colorSecondaryGreenPlant)
+                            else
+                              Icon(Icons.keyboard_arrow_up_rounded, size: 55, color: colorSecondaryGreenPlant)
                           ]
                       )
                   )
@@ -57,12 +59,15 @@ class _CardWidgetState extends State<CardWidget> {
           ),
 
           // this is the company card which is toggling based upon the bool
-          _showData ? Column(
+          _showData ? Container(
+            padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: ['SomeInfo','AnotherInfo'].map((e){
+              children: ['Java','Python', 'C++', 'Web Development', 'AWS', 'FPGA'].map((e){
                 // make changes in the UI here for your company card
-                return Card(child: Text(e));
+                return Card(child:Text(e, style: TextStyle(fontSize: 20, fontFamily: 'Merriweather', color: colorTextSmoothBlack)));
               }).toList()
+            )
           ) : SizedBox() // else blank
         ]
     );
@@ -88,25 +93,122 @@ class MainPage extends StatelessWidget {
       body: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          buildParseResult(context),
+          buildLeft(context),
           buildRightTab(context),
         ],
       ),
     );
   }
 
-  Widget buildParseResult(BuildContext context) {
-    return Expanded(
-      child: Center(
-        child: Container(
-          padding: EdgeInsets.all(50),
-          child:Column(
-              children: ['Skills', 'Organization', 'Language', 'Countries', 'Publication', 'Links'].map((country){
-                return CardWidget(title: country);
-              }).toList()
+  Widget buildLeft(BuildContext context){
+    return Container(
+      child: Column(
+        children: [
+          Row(
+              children: [logo(context), buildContact(context)]
           ),
-        ),
+          Expanded(
+              child: Container(
+                padding: EdgeInsets.fromLTRB(50, 0, 50, 50),
+                child: buildParseResult(context),
+            ),
+          ),
+          Container(
+            padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+            child: buildBottomLeft(context),
+          )
+        ],
       ),
+    );
+  }
+
+  Widget logo(BuildContext context){
+    return Container(
+      padding: EdgeInsets.fromLTRB(0, 30, 125, 0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: const [
+          Text('CVParser \niExtract', style: TextStyle(
+              fontSize: 60,
+              fontFamily: 'Eczar',
+              fontWeight: FontWeight.w600,
+              color: colorPrimaryRedCaramelDark,
+              height: 0.9,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+
+  Widget buildContact(BuildContext context){
+    return Container(
+        width: 505,
+        height: 100,
+        padding: EdgeInsets.fromLTRB(10, 0, 0, 5),
+        decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.onSecondary,
+            borderRadius: BorderRadius.circular(10)
+        ),
+        child: Container(
+            width: 400,
+            height: 80,
+            child: Row(
+                children: [Column(
+                    children: const [
+                      Text('Konstantin Fedorov', textAlign: TextAlign.start, style: TextStyle(height: 1.5, fontSize: 50, fontFamily: "Eczar", fontWeight: FontWeight.w400, color:  colorTextSmoothBlack)),
+                      Text('k.fedorov@innopolis.university   +79221994815', textAlign: TextAlign.start, style: TextStyle(height: 0.2, fontSize: 20.2, fontFamily: "Eczar", fontWeight: FontWeight.w400, color:  colorTextSmoothBlack)),
+                    ]
+                ), Icon(Icons.account_circle, size: 60, color: colorPrimaryRedCaramelDark)],
+            )
+        ),
+    );
+  }
+
+
+  Widget buildBottomLeft(BuildContext context){
+    return Container(
+        width: 900,
+        height: 50,
+        decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.secondary,
+            borderRadius: BorderRadius.circular(10)
+        ),
+
+        child: Padding(
+            padding: EdgeInsets.fromLTRB(15, 2, 5, 0),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+
+                children: [
+                  Text('Pdf1', style: TextStyle(height: 1.3, fontSize: 45, fontFamily: "Eczar", fontWeight: FontWeight.w400, color: colorSurfaceSmoothGreenPlant)),
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      fixedSize: MaterialStateProperty.all<Size>(const Size(250, 35)),
+                    ),
+                    onPressed: () {},
+                    child: const Text("EXPORT AS JSON"),
+                  ),
+                ]
+            )
+        )
+    );
+  }
+
+
+
+  Widget buildParseResult(BuildContext context) {
+    return Container(
+      //padding: EdgeInsets.all(50),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child:Column(
+            children: ['Skills', 'Organization', 'Language', 'Countries', 'Publication', 'Links'].map((country){
+              return CardWidget(title: country);
+            }).toList()
+        ),
+      )
     );
   }
 
@@ -134,7 +236,7 @@ class MainPage extends StatelessWidget {
     return GridView.builder(
       itemCount: 20,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
+        crossAxisCount: 4,
         mainAxisSpacing: 1,
         crossAxisSpacing: 1,
         childAspectRatio: 1,
@@ -200,19 +302,17 @@ class MainPage extends StatelessWidget {
         Theme(
           data: Theme.of(context).copyWith(primaryColor: colorSecondaryLightGreenPlant),
           child:TextField(
-            // TODO: beutify it
             cursorColor: colorSecondaryLightGreenPlant,
             decoration: InputDecoration(
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(30.0),
               ),
-              focusedBorder: OutlineInputBorder(
+                focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(30.0),
                 borderSide: const BorderSide(color: colorSecondaryLightGreenPlant),
               ),
-              // focusColor: colorSecondaryLightGreenPlant,
               hintText: "Search",
-              prefixIcon: const Icon(Icons.search),
+              prefixIcon: const Icon(Icons.search, color: colorSecondaryLightGreenPlant),
               constraints: const BoxConstraints(maxHeight: 40, maxWidth: 450),
               contentPadding: const EdgeInsets.all(0),
             ),
