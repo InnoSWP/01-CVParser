@@ -10,7 +10,7 @@ import 'package:flutter_svg/svg.dart';
 class CardWidget extends StatefulWidget {
   // right now it only accepts title, but you can add more
   // arguments to be accepted by this widget
-  CardWidget({Key? key, required this.title}) : super(key: key);
+  const CardWidget({Key? key, required this.title}) : super(key: key);
 
   final String title;
 
@@ -21,7 +21,6 @@ class CardWidget extends StatefulWidget {
 class _CardWidgetState extends State<CardWidget> {
   // responsible for toggle
   bool _showData = false;
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -38,19 +37,19 @@ class _CardWidgetState extends State<CardWidget> {
                   width: 900,
                   height: 100,
 
-                  margin: EdgeInsets.symmetric(vertical: 5),
+                  margin: const EdgeInsets.symmetric(vertical: 5),
                   decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.onSecondary,
                       borderRadius: BorderRadius.circular(10)
                   ),
 
                   child: Padding(
-                      padding: EdgeInsets.all(15.0),
+                      padding: EdgeInsets.fromLTRB(15, 2, 5, 5),
                       child: Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             // add your other icon here
-                            Text(widget.title)
+                            Text(widget.title, style: TextStyle(fontSize: 60, fontFamily: "Eczar", fontWeight: FontWeight.w400, color:  colorTextSmoothBlack)),
                           ]
                       )
                   )
@@ -60,7 +59,7 @@ class _CardWidgetState extends State<CardWidget> {
           // this is the company card which is toggling based upon the bool
           _showData ? Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: ['Kia','Samsung'].map((e){
+              children: ['SomeInfo','AnotherInfo'].map((e){
                 // make changes in the UI here for your company card
                 return Card(child: Text(e));
               }).toList()
@@ -100,13 +99,12 @@ class MainPage extends StatelessWidget {
     return Expanded(
       child: Center(
         child: Container(
+          padding: EdgeInsets.all(50),
           child:Column(
               children: ['Skills', 'Organization', 'Language', 'Countries', 'Publication', 'Links'].map((country){
-                // returning the CardWidget passing only title
                 return CardWidget(title: country);
               }).toList()
           ),
-          padding: EdgeInsets.all(50)
         ),
       ),
     );
