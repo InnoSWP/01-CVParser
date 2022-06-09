@@ -28,11 +28,11 @@ class RawPdfCV extends RawBytesCV {
     );
 
     // parse the text using iExtract API
-    return ParsedCV(
-      // TODO: rm it as it is temporary because API is not responding
-      filename: filename,
-      data: {},
-    );
+    // return ParsedCV(
+    //   // TODO: rm it as it is temporary because API is not responding
+    //   filename: filename,
+    //   data: {},
+    // );
 
     return ParsedCV(
       filename: filename,

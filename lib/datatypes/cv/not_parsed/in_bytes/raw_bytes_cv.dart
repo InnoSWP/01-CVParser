@@ -1,5 +1,6 @@
 import '../not_parsed_cv.dart';
 
+// TODO: extract from the hierarhy
 class RawBytesCV extends NotParsedCV {
   final List<int> _drained = [];
   final Stream<List<int>> _readStream;

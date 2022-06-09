@@ -28,7 +28,7 @@ class MainPage extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         ElevatedButton(
-          onPressed: () {},
+          onPressed: controller.exportSelected,
           child: const Text("EXPORT SELECTED AS JSON"),
         ),
         const SizedBox(height: _desiredPadding),
@@ -36,11 +36,12 @@ class MainPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             ElevatedButton(
-              onPressed: () {},
+              onPressed: controller.selectAll,
               child: const Text("SELECT ALL"),
             ),
             ElevatedButton(
-              onPressed: () {},
+              onPressed:
+                  controller.deleteSelected, // TODO: add binding of del button
               child: const Text("DELETE SELECTED"),
             ),
           ],
@@ -53,10 +54,15 @@ class MainPage extends StatelessWidget {
     // TODO: beautify select UX:
     // - smooth animations of select/deselect,
     // - accent on the tile under the cursor
-    // - range select (with shift)
-    return Obx(
-      () => GridView.builder(
-        itemCount: controller.cvs.length,
+    // - select as in a normal file explorer:
+    // -- ctrl+tap -> switchSelected
+    // -- range select (with shift)
+    // -- just tap -> reset all selected + select this one
+    // TODO: this big plus icon on no cvs
+    return Obx(() {
+      var keys = controller.cvsS.keys;
+      return GridView.builder(
+        itemCount: controller.cvsS.length,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3,
           mainAxisSpacing: 1,
@@ -65,13 +71,11 @@ class MainPage extends StatelessWidget {
         ),
         itemBuilder: (context, index) {
           return buildPdfIconButton(
-            index,
-            controller.cvs[index].item.filename,
-            controller.cvs[index].isSelected,
+            keys.elementAt(index),
           );
         },
-      ),
-    );
+      );
+    });
   }
 
   Widget buildParseResult(BuildContext context) {
@@ -82,9 +86,10 @@ class MainPage extends StatelessWidget {
     );
   }
 
-  Widget buildPdfIconButton(int index, String name, bool isSelected) {
+  Widget buildPdfIconButton(int index) {
     // TODO: separate class and optimize rebuilds with no changes
-    final BoxDecoration decor = isSelected
+    final tile = controller.cvsS[index]!;
+    final BoxDecoration decor = tile.isSelected
         ? BoxDecoration(
             color: const Color.fromARGB(10, 218, 225, 226),
             border: Border.all(
@@ -97,10 +102,10 @@ class MainPage extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: Tooltip(
         // TODO: make tooltip more pleasant
-        message: name,
+        message: tile.item.filename,
         child: GestureDetector(
           onTap: () {
-            controller.switchSelect(index);
+            controller.setCurrent(index);
           },
           child: Container(
             decoration: decor.copyWith(
@@ -122,7 +127,7 @@ class MainPage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 5),
                   child: Text(
-                    name,
+                    tile.item.filename,
                     textAlign: TextAlign.center,
                     overflow: TextOverflow.ellipsis,
                   ),
