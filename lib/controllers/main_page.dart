@@ -52,6 +52,7 @@ class MainPageController extends GetxController {
     if (tmp is NotParsedCV) {
       cvs[index].item = CVBase(tmp.filename); // mark it as processing
       try {
+        // TODO: special popup on iExtract API not working
         cvs[index].item = await tmp.parse(); // some async code
       } catch (e) {
         cvs[index].item = tmp; // so it's not processing anymore
@@ -67,7 +68,7 @@ class MainPageController extends GetxController {
       return;
     }
 
-    current.value = cvs[index] as ParsedCV;
+    current.value = cvs[index].item as ParsedCV;
   }
 
   /// Switches select of cv
