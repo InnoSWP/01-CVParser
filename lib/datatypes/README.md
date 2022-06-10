@@ -1,3 +1,0 @@
-# Datatypes hierarchy
-
-weak TODO
