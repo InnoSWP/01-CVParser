@@ -6,7 +6,7 @@ class PdfToText extends GetxService {
     final PdfDocument document = PdfDocument(
       inputBytes: bytes, // TESTIT: try loading pdf with a password
     );
-    // TODO: wrap this function as a future and delegate extractText
+    // weak TODO (uploading cv): wrap this function as a future and delegate extractText
     // to the separate isolate or to the separate Worker if on web
     String text = PdfTextExtractor(document).extractText();
     document.dispose();

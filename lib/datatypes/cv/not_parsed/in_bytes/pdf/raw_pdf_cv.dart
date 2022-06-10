@@ -27,7 +27,7 @@ class RawPdfCV extends NotParsedCV {
 
     // parse the text using iExtract API
     // return ParsedCV(
-    //   // TODO: rm it as it is temporary because API is not responding
+    //   // weak TODO: rm it as it is temporary because API is not responding
     //   filename: filename,
     //   data: {},
     // );

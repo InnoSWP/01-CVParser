@@ -69,7 +69,7 @@ class MainPageController extends GetxController {
       if (tmp is NotParsedCV) {
         cvsS[index]!.item = CVBase(tmp.filename); // mark it as processing
         try {
-          // TODO: special popup if iExtract API is not working
+          // 5 TODO (uploading cv): special popup if iExtract API is not working
           cvsS[index]?.item = await tmp.parse(); // some async code
         } catch (e) {
           cvsS[index]?.item = tmp; // so it's not processing anymore
@@ -197,14 +197,14 @@ class MainPageController extends GetxController {
     _blockCvs = true;
     // so I blocked cvs for others, but here I can acess it by cvsS
     {
-      // TODO: (in UI) cover by popup
+      // TODO (export multiple/one): (in UI) cover by popup
       // (so cvs must be persist throughout the whole export process)
       for (var index in cvsS.keys) {
         var cv = cvsS[index]!;
         if (cv.isSelected) {
           // if cv is not parsed => parse cv (with exception check)
           if (cv.item is ParsedCV) {
-            // TODO: json serivalizable
+            // TODO (export multiple/one): json serivalizable
             print(json.encode(cv.item));
           } else {
             // cv.item is NotParsedCV
@@ -230,4 +230,6 @@ class MainPageController extends GetxController {
     }
     _blockCvs = false;
   }
+
+  // TODO (export one): export by one
 }

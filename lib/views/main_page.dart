@@ -45,8 +45,8 @@ class MainPage extends StatelessWidget {
               child: const Text("SELECT ALL"),
             ),
             ElevatedButton(
-              onPressed:
-                  controller.deleteSelected, // TODO: add binding of del button
+              onPressed: controller
+                  .deleteSelected, // 1 weak TODO (uploading cv): add binding of del button
               child: const Text("DELETE SELECTED"),
             ),
           ],
@@ -56,12 +56,12 @@ class MainPage extends StatelessWidget {
   }
 
   Widget buildFileExplorer(BuildContext context) {
-    // TODO: beautify select UX:
+    // weak TODO: beautify select UX:
     // - smooth animations of select/deselect,
     // - accent on the tile under the cursor
     // - select all becomes deselect all if all is selected
     // - maybe somewhere insert selection ?
-    // TODO: this big plus icon on no cvs
+    // weak TODO: this big plus icon on no cvs
     return Obx(() {
       return GridView.builder(
         itemCount: controller.cvsS.length,
@@ -79,6 +79,8 @@ class MainPage extends StatelessWidget {
   }
 
   Widget buildParseResult(BuildContext context) {
+    // 3 TODO (uploading cv): merge ui
+    // 4 TODO (uploading cv): bind merged ui with controller
     return const Expanded(
       child: Center(
         child: CircularProgressIndicator(),
@@ -87,7 +89,7 @@ class MainPage extends StatelessWidget {
   }
 
   Widget buildPdfIconButton(int position) {
-    // TODO: separate class and optimize rebuilds with no changes
+    // weak TODO: separate class and optimize rebuilds with no changes
     final index = controller.cvsS.keys.elementAt(position);
     final tile = controller.cvsS[index]!;
     final BoxDecoration decor = tile.isSelected
@@ -102,7 +104,7 @@ class MainPage extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: Tooltip(
-        // TODO: make tooltip more pleasant
+        // weak TODO: make tooltip more pleasant
         message: tile.item.filename,
         child: GestureDetector(
           onTap: () {
@@ -182,7 +184,7 @@ class MainPage extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         TextField(
-          // TODO: beutify it
+          // weak TODO: beutify it
           decoration: InputDecoration(
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(30.0),

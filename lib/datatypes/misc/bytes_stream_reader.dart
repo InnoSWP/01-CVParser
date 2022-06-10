@@ -12,7 +12,7 @@ class BytesStreamReader {
         _size = size;
 
   Future<List<int>> get bytes async {
-    // TODO: big files loading error
+    // 2 TODO (uploading cv): big files loading error
 
     while (_drained.length != _size) {
       _drained.addAll(await _readStream.first);
