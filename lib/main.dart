@@ -4,7 +4,7 @@ import 'package:cvparser_b21_01/views/main_page.dart';
 import 'colors.dart' as my_colors;
 
 void main() {
-  initSertvices();
+  initServices();
   runApp(const CVParserApp());
 }
 
