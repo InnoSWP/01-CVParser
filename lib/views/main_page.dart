@@ -8,7 +8,7 @@ import 'package:get/get.dart';
 
 class MainPage extends StatelessWidget {
   static const _desiredPadding = 18.0;
-
+  const MainPage({Key? key}) : super(key: key);
   final controller = Get.put(MainPageController());
   final keyLookup = Get.find<KeyListener>();
 
@@ -21,37 +21,38 @@ class MainPage extends StatelessWidget {
       body: Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          buildParseResult(context),
+          buildLeft(context),
           buildRightTab(context),
         ],
       ),
     );
   }
 
-  Widget buildBottomBar(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        ElevatedButton(
-          onPressed: controller.exportSelected,
-          child: const Text("EXPORT SELECTED AS JSON"),
-        ),
-        const SizedBox(height: _desiredPadding),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            ElevatedButton(
-              onPressed: controller.selectAll,
-              child: const Text("SELECT ALL"),
-            ),
-            ElevatedButton(
-              onPressed: controller
-                  .deleteSelected, // 1 weak TODO (uploading cv): add binding of del button
-              child: const Text("DELETE SELECTED"),
-            ),
-          ],
-        ),
-      ],
+  Widget buildParseResult(BuildContext context) {
+    return const Expanded(
+      child: Center(
+        child: CircularProgressIndicator(),
+      ),
+    );
+  }
+
+  Widget buildRightTab(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(_desiredPadding),
+      width: 400,
+      color: Theme.of(context).colorScheme.secondary,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          buildTopBar(context),
+          const SizedBox(height: _desiredPadding),
+          Expanded(
+            child: buildFileExplorer(context),
+          ),
+          const SizedBox(height: _desiredPadding),
+          buildBottomBar(context),
+        ],
+      ),
     );
   }
 
@@ -66,7 +67,7 @@ class MainPage extends StatelessWidget {
       return GridView.builder(
         itemCount: controller.cvsS.length,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 3,
+          crossAxisCount: 4,
           mainAxisSpacing: 1,
           crossAxisSpacing: 1,
           childAspectRatio: 1,
@@ -78,17 +79,9 @@ class MainPage extends StatelessWidget {
     });
   }
 
-  Widget buildParseResult(BuildContext context) {
-    // 3 TODO (uploading cv): merge ui
-    // 4 TODO (uploading cv): bind merged ui with controller
-    return const Expanded(
-      child: Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
-  }
-
-  Widget buildPdfIconButton(int position) {
+  // 3 TODO (uploading cv): merge ui
+  // 4 TODO (uploading cv): bind merged ui with controller
+  Widget buildPdfIconButton(String name, bool isSelected) {
     // weak TODO: separate class and optimize rebuilds with no changes
     final index = controller.cvsS.keys.elementAt(position);
     final tile = controller.cvsS[index]!;
@@ -183,16 +176,23 @@ class MainPage extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        TextField(
-          // weak TODO: beutify it
-          decoration: InputDecoration(
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30.0),
+        Theme(
+          data: Theme.of(context).copyWith(primaryColor: colorSecondaryLightGreenPlant),
+          child:TextField(
+            cursorColor: colorSecondaryLightGreenPlant,
+            decoration: InputDecoration(
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+                focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(30.0),
+                borderSide: const BorderSide(color: colorSecondaryLightGreenPlant),
+              ),
+              hintText: "Search",
+              prefixIcon: const Icon(Icons.search, color: colorSecondaryLightGreenPlant),
+              constraints: const BoxConstraints(maxHeight: 40, maxWidth: 450),
+              contentPadding: const EdgeInsets.all(0),
             ),
-            hintText: "Search",
-            prefixIcon: const Icon(Icons.search),
-            constraints: const BoxConstraints(maxHeight: 40, maxWidth: 400),
-            contentPadding: const EdgeInsets.all(0),
           ),
         ),
         const SizedBox(height: _desiredPadding),
@@ -205,10 +205,36 @@ class MainPage extends StatelessWidget {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            fixedSize: MaterialStateProperty.all<Size>(const Size(200, 45)),
+            fixedSize: MaterialStateProperty.all<Size>(const Size(250, 55)),
           ),
           onPressed: controller.askUserToUploadPdfFiles,
           child: const Text("ADD RESUMES"),
+        ),
+      ],
+    );
+  }
+
+  Widget buildBottomBar(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        ElevatedButton(
+          onPressed: () {},
+          child: const Text("EXPORT SELECTED AS JSON"),
+        ),
+        const SizedBox(height: _desiredPadding),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ElevatedButton(
+              onPressed: () {},
+              child: const Text("SELECT ALL"),
+            ),
+            ElevatedButton(
+              onPressed: () {},
+              child: const Text("DELETE SELECTED"),
+            ),
+          ],
         ),
       ],
     );
