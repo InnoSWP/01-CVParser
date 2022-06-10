@@ -260,7 +260,6 @@ class MainPage extends StatelessWidget {
     });
   }
 
-  // 3 TODO (uploading cv): merge ui
   // 4 TODO (uploading cv): bind merged ui with controller
   Widget buildPdfIconButton(int position) {
     // weak TODO: separate class and optimize rebuilds with no changes
@@ -286,8 +285,9 @@ class MainPage extends StatelessWidget {
               controller.selectPoint ??= 0;
               final start = min(controller.selectPoint!, position);
               final stop = max(controller.selectPoint!, position);
-              for (int i = start; i <= stop; i++) {
-                controller.select(i);
+              print('$start $stop');
+              for (int p = start; p <= stop; p++) {
+                controller.select(controller.cvsS.keys.elementAt(p));
               }
             } else {
               if (!keyLookup.ctrl) {
