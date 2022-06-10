@@ -403,7 +403,7 @@ class MainPage extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         ElevatedButton(
-          onPressed: () {},
+          onPressed: controller.exportSelected,
           child: const Text("EXPORT SELECTED AS JSON"),
         ),
         const SizedBox(height: _desiredPadding),
@@ -411,11 +411,11 @@ class MainPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             ElevatedButton(
-              onPressed: () {},
+              onPressed: controller.selectAll,
               child: const Text("SELECT ALL"),
             ),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: controller.deleteSelected,
               child: const Text("DELETE SELECTED"),
             ),
           ],
