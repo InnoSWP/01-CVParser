@@ -1,6 +1,7 @@
 import 'package:cvparser_b21_01/services/init.dart';
-import 'package:flutter/material.dart';
 import 'package:cvparser_b21_01/views/main_page.dart';
+import 'package:flutter/material.dart';
+
 import 'colors.dart' as my_colors;
 
 void main() {

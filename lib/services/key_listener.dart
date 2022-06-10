@@ -13,9 +13,6 @@ class KeyListener extends GetxService {
   final _escEventStream = StreamController<KeyEventType>.broadcast();
   final _delEventStream = StreamController<KeyEventType>.broadcast();
 
-  Stream<KeyEventType> get escEventStream => _escEventStream.stream;
-  Stream<KeyEventType> get delEventStream => _delEventStream.stream;
-
   KeyListener() {
     window.onKeyData = (final keyData) {
       if (keyData.type != KeyEventType.repeat) {
@@ -36,6 +33,9 @@ class KeyListener extends GetxService {
       return false;
     };
   }
+  Stream<KeyEventType> get delEventStream => _delEventStream.stream;
+
+  Stream<KeyEventType> get escEventStream => _escEventStream.stream;
 
   @override
   void onClose() {

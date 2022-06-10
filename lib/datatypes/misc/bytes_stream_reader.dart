@@ -14,12 +14,6 @@ class BytesStreamReader {
     required readStream,
   }) : _readStream = readStream;
 
-  Future<void> _drain() async {
-    await for (final bucket in _readStream) {
-      _drained.addAll(bucket);
-    }
-  }
-
   Future<List<int>> get bytes async {
     switch (state) {
       case BytesStreamDrainerState.initial:
@@ -37,5 +31,11 @@ class BytesStreamReader {
         throw TypeError();
     }
     return _drained;
+  }
+
+  Future<void> _drain() async {
+    await for (final bucket in _readStream) {
+      _drained.addAll(bucket);
+    }
   }
 }

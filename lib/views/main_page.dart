@@ -9,91 +9,21 @@ import 'package:get/get.dart';
 import '../colors.dart';
 
 class CardWidget extends StatefulWidget {
+  final String title;
+
   // right now it only accepts title, but you can add more
   // arguments to be accepted by this widget
   const CardWidget({Key? key, required this.title}) : super(key: key);
-
-  final String title;
 
   @override
   _CardWidgetState createState() => _CardWidgetState();
 }
 
-class _CardWidgetState extends State<CardWidget> {
-  // responsible for toggle
-  bool _showData = false;
-  bool aboba = true;
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(height: 10.0),
-          // list card containing country name
-          GestureDetector(
-              onTap: () {
-                setState(() => _showData = !_showData);
-                setState(() => aboba = !aboba);
-              },
-              child: Container(
-                  width: 900,
-                  height: 100,
-                  margin: const EdgeInsets.symmetric(vertical: 5),
-                  decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.onSecondary,
-                      borderRadius: BorderRadius.circular(10)),
-                  child: Padding(
-                      padding: EdgeInsets.fromLTRB(15, 2, 5, 5),
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(widget.title,
-                                style: TextStyle(
-                                    fontSize: 60,
-                                    fontFamily: "Eczar",
-                                    fontWeight: FontWeight.w400,
-                                    color: colorTextSmoothBlack)),
-                            if (aboba)
-                              Icon(Icons.keyboard_arrow_down_rounded,
-                                  size: 55, color: colorSecondaryGreenPlant)
-                            else
-                              Icon(Icons.keyboard_arrow_up_rounded,
-                                  size: 55, color: colorSecondaryGreenPlant)
-                          ])))),
-
-          // this is the company card which is toggling based upon the bool
-          _showData
-              ? Container(
-                  padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
-                  child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        'Java',
-                        'Python',
-                        'C++',
-                        'Web Development',
-                        'AWS',
-                        'FPGA'
-                      ].map((e) {
-                        // make changes in the UI here for your company card
-                        return Card(
-                            child: Text(e,
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    fontFamily: 'Merriweather',
-                                    color: colorTextSmoothBlack)));
-                      }).toList()))
-              : SizedBox() // else blank
-        ]);
-  }
-}
-
 class MainPage extends StatelessWidget {
   static const _desiredPadding = 18.0;
-  MainPage({Key? key}) : super(key: key);
   final controller = Get.put(MainPageController());
   final keyLookup = Get.find<KeyListener>();
+  MainPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -109,56 +39,71 @@ class MainPage extends StatelessWidget {
     );
   }
 
-  Widget buildLeft(BuildContext context) {
-    return Container(
-      child: Column(
-        children: [
-          Row(children: [logo(context), buildContact(context)]),
-          Expanded(
-            child: Container(
-              padding: EdgeInsets.fromLTRB(50, 0, 50, 50),
-              child: buildParseResult(context),
+  Widget buildBottomBar(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        ElevatedButton(
+          onPressed: controller.exportSelected,
+          child: const Text("EXPORT SELECTED AS JSON"),
+        ),
+        const SizedBox(height: _desiredPadding),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ElevatedButton(
+              onPressed: controller.selectAll,
+              child: const Text("SELECT ALL"),
             ),
-          ),
-          Container(
-            padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-            child: buildBottomLeft(context),
-          )
-        ],
-      ),
+            ElevatedButton(
+              onPressed: controller.deleteSelected,
+              child: const Text("DELETE SELECTED"),
+            ),
+          ],
+        ),
+      ],
     );
   }
 
-  Widget logo(BuildContext context) {
+  Widget buildBottomLeft(BuildContext context) {
     return Container(
-      padding: EdgeInsets.fromLTRB(0, 30, 125, 0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: const [
-          Text(
-            'CVParser \niExtract',
-            style: TextStyle(
-              fontSize: 60,
-              fontFamily: 'Eczar',
-              fontWeight: FontWeight.w600,
-              color: colorPrimaryRedCaramelDark,
-              height: 0.9,
-            ),
-          ),
-        ],
-      ),
-    );
+        width: 900,
+        height: 50,
+        decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.secondary,
+            borderRadius: BorderRadius.circular(10)),
+        child: Padding(
+            padding: const EdgeInsets.fromLTRB(15, 2, 5, 0),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  const Text('Pdf1',
+                      style: TextStyle(
+                          height: 1.3,
+                          fontSize: 45,
+                          fontFamily: "Eczar",
+                          fontWeight: FontWeight.w400,
+                          color: colorSurfaceSmoothGreenPlant)),
+                  ElevatedButton(
+                    style: ButtonStyle(
+                      fixedSize:
+                          MaterialStateProperty.all<Size>(const Size(250, 35)),
+                    ),
+                    onPressed: () {},
+                    child: const Text("EXPORT AS JSON"),
+                  ),
+                ])));
   }
 
   Widget buildContact(BuildContext context) {
     return Container(
       width: 505,
       height: 100,
-      padding: EdgeInsets.fromLTRB(10, 0, 0, 5),
+      padding: const EdgeInsets.fromLTRB(10, 0, 0, 5),
       decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.onSecondary,
           borderRadius: BorderRadius.circular(10)),
-      child: Container(
+      child: SizedBox(
           width: 400,
           height: 80,
           child: Row(
@@ -181,60 +126,11 @@ class MainPage extends StatelessWidget {
                         fontWeight: FontWeight.w400,
                         color: colorTextSmoothBlack)),
               ]),
-              Icon(Icons.account_circle,
+              const Icon(Icons.account_circle,
                   size: 60, color: colorPrimaryRedCaramelDark)
             ],
           )),
     );
-  }
-
-  Widget buildBottomLeft(BuildContext context) {
-    return Container(
-        width: 900,
-        height: 50,
-        decoration: BoxDecoration(
-            color: Theme.of(context).colorScheme.secondary,
-            borderRadius: BorderRadius.circular(10)),
-        child: Padding(
-            padding: EdgeInsets.fromLTRB(15, 2, 5, 0),
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Text('Pdf1',
-                      style: TextStyle(
-                          height: 1.3,
-                          fontSize: 45,
-                          fontFamily: "Eczar",
-                          fontWeight: FontWeight.w400,
-                          color: colorSurfaceSmoothGreenPlant)),
-                  ElevatedButton(
-                    style: ButtonStyle(
-                      fixedSize:
-                          MaterialStateProperty.all<Size>(const Size(250, 35)),
-                    ),
-                    onPressed: () {},
-                    child: const Text("EXPORT AS JSON"),
-                  ),
-                ])));
-  }
-
-  Widget buildParseResult(BuildContext context) {
-    return Container(
-        //padding: EdgeInsets.all(50),
-        child: SingleChildScrollView(
-      scrollDirection: Axis.vertical,
-      child: Column(
-          children: [
-        'Skills',
-        'Organization',
-        'Language',
-        'Countries',
-        'Publication',
-        'Links'
-      ].map((country) {
-        return CardWidget(title: country);
-      }).toList()),
-    ));
   }
 
   Widget buildFileExplorer(BuildContext context) {
@@ -258,6 +154,41 @@ class MainPage extends StatelessWidget {
         },
       );
     });
+  }
+
+  Widget buildLeft(BuildContext context) {
+    return Column(
+      children: [
+        Row(children: [logo(context), buildContact(context)]),
+        Expanded(
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(50, 0, 50, 50),
+            child: buildParseResult(context),
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+          child: buildBottomLeft(context),
+        )
+      ],
+    );
+  }
+
+  Widget buildParseResult(BuildContext context) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.vertical,
+      child: Column(
+          children: [
+        'Skills',
+        'Organization',
+        'Language',
+        'Countries',
+        'Publication',
+        'Links'
+      ].map((country) {
+        return CardWidget(title: country);
+      }).toList()),
+    );
   }
 
   // 4 TODO (uploading cv): bind merged ui with controller
@@ -285,7 +216,6 @@ class MainPage extends StatelessWidget {
               controller.selectPoint ??= 0;
               final start = min(controller.selectPoint!, position);
               final stop = max(controller.selectPoint!, position);
-              print('$start $stop');
               for (int p = start; p <= stop; p++) {
                 controller.select(controller.cvsS.keys.elementAt(p));
               }
@@ -398,29 +328,94 @@ class MainPage extends StatelessWidget {
     );
   }
 
-  Widget buildBottomBar(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        ElevatedButton(
-          onPressed: controller.exportSelected,
-          child: const Text("EXPORT SELECTED AS JSON"),
-        ),
-        const SizedBox(height: _desiredPadding),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            ElevatedButton(
-              onPressed: controller.selectAll,
-              child: const Text("SELECT ALL"),
+  Widget logo(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(0, 30, 125, 0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: const [
+          Text(
+            'CVParser \niExtract',
+            style: TextStyle(
+              fontSize: 60,
+              fontFamily: 'Eczar',
+              fontWeight: FontWeight.w600,
+              color: colorPrimaryRedCaramelDark,
+              height: 0.9,
             ),
-            ElevatedButton(
-              onPressed: controller.deleteSelected,
-              child: const Text("DELETE SELECTED"),
-            ),
-          ],
-        ),
-      ],
+          ),
+        ],
+      ),
     );
+  }
+}
+
+class _CardWidgetState extends State<CardWidget> {
+  // responsible for toggle
+  bool _showData = false;
+  bool aboba = true;
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 10.0),
+          // list card containing country name
+          GestureDetector(
+              onTap: () {
+                setState(() => _showData = !_showData);
+                setState(() => aboba = !aboba);
+              },
+              child: Container(
+                  width: 900,
+                  height: 100,
+                  margin: const EdgeInsets.symmetric(vertical: 5),
+                  decoration: BoxDecoration(
+                      color: Theme.of(context).colorScheme.onSecondary,
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Padding(
+                      padding: const EdgeInsets.fromLTRB(15, 2, 5, 5),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(widget.title,
+                                style: const TextStyle(
+                                    fontSize: 60,
+                                    fontFamily: "Eczar",
+                                    fontWeight: FontWeight.w400,
+                                    color: colorTextSmoothBlack)),
+                            if (aboba)
+                              const Icon(Icons.keyboard_arrow_down_rounded,
+                                  size: 55, color: colorSecondaryGreenPlant)
+                            else
+                              const Icon(Icons.keyboard_arrow_up_rounded,
+                                  size: 55, color: colorSecondaryGreenPlant)
+                          ])))),
+
+          // this is the company card which is toggling based upon the bool
+          _showData
+              ? Container(
+                  padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        'Java',
+                        'Python',
+                        'C++',
+                        'Web Development',
+                        'AWS',
+                        'FPGA'
+                      ].map((e) {
+                        // make changes in the UI here for your company card
+                        return Card(
+                            child: Text(e,
+                                style: const TextStyle(
+                                    fontSize: 20,
+                                    fontFamily: 'Merriweather',
+                                    color: colorTextSmoothBlack)));
+                      }).toList()))
+              : const SizedBox() // else blank
+        ]);
   }
 }
