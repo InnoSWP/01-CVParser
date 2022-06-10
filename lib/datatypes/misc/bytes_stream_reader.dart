@@ -1,21 +1,40 @@
+enum BytesStreamDrainerState {
+  initial,
+  processing,
+  filled,
+}
+
 class BytesStreamReader {
   final List<int> _drained = [];
   final Stream<List<int>> _readStream;
-  final int _size;
+  BytesStreamDrainerState state = BytesStreamDrainerState.initial;
+  Future<void>? drainer;
 
-  /// Important: providing an incorrect size may lead
-  /// to infinite loop in [bytes] getter
   BytesStreamReader({
     required readStream,
-    required size,
-  })  : _readStream = readStream,
-        _size = size;
+  }) : _readStream = readStream;
+
+  Future<void> _drain() async {
+    await for (final bucket in _readStream) {
+      _drained.addAll(bucket);
+    }
+  }
 
   Future<List<int>> get bytes async {
-    // 2 TODO (uploading cv): big files loading error
-
-    while (_drained.length != _size) {
-      _drained.addAll(await _readStream.first);
+    switch (state) {
+      case BytesStreamDrainerState.initial:
+        drainer = _drain();
+        state = BytesStreamDrainerState.processing;
+        await drainer;
+        state = BytesStreamDrainerState.filled;
+        break;
+      case BytesStreamDrainerState.processing:
+        await drainer;
+        break;
+      case BytesStreamDrainerState.filled:
+        break;
+      default:
+        throw TypeError();
     }
     return _drained;
   }

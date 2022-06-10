@@ -114,7 +114,6 @@ class MainPageController extends GetxController {
             // but we can get stream of filedata
             filename: file.name,
             readStream: file.readStream,
-            size: file.size,
           ),
           isSelected: false,
         );
@@ -218,11 +217,8 @@ class MainPageController extends GetxController {
         var cv = cvsS[index]!;
         if (cv.isSelected) {
           // if cv is not parsed => parse cv (with exception check)
-          if (cv.item is ParsedCV) {
-            // TODO (export multiple/one): json serivalizable
-            print(json.encode(cv.item));
-          } else {
-            // cv.item is NotParsedCV
+          // TODO (export multiple/one): json serivalizable
+          if (cv.item is NotParsedCV) {
             bool notParsed = true;
             while (notParsed) {
               try {
@@ -239,6 +235,7 @@ class MainPageController extends GetxController {
                 await Future.delayed(const Duration(milliseconds: 50));
               }
             }
+            print(json.encode(cv.item));
           }
         }
       }

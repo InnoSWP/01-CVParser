@@ -11,10 +11,8 @@ class RawPdfCV extends NotParsedCV {
   RawPdfCV({
     required filename,
     required readStream,
-    required size,
   })  : data = BytesStreamReader(
           readStream: readStream,
-          size: size,
         ),
         super(filename);
 
@@ -22,7 +20,7 @@ class RawPdfCV extends NotParsedCV {
   Future<ParsedCV> parse() async {
     // extract text
     String text = textExtracter.extractTextFromPdfBytes(
-      await data.bytes, // NOTE: may be infinite if size was provided incorrect
+      await data.bytes,
     );
 
     // parse the text using iExtract API
