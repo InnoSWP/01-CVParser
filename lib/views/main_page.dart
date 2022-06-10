@@ -1,11 +1,16 @@
+import 'dart:math';
+
 import 'package:cvparser_b21_01/controllers/main_page.dart';
+import 'package:cvparser_b21_01/services/key_listener.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 class MainPage extends StatelessWidget {
   static const _desiredPadding = 18.0;
+
   final controller = Get.put(MainPageController());
+  final keyLookup = Get.find<KeyListener>();
 
   MainPage({Key? key}) : super(key: key);
 
@@ -54,13 +59,10 @@ class MainPage extends StatelessWidget {
     // TODO: beautify select UX:
     // - smooth animations of select/deselect,
     // - accent on the tile under the cursor
-    // - select as in a normal file explorer:
-    // -- ctrl+tap -> switchSelected
-    // -- range select (with shift)
-    // -- just tap -> reset all selected + select this one
+    // - select all becomes deselect all if all is selected
+    // - maybe somewhere insert selection ?
     // TODO: this big plus icon on no cvs
     return Obx(() {
-      var keys = controller.cvsS.keys;
       return GridView.builder(
         itemCount: controller.cvsS.length,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -69,10 +71,8 @@ class MainPage extends StatelessWidget {
           crossAxisSpacing: 1,
           childAspectRatio: 1,
         ),
-        itemBuilder: (context, index) {
-          return buildPdfIconButton(
-            keys.elementAt(index),
-          );
+        itemBuilder: (context, position) {
+          return buildPdfIconButton(position);
         },
       );
     });
@@ -86,8 +86,9 @@ class MainPage extends StatelessWidget {
     );
   }
 
-  Widget buildPdfIconButton(int index) {
+  Widget buildPdfIconButton(int position) {
     // TODO: separate class and optimize rebuilds with no changes
+    final index = controller.cvsS.keys.elementAt(position);
     final tile = controller.cvsS[index]!;
     final BoxDecoration decor = tile.isSelected
         ? BoxDecoration(
@@ -105,6 +106,22 @@ class MainPage extends StatelessWidget {
         message: tile.item.filename,
         child: GestureDetector(
           onTap: () {
+            if (keyLookup.shift) {
+              controller.selectPoint ??= 0;
+              final start = min(controller.selectPoint!, position);
+              final stop = max(controller.selectPoint!, position);
+              for (int i = start; i <= stop; i++) {
+                controller.select(i);
+              }
+            } else {
+              if (!keyLookup.ctrl) {
+                controller.deselectAll();
+              }
+              controller.switchSelect(index);
+            }
+            controller.selectPoint = position;
+          },
+          onDoubleTap: () {
             controller.setCurrent(index);
           },
           child: Container(

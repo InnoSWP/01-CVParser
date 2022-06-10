@@ -1,22 +1,47 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:cvparser_b21_01/datatypes/all.dart';
+import 'package:cvparser_b21_01/services/key_listener.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
 
 class MainPageController extends GetxController {
+  final keyLookup = Get.find<KeyListener>();
+
   /// Using lazy approach, we will initially upload cv's as [NotParsedCV],
   /// but on the first invocation it converts them to the [ParsedCV].
 
   // map unique file index -> selectable file
   bool _blockCvs = false;
   final cvsS = <int, Selectable<CVBase>>{}.obs;
-  var current = Rxn<int>();
+  final _current = Rxn<int>();
+
+  int? selectPoint;
 
   // the cvs by itself needs to be protected, so only _parseCv should be
   // able to change cvs at any time (needed for parallelization purposes,
   // so it's important to check is it accessable on every invocation)
   RxMap<int, Selectable<CVBase>>? get cvs => _blockCvs ? null : cvsS;
+
+  // subscribe to the stream of key events
+  late StreamSubscription<dynamic> _escEventStream;
+
+  @override
+  void onInit() {
+    _escEventStream = keyLookup.escEventStream.listen((event) {
+      if (event == KeyEvent.escPressed) {
+        deselectAll();
+      }
+    });
+    super.onInit();
+  }
+
+  @override
+  void onClose() async {
+    await _escEventStream.cancel();
+    super.onClose();
+  }
 
   /// This function will create a future that will:
   /// 1. take the element at index
@@ -90,7 +115,7 @@ class MainPageController extends GetxController {
   }
 
   /// Provided [index] (in cvs list) of the cv that you need to display parsed,
-  /// this function tries to set the [current] to that index
+  /// this function tries to set the [_current] to that index
   /// and starts asyncronus parsing of that CV
   ///
   /// - ignored if there is no such index
@@ -98,7 +123,7 @@ class MainPageController extends GetxController {
     // ya, here we can directly query cvsS itself
     if (cvsS[index] != null) {
       // display current immediately
-      current.value = index;
+      _current.value = index;
 
       // run parsing future
       // Note: ignore if it's already in process
@@ -119,6 +144,15 @@ class MainPageController extends GetxController {
     }
   }
 
+  /// Switches select of cv,
+  /// if there is no such index, or the cvs is blocked - does nothing
+  void select(int index) {
+    if (cvs != null && cvs![index] != null) {
+      cvs![index]!.isSelected = true;
+      cvs!.refresh();
+    }
+  }
+
   /// Tries to select all, if cvs is blocked - does nothing
   void selectAll() {
     // Note: the whole expression is wrapped like this
@@ -126,6 +160,18 @@ class MainPageController extends GetxController {
     if (cvs != null) {
       for (var cv in cvs!.values) {
         cv.isSelected = true;
+      }
+      cvs!.refresh();
+    }
+  }
+
+  /// Tries to deselect all, if cvs is blocked - does nothing
+  void deselectAll() {
+    // Note: the whole expression is wrapped like this
+    // only because it's synchronus function
+    if (cvs != null) {
+      for (var cv in cvs!.values) {
+        cv.isSelected = false;
       }
       cvs!.refresh();
     }
@@ -143,6 +189,7 @@ class MainPageController extends GetxController {
         }
       }
       cvs!.value = remaining;
+      selectPoint = null;
     }
   }
 
@@ -157,6 +204,7 @@ class MainPageController extends GetxController {
         if (cv.isSelected) {
           // if cv is not parsed => parse cv (with exception check)
           if (cv.item is ParsedCV) {
+            // TODO: json serivalizable
             print(json.encode(cv.item));
           } else {
             // cv.item is NotParsedCV
