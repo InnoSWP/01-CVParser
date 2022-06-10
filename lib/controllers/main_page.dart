@@ -201,7 +201,14 @@ class MainPageController extends GetxController {
     }
   }
 
+  /// Try to export selected, blocking cvs during the process
+  /// if the cvs was blocked, it would throw AlreadyInProcess
   Future<void> exportSelected() async {
+    if (cvs != null) {
+      // as for now only exportSelected can block cvs
+      throw AlreadyInProcess();
+    }
+
     _blockCvs = true;
     // so I blocked cvs for others, but here I can acess it by cvsS
     {
