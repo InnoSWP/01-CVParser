@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:cvparser_b21_01/datatypes/all.dart';
 import 'package:cvparser_b21_01/services/key_listener.dart';
@@ -25,13 +26,19 @@ class MainPageController extends GetxController {
   RxMap<int, Selectable<CVBase>>? get cvs => _blockCvs ? null : cvsS;
 
   // subscribe to the stream of key events
-  late StreamSubscription<dynamic> _escEventStream;
+  late StreamSubscription<dynamic> _escListener;
+  late StreamSubscription<dynamic> _delListener;
 
   @override
   void onInit() {
-    _escEventStream = keyLookup.escEventStream.listen((event) {
-      if (event == KeyEvent.escPressed) {
+    _escListener = keyLookup.escEventStream.listen((event) {
+      if (event == KeyEventType.down) {
         deselectAll();
+      }
+    });
+    _delListener = keyLookup.delEventStream.listen((event) {
+      if (event == KeyEventType.down) {
+        deleteSelected();
       }
     });
     super.onInit();
@@ -39,7 +46,8 @@ class MainPageController extends GetxController {
 
   @override
   void onClose() async {
-    await _escEventStream.cancel();
+    await _escListener.cancel();
+    await _delListener.cancel();
     super.onClose();
   }
 

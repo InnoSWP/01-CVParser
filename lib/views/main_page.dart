@@ -45,8 +45,7 @@ class MainPage extends StatelessWidget {
               child: const Text("SELECT ALL"),
             ),
             ElevatedButton(
-              onPressed: controller
-                  .deleteSelected, // 1 weak TODO (uploading cv): add binding of del button
+              onPressed: controller.deleteSelected,
               child: const Text("DELETE SELECTED"),
             ),
           ],

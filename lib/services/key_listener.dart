@@ -4,28 +4,25 @@ import 'dart:ui';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
-enum KeyEvent {
-  escPressed,
-  escReleased,
-  // NOTE: i'm too lazy to fulfill this thing,
-  // as now it's enough of this functionality
-}
-
 class KeyListener extends GetxService {
-  var esc = false;
   var ctrl = false;
   var shift = false;
 
-  final _escEventStream = StreamController<KeyEvent>.broadcast();
+  // NOTE: i'm too lazy to fulfill this thing,
+  // as now it's enough of this functionality
+  final _escEventStream = StreamController<KeyEventType>.broadcast();
+  final _delEventStream = StreamController<KeyEventType>.broadcast();
 
-  Stream<KeyEvent> get escEventStream => _escEventStream.stream;
+  Stream<KeyEventType> get escEventStream => _escEventStream.stream;
+  Stream<KeyEventType> get delEventStream => _delEventStream.stream;
 
   KeyListener() {
     window.onKeyData = (final keyData) {
       if (keyData.type != KeyEventType.repeat) {
         if (keyData.logical == LogicalKeyboardKey.escape.keyId) {
-          esc = keyData.type == KeyEventType.down;
-          _escEventStream.add(esc ? KeyEvent.escPressed : KeyEvent.escReleased);
+          _escEventStream.add(keyData.type);
+        } else if (keyData.logical == LogicalKeyboardKey.delete.keyId) {
+          _delEventStream.add(keyData.type);
         } else if (keyData.logical == LogicalKeyboardKey.controlLeft.keyId ||
             keyData.logical == LogicalKeyboardKey.controlRight.keyId) {
           ctrl = keyData.type == KeyEventType.down;
@@ -43,5 +40,6 @@ class KeyListener extends GetxService {
   @override
   void onClose() {
     _escEventStream.close();
+    _delEventStream.close();
   }
 }
