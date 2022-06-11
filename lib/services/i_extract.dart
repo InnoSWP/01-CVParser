@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:cvparser_b21_01/datatypes/all.dart';
+import 'package:cvparser_b21_01/datatypes/export.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
