@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class BottomBar extends StatelessWidget {
-  final controller = Get.find<MainPageController>();
+  final controller = Get.find<MainPageController>(); // just listeners
 
   BottomBar({Key? key}) : super(key: key);
 

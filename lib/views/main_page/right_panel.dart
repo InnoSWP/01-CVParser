@@ -18,9 +18,7 @@ class RightPanel extends StatelessWidget {
         children: [
           TopBar(),
           const SizedBox(height: 18.0),
-          Expanded(
-            child: FileExplorer(),
-          ),
+          SizedBox(width: 500, height: 532, child: FileExplorer()),
           const SizedBox(height: 18.0),
           BottomBar(),
         ],

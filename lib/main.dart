@@ -1,6 +1,7 @@
 import 'package:cvparser_b21_01/services/init.dart';
 import 'package:cvparser_b21_01/views/main_page.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import 'colors.dart' as my_colors;
 
@@ -33,7 +34,7 @@ class CVParserApp extends StatelessWidget {
       fontFamily: "Merriweather",
     );
 
-    return MaterialApp(
+    return GetMaterialApp(
       title: 'CV Parser',
       theme: mainTheme,
       home: MainPage(),

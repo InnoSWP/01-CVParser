@@ -4,8 +4,6 @@ import 'package:cvparser_b21_01/views/main_page/right_panel.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-// 4 TODO (uploading cv): bind merged ui with controller
-
 class MainPage extends StatelessWidget {
   final controller = Get.put(MainPageController());
 
@@ -15,13 +13,14 @@ class MainPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      body: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: const [
-          ContentArea(),
-          RightPanel(),
-        ],
-      ),
+      body: SingleChildScrollView(scrollDirection: Axis.vertical, child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: const [
+            SizedBox(width: 999, height: 792, child: ContentArea()),
+            SizedBox(width: 500, height: 792, child: RightPanel()),
+          ],
+        ),
+    ),
     );
   }
 }

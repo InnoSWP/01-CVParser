@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import 'file_explorer/pdf_icon_button.dart';
 
 class FileExplorer extends StatelessWidget {
-  final controller = Get.find<MainPageController>();
+  final controller = Get.find<MainPageController>(); // observe [cvs]
   final keyLookup = Get.find<KeyListener>();
 
   FileExplorer({Key? key}) : super(key: key);
@@ -20,8 +20,8 @@ class FileExplorer extends StatelessWidget {
     // - select all becomes deselect all if all is selected
     // - maybe somewhere insert selection ?
     // weak TODO: this big plus icon on no cvs
-    return Obx(() {
-      return GridView.builder(
+    return Obx(
+      () => GridView.builder(
         itemCount: controller.cvs.length,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 4,
@@ -42,7 +42,7 @@ class FileExplorer extends StatelessWidget {
             ),
           );
         },
-      );
-    });
+      ),
+    );
   }
 }

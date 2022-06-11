@@ -3,14 +3,15 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:cvparser_b21_01/colors.dart';
 import 'package:cvparser_b21_01/datatypes/export.dart';
 import 'package:cvparser_b21_01/services/file_saver.dart';
 import 'package:cvparser_b21_01/services/key_listener.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-// TODO: UI: blocking popup with progress on any action
-// + transfer progress percantage to this popup
+// TODO: UI: + transfer progress percantage to the blocking popup
 
 // weak TODO: any action fail popup
 
@@ -37,7 +38,9 @@ class MainPageController extends GetxController {
   final cvs = <Selectable<CVBase>>[].obs;
   final _current = Rxn<int>();
 
-  CVEntries get current => (cvs[_current.value!].item as ParsedCV).data;
+  CVEntries? get current => _current.value != null
+      ? (cvs[_current.value!].item as ParsedCV).data
+      : null;
 
   /// used for range select
   int? selectPoint;
@@ -67,14 +70,16 @@ class MainPageController extends GetxController {
       if (picked != null) {
         for (PlatformFile file in picked.files) {
           // add an NotParsedCV
-          cvs[cvs.length] = Selectable(
-            item: RawPdfCV(
-              // just because it's web, we cannot store file path,
-              // but we can get stream of filedata
-              filename: file.name,
-              readStream: file.readStream,
+          cvs.add(
+            Selectable(
+              item: RawPdfCV(
+                // just because it's web, we cannot store file path,
+                // but we can get stream of filedata
+                filename: file.name,
+                readStream: file.readStream,
+              ),
+              isSelected: false,
             ),
-            isSelected: false,
           );
         }
       }
@@ -121,6 +126,8 @@ class MainPageController extends GetxController {
     }
     _busy = true;
 
+    _dialog("Exporting");
+
     try {
       List<ParsedCV> parsedCVs = [];
       for (var index = 0; index != cvs.length; index++) {
@@ -148,6 +155,7 @@ class MainPageController extends GetxController {
       rethrow;
     } finally {
       _busy = false;
+      Get.back();
     }
   }
 
@@ -156,6 +164,8 @@ class MainPageController extends GetxController {
       return;
     }
     _busy = true;
+
+    _dialog("Exporting");
 
     try {
       // export to json string
@@ -172,6 +182,7 @@ class MainPageController extends GetxController {
       rethrow;
     } finally {
       _busy = false;
+      Get.back();
     }
   }
 
@@ -233,6 +244,8 @@ class MainPageController extends GetxController {
     }
     _busy = true;
 
+    _dialog("Loading content");
+
     try {
       await _parseCv(index);
       _current.value = index;
@@ -241,6 +254,7 @@ class MainPageController extends GetxController {
       rethrow;
     } finally {
       _busy = false;
+      Get.back();
     }
   }
 
@@ -254,6 +268,48 @@ class MainPageController extends GetxController {
     cvs.refresh();
   }
 
+  void _dialog(String text) {
+    Get.dialog(
+      barrierDismissible: false,
+      Center(
+        child: Card(
+          child: SizedBox(
+            height: 200,
+            width: 350,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  text,
+                  style: const TextStyle(
+                    fontSize: 30,
+                    fontFamily: "Eczar",
+                    fontWeight: FontWeight.w400,
+                    color: colorTextSmoothBlack,
+                  ),
+                ),
+                const Expanded(
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+                const Text(
+                  "please wait...",
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontFamily: "Eczar",
+                    fontWeight: FontWeight.w400,
+                    color: colorTextSmoothBlack,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   /// This function will create a future that will:
   /// 1. take the element at index
   /// 2. try to parse it
@@ -262,8 +318,7 @@ class MainPageController extends GetxController {
   /// Note: will fo nothing if the item was already parsed
   ///
   /// Note: this function is always invoked with [_busy] flag equals to true,
-  /// as it is just a subroutine function for
-  /// [exportSelected], [exportCurrent] and [setCurrent] methods
+  /// as it is just a subroutine function for [exportSelected] and [setCurrent]
   /// so this is the reason why we don't block it with [_busy] flag,
   /// but it uses it's own [_parsingCv]
   Future<void> _parseCv(int index) async {

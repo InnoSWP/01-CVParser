@@ -12,11 +12,11 @@ class ContentArea extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Row(children: const [Logo(), Contact()]),
+        Padding(padding: EdgeInsets.fromLTRB(49, 0, 0, 0), child: Row(children: const [Logo(), Contact()])),
         Expanded(
           child: Container(
             padding: const EdgeInsets.fromLTRB(50, 0, 50, 50),
-            child: const ParseResult(),
+            child:  ParseResult(),
           ),
         ),
         Container(
