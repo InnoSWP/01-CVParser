@@ -17,7 +17,7 @@ class ParseResult extends StatelessWidget {
         List<Widget> content = [];
 
         if (controller.current != null) {
-          for (var entry in controller.current!.entries) {
+          for (var entry in controller.current!.data.entries) {
             content.add(
               CardWidget(
                 title: entry.key,
