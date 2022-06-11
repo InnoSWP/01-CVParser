@@ -3,6 +3,8 @@ name: deploy_web
 on:
   push:
     branches: [ "main" ]
+    paths-ignore:
+    - 'README.md'
 
 jobs:
   deploy_web:
