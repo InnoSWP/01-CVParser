@@ -267,6 +267,7 @@ class MainPageController extends GetxController {
     cvs.refresh();
   }
 
+  /// Blocking overlay
   void _dialog(String text) {
     Get.dialog(
       barrierDismissible: false,
