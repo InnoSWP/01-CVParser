@@ -7,7 +7,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 class PdfIconButton extends StatelessWidget {
-  final controller = Get.find<MainPageController>();
+  final controller = Get.find<MainPageController>(); // just listeners
   final keyLookup = Get.find<KeyListener>();
 
   final int index;
@@ -36,7 +36,7 @@ class PdfIconButton extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: Tooltip(
         // weak TODO: make tooltip more pleasant
-        // TODO: why selection on GestureDetector is too slow?!
+        // weak TODO: why selection on GestureDetector is too slow?!
         message: filename,
         child: GestureDetector(
           onTapDown: (d) {

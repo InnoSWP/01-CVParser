@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class Footer extends StatelessWidget {
-  final controller = Get.find<MainPageController>();
+  final controller = Get.find<MainPageController>(); // just listeners
 
   Footer({Key? key}) : super(key: key);
 

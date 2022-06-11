@@ -1,6 +1,7 @@
 import 'package:cvparser_b21_01/colors.dart';
 import 'package:flutter/material.dart';
 
+// TODO
 class Contact extends StatelessWidget {
   const Contact({Key? key}) : super(key: key);
 

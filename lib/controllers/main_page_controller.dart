@@ -37,7 +37,9 @@ class MainPageController extends GetxController {
   final cvs = <Selectable<CVBase>>[].obs;
   final _current = Rxn<int>();
 
-  CVEntries get current => (cvs[_current.value!].item as ParsedCV).data;
+  CVEntries? get current => _current.value != null
+      ? (cvs[_current.value!].item as ParsedCV).data
+      : null;
 
   /// used for range select
   int? selectPoint;
