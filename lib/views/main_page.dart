@@ -13,13 +13,14 @@ class MainPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      body: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: const [
-          ContentArea(),
-          RightPanel(),
-        ],
-      ),
+      body: SingleChildScrollView(scrollDirection: Axis.vertical, child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: const [
+            SizedBox(width: 999, height: 792, child: ContentArea()),
+            SizedBox(width: 500, height: 792, child: RightPanel()),
+          ],
+        ),
+    ),
     );
   }
 }
