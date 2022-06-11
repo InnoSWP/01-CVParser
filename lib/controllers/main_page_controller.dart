@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:ui';
 
-import 'package:cvparser_b21_01/datatypes/all.dart';
+import 'package:cvparser_b21_01/datatypes/export.dart';
 import 'package:cvparser_b21_01/services/key_listener.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
