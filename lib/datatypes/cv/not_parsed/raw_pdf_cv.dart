@@ -24,11 +24,19 @@ class RawPdfCV extends NotParsedCV {
     );
 
     // parse the text using iExtract API
-    // return ParsedCV(
-    //   // weak TODO: rm it as it is temporary because API is not responding
-    //   filename: filename,
-    //   data: {},
-    // );
+    return ParsedCV(
+      // weak TODO: rm it as it is temporary because API is not responding
+      filename: filename,
+      data: {
+        "Skills": [
+          CVMatch(match: "C++", sentence: "I love C++"),
+          CVMatch(match: "Java", sentence: "I had an experience in Java"),
+        ],
+        "Language": [
+          CVMatch(match: "Eng", sentence: "B2 english"),
+        ]
+      },
+    );
 
     return ParsedCV(
       filename: filename,

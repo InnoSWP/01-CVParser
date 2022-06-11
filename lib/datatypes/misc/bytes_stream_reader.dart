@@ -28,7 +28,7 @@ class BytesStreamReader {
       case BytesStreamDrainerState.filled:
         break;
       default:
-        throw TypeError();
+        throw Error();
     }
     return _drained;
   }

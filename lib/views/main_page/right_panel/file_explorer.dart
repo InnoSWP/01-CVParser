@@ -22,22 +22,20 @@ class FileExplorer extends StatelessWidget {
     // weak TODO: this big plus icon on no cvs
     return Obx(() {
       return GridView.builder(
-        itemCount: controller.cvsS.length,
+        itemCount: controller.cvs.length,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 4,
           mainAxisSpacing: 1,
           crossAxisSpacing: 1,
           childAspectRatio: 1,
         ),
-        itemBuilder: (context, position) {
-          final index = controller.cvsS.keys.elementAt(position);
-          final tile = controller.cvsS[index]!;
+        itemBuilder: (context, index) {
+          final tile = controller.cvs[index];
           return ShouldRebuild<PdfIconButton>(
             shouldRebuild: (oldWidget, newWidget) =>
-                oldWidget.index != newWidget.index ||
+                oldWidget.filename != newWidget.filename ||
                 oldWidget.isSelected != newWidget.isSelected,
             child: PdfIconButton(
-              position: position,
               index: index,
               isSelected: tile.isSelected,
               filename: tile.item.filename,

@@ -1,8 +1,12 @@
 import 'package:cvparser_b21_01/colors.dart';
+import 'package:cvparser_b21_01/controllers/main_page_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class Footer extends StatelessWidget {
-  const Footer({Key? key}) : super(key: key);
+  final controller = Get.find<MainPageController>();
+
+  Footer({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +36,7 @@ class Footer extends StatelessWidget {
               style: ButtonStyle(
                 fixedSize: MaterialStateProperty.all<Size>(const Size(250, 35)),
               ),
-              onPressed: () {}, // TODO (export one): todo
+              onPressed: controller.exportCurrent,
               child: const Text("EXPORT AS JSON"),
             ),
           ],

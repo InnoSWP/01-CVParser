@@ -1,3 +1,4 @@
+import 'file_saver.dart';
 import 'i_extract.dart';
 import 'key_listener.dart';
 import 'pdf_to_text.dart';
@@ -8,4 +9,5 @@ void initServices() {
   Get.put(IExtract());
   Get.put(PdfToText());
   Get.put(KeyListener());
+  Get.put(FileSaver());
 }

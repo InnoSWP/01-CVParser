@@ -21,7 +21,7 @@ class ContentArea extends StatelessWidget {
         ),
         Container(
           padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-          child: const Footer(),
+          child: Footer(),
         )
       ],
     );
