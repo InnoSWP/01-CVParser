@@ -10,14 +10,12 @@ class PdfIconButton extends StatelessWidget {
   final controller = Get.find<MainPageController>();
   final keyLookup = Get.find<KeyListener>();
 
-  final int position;
   final int index;
   final bool isSelected;
   final String filename;
 
   PdfIconButton(
       {Key? key,
-      required this.position,
       required this.index,
       required this.isSelected,
       required this.filename})
@@ -39,23 +37,26 @@ class PdfIconButton extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: Tooltip(
         // weak TODO: make tooltip more pleasant
+        // TODO: why selection on GestureDetector is too slow?!
         message: filename,
         child: GestureDetector(
           onTapDown: (d) {
             if (keyLookup.shift) {
+              // range select
               controller.selectPoint ??= 0;
-              final start = min(controller.selectPoint!, position);
-              final stop = max(controller.selectPoint!, position);
-              for (int p = start; p <= stop; p++) {
-                controller.select(controller.cvsS.keys.elementAt(p));
+              final start = min(controller.selectPoint!, index);
+              final stop = max(controller.selectPoint!, index);
+              for (int i = start; i <= stop; i++) {
+                controller.select(i);
               }
             } else {
+              // single select
               if (!keyLookup.ctrl) {
                 controller.deselectAll();
               }
               controller.switchSelect(index);
             }
-            controller.selectPoint = position;
+            controller.selectPoint = index;
           },
           onDoubleTap: () {
             controller.setCurrent(index);

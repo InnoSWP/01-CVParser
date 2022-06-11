@@ -1,137 +1,191 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:cvparser_b21_01/datatypes/export.dart';
+import 'package:cvparser_b21_01/services/file_saver.dart';
 import 'package:cvparser_b21_01/services/key_listener.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
 
+// TODO: UI: blocking popup with progress on any action
+// + transfer progress percantage to this popup
+
+// weak TODO: any action fail popup
+
 class MainPageController extends GetxController {
   final keyLookup = Get.find<KeyListener>();
+  final fileSaver = Get.find<FileSaver>();
 
   /// Using lazy approach, we will initially upload cv's as [NotParsedCV],
   /// but on the first invocation it converts them to the [ParsedCV].
 
-  // map unique file index -> selectable file
-  bool _blockCvs = false;
-  final cvsS = <int, Selectable<CVBase>>{}.obs;
+  /// As we have async methods, we need to prevent undefined behaviour
+  /// when two coroutines modify the same data.
+  /// For this, we will block methods invocation with [_busy] flag
+  /// untill the occupator future is done.
+  ///
+  /// Note: there can be only one sync/async worker that
+  /// is working with the data inside this class
+  bool _busy = false;
+  bool _parsingCv = false; // see [_parseCV] for more details
+
+  /// Important: before modifying this data, firstly check the [_busy] flag,
+  /// also it's supposed to be any kind modified only inside this file,
+  /// any outer invocation must just read data
+  final cvs = <Selectable<CVBase>>[].obs;
   final _current = Rxn<int>();
 
+  CVEntries get current => (cvs[_current.value!].item as ParsedCV).data;
+
+  /// used for range select
   int? selectPoint;
 
-  // subscribe to the stream of key events
+  /// subscribe to the stream of key events
   late StreamSubscription<dynamic> _escListener;
-
   late StreamSubscription<dynamic> _delListener;
-  // the cvs by itself needs to be protected, so only _parseCv should be
-  // able to change cvs at any time (needed for parallelization purposes,
-  // so it's important to check is it accessable on every invocation)
-  RxMap<int, Selectable<CVBase>>? get cvs => _blockCvs ? null : cvsS;
 
   /// Creates native dialog for user to select files
   Future<void> askUserToUploadPdfFiles() async {
-    FilePickerResult? picked = await FilePicker.platform.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ["pdf"], // TESTIT: what if not pdf
-      allowMultiple: true,
-      withReadStream: true,
-      withData: false,
-      lockParentWindow: true,
-    );
+    if (_busy) {
+      return;
+    }
+    _busy = true;
 
-    // if cvs is not blocked and there is some input
-    if (picked != null && cvs != null) {
-      for (PlatformFile file in picked.files) {
-        // add an NotParsedCV
-        cvs![cvs!.length] = Selectable(
-          item: RawPdfCV(
-            // just because it's web, we cannot store file path,
-            // but we can get stream of filedata
-            filename: file.name,
-            readStream: file.readStream,
-          ),
-          isSelected: false,
+    try {
+      FilePickerResult? picked = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ["pdf"], // TESTIT: what if not pdf
+        allowMultiple: true,
+        withReadStream: true,
+        withData: false,
+        lockParentWindow: true,
+      );
+
+      // if cvs is not blocked and there is some input
+      if (picked != null) {
+        for (PlatformFile file in picked.files) {
+          // add an NotParsedCV
+          cvs[cvs.length] = Selectable(
+            item: RawPdfCV(
+              // just because it's web, we cannot store file path,
+              // but we can get stream of filedata
+              filename: file.name,
+              readStream: file.readStream,
+            ),
+            isSelected: false,
+          );
+        }
+      }
+    } catch (e) {
+      _busy = false;
+      rethrow;
+    } finally {
+      _busy = false;
+    }
+  }
+
+  /// Tries to delete selected
+  void deleteSelected() {
+    if (_busy) {
+      return;
+    } // no need to mark _busy because this is a synchronus function
+
+    var remaining = <Selectable<CVBase>>[];
+    for (var cv in cvs) {
+      if (!cv.isSelected) {
+        remaining.add(cv);
+      }
+    }
+    cvs.value = remaining;
+    selectPoint = null;
+  }
+
+  /// Tries to deselect all
+  void deselectAll() {
+    if (_busy) {
+      return;
+    } // no need to mark _busy because this is a synchronus function
+
+    for (var cv in cvs) {
+      cv.isSelected = false;
+    }
+    cvs.refresh();
+  }
+
+  /// Try to export selected
+  Future<void> exportSelected() async {
+    if (_busy) {
+      return;
+    }
+    _busy = true;
+
+    try {
+      List<ParsedCV> parsedCVs = [];
+      for (var index = 0; index != cvs.length; index++) {
+        var cv = cvs[index];
+        if (cv.isSelected) {
+          await _parseCv(index); // make sure that all cv's are parsed
+          parsedCVs.add(cv.item as ParsedCV);
+        }
+      }
+
+      // export to json file and save it
+      {
+        // export to json string
+        const encoder = JsonEncoder.withIndent("  ");
+        String encoded = encoder.convert(parsedCVs);
+
+        // save to file
+        await fileSaver.saveJsonFile(
+          name: "bunch.json",
+          bytes: Uint8List.fromList(encoded.codeUnits),
         );
       }
+    } catch (e) {
+      _busy = false;
+      rethrow;
+    } finally {
+      _busy = false;
     }
   }
 
-  /// Tries to delete selected, if cvs is blocked - does nothing
-  void deleteSelected() {
-    // Note: the whole expression is wrapped like this
-    // only because it's synchronus function
-    if (cvs != null) {
-      var remaining = <int, Selectable<CVBase>>{};
-      for (var cv in cvs!.entries) {
-        if (!cv.value.isSelected) {
-          remaining[cv.key] = cv.value;
-        }
-      }
-      cvs!.value = remaining;
-      selectPoint = null;
+  Future<void> exportCurrent() async {
+    if (_busy) {
+      return;
     }
-  }
+    _busy = true;
 
-  /// Tries to deselect all, if cvs is blocked - does nothing
-  void deselectAll() {
-    // Note: the whole expression is wrapped like this
-    // only because it's synchronus function
-    if (cvs != null) {
-      for (var cv in cvs!.values) {
-        cv.isSelected = false;
-      }
-      cvs!.refresh();
-    }
-  }
+    try {
+      // export to json string
+      const encoder = JsonEncoder.withIndent("  ");
+      String encoded = encoder.convert(current);
 
-  /// Try to export selected, blocking cvs during the process
-  /// if the cvs was blocked, it would throw AlreadyInProcess
-  Future<void> exportSelected() async {
-    if (cvs != null) {
-      // as for now only exportSelected can block cvs
-      throw AlreadyInProcess();
+      // save to file
+      await fileSaver.saveJsonFile(
+        name: "single.json",
+        bytes: Uint8List.fromList(encoded.codeUnits),
+      );
+    } catch (e) {
+      _busy = false;
+      rethrow;
+    } finally {
+      _busy = false;
     }
-
-    _blockCvs = true;
-    // so I blocked cvs for others, but here I can acess it by cvsS
-    {
-      // TODO (export multiple/one): (in UI) cover by popup
-      // (so cvs must be persist throughout the whole export process)
-      for (var index in cvsS.keys) {
-        var cv = cvsS[index]!;
-        if (cv.isSelected) {
-          // if cv is not parsed => parse cv (with exception check)
-          // TODO (export multiple/one): json serializable
-          if (cv.item is NotParsedCV) {
-            bool notParsed = true;
-            while (notParsed) {
-              try {
-                await _parseCv(index);
-                notParsed = false;
-              } on AlreadyInProcess {
-                // we can only poll it's status
-                // if it was scheduled somewhere else
-                //
-                // Note: actually we can store and further pull
-                // instances of futures that are working
-                // _parseCv invocations, but it would be more complex
-                // but it would be more complex
-                await Future.delayed(const Duration(milliseconds: 50));
-              }
-            }
-            print(json.encode(cv.item));
-          }
-        }
-      }
-    }
-    _blockCvs = false;
   }
 
   @override
   void onClose() async {
     await _escListener.cancel();
     await _delListener.cancel();
+
+    // ya, it's ofcource better to track the actual future instances instead of
+    // just flag [_busy], and cancel them when the actual class instance becomes
+    // destroyed, but it's muuuch complex, moreover the class instance is
+    // supposed to be destroyed on the application exit, so all of them would be
+    // forced to end up with him
+
     super.onClose();
   }
 
@@ -150,98 +204,107 @@ class MainPageController extends GetxController {
     super.onInit();
   }
 
-  /// Switches select of cv,
-  /// if there is no such index, or the cvs is blocked - does nothing
+  /// Switches select of cv
   void select(int index) {
-    if (cvs != null && cvs![index] != null) {
-      cvs![index]!.isSelected = true;
-      cvs!.refresh();
-    }
+    if (_busy) {
+      return;
+    } // no need to mark _busy because this is a synchronus function
+
+    cvs[index].isSelected = true;
+    cvs.refresh();
   }
 
-  /// Tries to select all, if cvs is blocked - does nothing
+  /// Tries to select all
   void selectAll() {
-    // Note: the whole expression is wrapped like this
-    // only because it's synchronus function
-    if (cvs != null) {
-      for (var cv in cvs!.values) {
-        cv.isSelected = true;
-      }
-      cvs!.refresh();
+    if (_busy) {
+      return;
+    } // no need to mark _busy because this is a synchronus function
+
+    for (var cv in cvs) {
+      cv.isSelected = true;
     }
+    cvs.refresh();
   }
 
-  /// Provided [index] (in cvs list) of the cv that you need to display parsed,
-  /// this function tries to set the [_current] to that index
-  /// and starts asynchronous parsing of that CV
-  ///
-  /// - ignored if there is no such index
-  void setCurrent(int index) {
-    // ya, here we can directly query cvsS itself
-    if (cvsS[index] != null) {
-      // display current immediately
+  /// Tries to parse this CV and then set the [_current]
+  Future<void> setCurrent(int index) async {
+    if (_busy) {
+      return;
+    }
+    _busy = true;
+
+    try {
+      await _parseCv(index);
       _current.value = index;
-
-      // run parsing future
-      // Note: ignore if it's already in process
-      _parseCv(index).onError<AlreadyInProcess>((error, stackTrace) {});
+    } catch (e) {
+      _busy = false;
+      rethrow;
+    } finally {
+      _busy = false;
     }
   }
 
-  /// Switches select of cv,
-  /// if there is no such index, or the cvs is blocked - does nothing
+  /// Switches select of cv
   void switchSelect(int index) {
-    if (cvs != null && cvs![index] != null) {
-      cvs![index]!.isSelected = !cvs![index]!.isSelected;
-      // here `Rx` knows only that we invoked getter of list,
-      // but did not know what did we do with the element itself
-      // so from the point of view of `Rx` it was just a lookup,
-      // so to notify that it was not just a lookup, we need to set it manually
-      cvs!.refresh();
-    }
+    if (_busy) {
+      return;
+    } // no need to mark _busy because this is a synchronus function
+
+    cvs[index].isSelected = !cvs[index].isSelected;
+    cvs.refresh();
   }
 
   /// This function will create a future that will:
   /// 1. take the element at index
-  /// 2. try to parse it (this may throw an exception)
+  /// 2. try to parse it
   /// 3. try to store the procession result into the same index
   ///
-  /// Note: because of the third point it's important for files
-  /// to persist the same immutable unique identifier [index],
-  /// even after some manipulations on [cvs]
-  /// (for example - deletions from cvs should not affect index of remaining)
+  /// Note: will fo nothing if the item was already parsed
   ///
-  /// - will throw an AlreadyInProcess exception if you call it without
-  /// waiting for completion of the first invocation on the same [index]
-  ///
-  /// will do nothing if:
-  /// - there is no element with such index (check at point 1)
-  /// - the index element was already parsed (check at point 1)
-  /// - there is no element with such index after (check at point 3)
+  /// Note: this function is always invoked with [_busy] flag equals to true,
+  /// as it is just a subroutine function for
+  /// [exportSelected], [exportSingle] and [setCurrent] methods
+  /// so this is the reason why we don't block it with [_busy] flag,
+  /// but it uses it's own [_parsingCv]
   Future<void> _parseCv(int index) async {
-    // ya, only this function can work with cvsS directly
-    if (cvsS[index] != null) {
-      var tmp = cvsS[index]!.item;
+    assert(!_parsingCv);
+    assert(_busy);
+
+    _parsingCv = true;
+    try {
+      var tmp = cvs[index].item;
 
       // The lazy approach itself
       if (tmp is NotParsedCV) {
-        cvsS[index]!.item = CVBase(tmp.filename); // mark it as processing
+        cvs[index].item = CVBase(tmp.filename); // mark it as processing
         try {
-          // 5 TODO (uploading cv): special popup if iExtract API is not working
-          cvsS[index]?.item = await tmp.parse(); // some async code
+          cvs[index].item = await tmp.parse(); // some async code
         } catch (e) {
-          cvsS[index]?.item = tmp; // so it's not processing anymore
+          cvs[index].item = tmp; // so it's not processing anymore
           rethrow;
         }
       } else if (tmp is ParsedCV) {
         // it was already converted, so there is nothing to do
       } else {
-        // Note that if we entered here, then the type of tmp is CVBase,
+        // if we entered here, then the type of tmp is CVBase,
         // which is the indicator that someone is now working on it.
-        throw AlreadyInProcess();
+        throw TypeError();
+
+        // Fatal: if you ever see this exception, means that the overall
+        // data protection logic (see flag [_busy]) does not work
+        // as only [_parseCV] ignores [_busy] flag and only it can be run
+        // concurrently on cvs
+        // but newertheless we expect only one instance of such futre to work
+        // on the [cvs] at the same time
+
+        // note that this thing actually would not be ever fired
+        // because now it is totally covered by [_parsingCv] flag
       }
+    } catch (e) {
+      _parsingCv = false;
+      rethrow;
+    } finally {
+      _parsingCv = false;
     }
   }
-
-  // TODO (export one): export by one
 }
