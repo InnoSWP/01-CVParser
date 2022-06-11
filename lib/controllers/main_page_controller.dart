@@ -3,14 +3,15 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:cvparser_b21_01/colors.dart';
 import 'package:cvparser_b21_01/datatypes/export.dart';
 import 'package:cvparser_b21_01/services/file_saver.dart';
 import 'package:cvparser_b21_01/services/key_listener.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-// TODO: UI: blocking popup with progress on any action
-// + transfer progress percantage to this popup
+// TODO: UI: + transfer progress percantage to the blocking popup
 
 // weak TODO: any action fail popup
 
@@ -125,6 +126,8 @@ class MainPageController extends GetxController {
     }
     _busy = true;
 
+    _dialog("Exporting");
+
     try {
       List<ParsedCV> parsedCVs = [];
       for (var index = 0; index != cvs.length; index++) {
@@ -152,6 +155,7 @@ class MainPageController extends GetxController {
       rethrow;
     } finally {
       _busy = false;
+      Get.back();
     }
   }
 
@@ -160,6 +164,8 @@ class MainPageController extends GetxController {
       return;
     }
     _busy = true;
+
+    _dialog("Exporting");
 
     try {
       // export to json string
@@ -176,6 +182,7 @@ class MainPageController extends GetxController {
       rethrow;
     } finally {
       _busy = false;
+      Get.back();
     }
   }
 
@@ -237,6 +244,8 @@ class MainPageController extends GetxController {
     }
     _busy = true;
 
+    _dialog("Loading content");
+
     try {
       await _parseCv(index);
       _current.value = index;
@@ -245,6 +254,7 @@ class MainPageController extends GetxController {
       rethrow;
     } finally {
       _busy = false;
+      Get.back();
     }
   }
 
@@ -256,6 +266,48 @@ class MainPageController extends GetxController {
 
     cvs[index].isSelected = !cvs[index].isSelected;
     cvs.refresh();
+  }
+
+  void _dialog(String text) {
+    Get.dialog(
+      barrierDismissible: false,
+      Center(
+        child: Card(
+          child: SizedBox(
+            height: 200,
+            width: 350,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  text,
+                  style: const TextStyle(
+                    fontSize: 30,
+                    fontFamily: "Eczar",
+                    fontWeight: FontWeight.w400,
+                    color: colorTextSmoothBlack,
+                  ),
+                ),
+                const Expanded(
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                ),
+                const Text(
+                  "please wait...",
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontFamily: "Eczar",
+                    fontWeight: FontWeight.w400,
+                    color: colorTextSmoothBlack,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   /// This function will create a future that will:
