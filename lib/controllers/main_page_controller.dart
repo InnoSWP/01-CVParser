@@ -264,8 +264,7 @@ class MainPageController extends GetxController {
   /// Note: will fo nothing if the item was already parsed
   ///
   /// Note: this function is always invoked with [_busy] flag equals to true,
-  /// as it is just a subroutine function for
-  /// [exportSelected], [exportCurrent] and [setCurrent] methods
+  /// as it is just a subroutine function for [exportSelected] and [setCurrent]
   /// so this is the reason why we don't block it with [_busy] flag,
   /// but it uses it's own [_parsingCv]
   Future<void> _parseCv(int index) async {

@@ -23,7 +23,6 @@ class PdfIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('build $index');
     final BoxDecoration decor = isSelected
         ? BoxDecoration(
             color: const Color.fromARGB(10, 218, 225, 226),
