@@ -67,14 +67,16 @@ class MainPageController extends GetxController {
       if (picked != null) {
         for (PlatformFile file in picked.files) {
           // add an NotParsedCV
-          cvs[cvs.length] = Selectable(
-            item: RawPdfCV(
-              // just because it's web, we cannot store file path,
-              // but we can get stream of filedata
-              filename: file.name,
-              readStream: file.readStream,
+          cvs.add(
+            Selectable(
+              item: RawPdfCV(
+                // just because it's web, we cannot store file path,
+                // but we can get stream of filedata
+                filename: file.name,
+                readStream: file.readStream,
+              ),
+              isSelected: false,
             ),
-            isSelected: false,
           );
         }
       }
