@@ -37,6 +37,10 @@ class PdfIconButton extends StatelessWidget {
       child: Tooltip(
         // weak TODO: make tooltip more pleasant
         // weak TODO: why selection on GestureDetector is too slow?!
+        // weak TODO: beautify select UX:
+        // - smooth animations of select/deselect,
+        // - accent on the tile under the cursor
+        // - maybe somewhere invert selection ?
         message: filename,
         child: GestureDetector(
           onTapDown: (d) {

@@ -14,11 +14,6 @@ class FileExplorer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // weak TODO: beautify select UX:
-    // - smooth animations of select/deselect,
-    // - accent on the tile under the cursor
-    // - select all becomes deselect all if all is selected
-    // - maybe somewhere insert selection ?
     // weak TODO: this big plus icon on no cvs
     return Obx(
       () => GridView.builder(
