@@ -15,9 +15,9 @@ class MainPage extends StatelessWidget {
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: SingleChildScrollView(scrollDirection: Axis.vertical, child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
-          children: const [
-            SizedBox(width: 999, height: 792, child: ContentArea()),
-            SizedBox(width: 500, height: 792, child: RightPanel()),
+          children: [
+            SizedBox(width: MediaQuery.of(context).size.width - 500, height: MediaQuery.of(context).size.height, child: ContentArea()),
+            SizedBox(width: 500, height: MediaQuery.of(context).size.height, child: RightPanel()),
           ],
         ),
     ),

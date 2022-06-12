@@ -39,7 +39,7 @@ class _CardWidgetState extends State<CardWidget> {
             });
           },
           child: Container(
-            width: 900,
+            width: 1350,
             height: 100,
             margin: const EdgeInsets.symmetric(vertical: 5),
             decoration: BoxDecoration(

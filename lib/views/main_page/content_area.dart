@@ -12,9 +12,9 @@ class ContentArea extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Padding(
-            padding: const EdgeInsets.fromLTRB(49, 0, 0, 0),
-            child: Row(children: const [Logo(), Contact()])),
+        Container(
+            padding: const EdgeInsets.fromLTRB(50, 0, 50, 0),
+            child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: const [Logo(), Contact()])),
         Expanded(
           child: Container(
             padding: const EdgeInsets.fromLTRB(50, 0, 50, 50),
@@ -22,7 +22,7 @@ class ContentArea extends StatelessWidget {
           ),
         ),
         Container(
-          padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+          padding: const EdgeInsets.fromLTRB(50, 0, 50, 10),
           child: Footer(),
         )
       ],
