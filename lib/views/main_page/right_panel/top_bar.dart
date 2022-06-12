@@ -17,6 +17,7 @@ class TopBar extends StatelessWidget {
           data: Theme.of(context)
               .copyWith(primaryColor: colorSecondaryLightGreenPlant),
           child: TextField(
+            // TODO: fix styling
             cursorColor: colorSecondaryLightGreenPlant,
             decoration: InputDecoration(
               border: OutlineInputBorder(
