@@ -1,7 +1,6 @@
+import 'package:cvparser_b21_01/colors.dart';
 import 'package:cvparser_b21_01/datatypes/export.dart';
 import 'package:flutter/material.dart';
-
-import 'package:cvparser_b21_01/colors.dart';
 
 class CardWidget extends StatefulWidget {
   final String title;

@@ -1,6 +1,5 @@
-import 'package:cvparser_b21_01/datatypes/cv/parsed/parsed_cv.dart';
-
 import '../cv_base.dart';
+import '../parsed/parsed_cv.dart';
 
 class NotParsedCV extends CVBase {
   NotParsedCV(filename) : super(filename);

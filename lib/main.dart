@@ -35,7 +35,7 @@ class CVParserApp extends StatelessWidget {
     );
 
     return GetMaterialApp(
-      title: 'CV Parser',
+      title: "CV Parser",
       theme: mainTheme,
       home: MainPage(),
     );
