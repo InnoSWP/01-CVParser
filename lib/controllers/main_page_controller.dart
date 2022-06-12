@@ -33,7 +33,6 @@ class MainPageController extends GetxController {
   /// any outer invocation must just read data
   final cvs = <Selectable<CVBase>>[].obs;
   final _current = Rxn<ParsedCV>();
-  ParsedCV? get current => _current.value;
 
   /// used for range select
   int? selectPoint;
@@ -43,7 +42,9 @@ class MainPageController extends GetxController {
 
   /// subscribe to the stream of key events
   late StreamSubscription<dynamic> _escListener;
+
   late StreamSubscription<dynamic> _delListener;
+  ParsedCV? get current => _current.value;
 
   /// Creates native dialog for user to select files
   void askUserToUploadPdfFiles() {
