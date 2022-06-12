@@ -1,9 +1,9 @@
 import 'package:cvparser_b21_01/colors.dart';
 import 'package:cvparser_b21_01/controllers/main_page_controller.dart';
-import 'package:cvparser_b21_01/datatypes/cv/parsed/cv_match.dart';
-import 'package:cvparser_b21_01/views/common/card_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import 'parse_result/card_widget.dart';
 
 class ParseResult extends StatelessWidget {
   final controller = Get.find<MainPageController>(); // observe [current]
