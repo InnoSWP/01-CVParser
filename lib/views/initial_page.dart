@@ -24,7 +24,6 @@ class InitialPage extends GetView<InitialPageController> {
                     DropzoneView(
                       operation: DragOperation.move,
                       cursor: CursorType.grab,
-                      //mime: const ["application/pdf"],
                       onCreated: controller.instantiateDropzoneController,
                       onHover: controller.onDropzoneHover,
                       onLeave: controller.onDropzoneLeave,
