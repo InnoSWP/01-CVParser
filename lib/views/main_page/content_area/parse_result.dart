@@ -13,7 +13,6 @@ class ParseResult extends GetView<MainPageController> {
     return Obx(
       () {
         List<Widget> content = [];
-
         if (controller.current != null) {
           for (var entry in controller.current!.data.entries) {
             content.add(
@@ -26,7 +25,7 @@ class ParseResult extends GetView<MainPageController> {
         } else {
           content.add(
             Container(
-              width: 900,
+              width: 1350,
               height: 100,
               margin: const EdgeInsets.symmetric(vertical: 5),
               decoration: BoxDecoration(

@@ -11,14 +11,14 @@ class RightPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(18.0),
-      width: 520,
+      width: 500,
       color: Theme.of(context).colorScheme.secondary,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           TopBar(),
           const SizedBox(height: 18.0),
-          SizedBox(width: 500, height: 532, child: FileExplorer()),
+          Expanded(child: FileExplorer()),
           const SizedBox(height: 18.0),
           BottomBar(),
         ],

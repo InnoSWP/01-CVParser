@@ -7,7 +7,7 @@ class Logo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(0, 30, 125, 0),
+      padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: const [
