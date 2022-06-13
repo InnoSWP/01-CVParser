@@ -3,10 +3,8 @@ import 'package:cvparser_b21_01/controllers/main_page_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class TopBar extends StatelessWidget {
-  final controller = Get.find<MainPageController>(); // just listeners
-
-  TopBar({Key? key}) : super(key: key);
+class TopBar extends GetView<MainPageController> {
+  const TopBar({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

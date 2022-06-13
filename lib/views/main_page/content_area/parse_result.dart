@@ -5,10 +5,8 @@ import 'package:get/get.dart';
 
 import 'parse_result/card_widget.dart';
 
-class ParseResult extends StatelessWidget {
-  final controller = Get.find<MainPageController>(); // observe [current]
-
-  ParseResult({Key? key}) : super(key: key);
+class ParseResult extends GetView<MainPageController> {
+  const ParseResult({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

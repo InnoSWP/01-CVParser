@@ -3,10 +3,8 @@ import 'package:cvparser_b21_01/controllers/main_page_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class Footer extends StatelessWidget {
-  final controller = Get.find<MainPageController>(); // observe [current]
-
-  Footer({Key? key}) : super(key: key);
+class Footer extends GetView<MainPageController> {
+  const Footer({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

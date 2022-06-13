@@ -1,4 +1,7 @@
-import 'package:cvparser_b21_01/services/init.dart';
+import 'package:cvparser_b21_01/bindings/initial_page_binding.dart';
+import 'package:cvparser_b21_01/bindings/main_page_binding.dart';
+import 'package:cvparser_b21_01/bindings/services_binding.dart';
+import 'package:cvparser_b21_01/views/initial_page.dart';
 import 'package:cvparser_b21_01/views/main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -6,7 +9,6 @@ import 'package:get/get.dart';
 import 'colors.dart' as my_colors;
 
 void main() {
-  initServices();
   runApp(const CVParserApp());
 }
 
@@ -37,7 +39,24 @@ class CVParserApp extends StatelessWidget {
     return GetMaterialApp(
       title: "CV Parser",
       theme: mainTheme,
-      home: MainPage(),
+      initialBinding: ServicesBinding(),
+      initialRoute: "/initial",
+      getPages: [
+        GetPage(
+          name: "/initial",
+          page: () => const InitialPage(),
+          bindings: [
+            InitialPageBinding(),
+          ],
+        ),
+        GetPage(
+          name: "/main",
+          page: () => const MainPage(),
+          bindings: [
+            MainPageBinding(),
+          ],
+        ),
+      ],
     );
   }
 }

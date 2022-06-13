@@ -6,8 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
-class PdfIconButton extends StatelessWidget {
-  final controller = Get.find<MainPageController>(); // just listeners
+class PdfIconButton extends GetView<MainPageController> {
   final keyLookup = Get.find<KeyListener>();
 
   final int index;

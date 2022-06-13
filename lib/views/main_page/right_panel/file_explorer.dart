@@ -6,8 +6,7 @@ import 'package:get/get.dart';
 
 import 'file_explorer/pdf_icon_button.dart';
 
-class FileExplorer extends StatelessWidget {
-  final controller = Get.find<MainPageController>(); // observe [cvs]
+class FileExplorer extends GetView<MainPageController> {
   final keyLookup = Get.find<KeyListener>();
 
   FileExplorer({Key? key}) : super(key: key);

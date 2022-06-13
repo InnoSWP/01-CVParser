@@ -194,6 +194,7 @@ class MainPageController extends GetxController {
 
   @override
   void onInit() {
+    // setup keyboard listeners
     _escListener = keyLookup.escEventStream.listen((event) {
       if (event == KeyEventType.down) {
         deselectAll();
@@ -204,6 +205,19 @@ class MainPageController extends GetxController {
         deleteSelected();
       }
     });
+
+    // retrive data from route
+    if (Get.arguments != null) {
+      for (RawPdfCV cv in Get.arguments) {
+        cvs.add(
+          Selectable(
+            item: cv,
+            isSelected: false,
+          ),
+        );
+      }
+    }
+
     super.onInit();
   }
 
