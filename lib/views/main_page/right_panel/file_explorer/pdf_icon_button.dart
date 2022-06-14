@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:cvparser_b21_01/colors.dart';
 import 'package:cvparser_b21_01/controllers/main_page_controller.dart';
 import 'package:cvparser_b21_01/services/key_listener.dart';
 import 'package:flutter/material.dart';
@@ -102,6 +103,7 @@ class _PdfIconButtonState extends State<PdfIconButton> {
                       widget.filename,
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(color: colorSecondaryLightGreenPlant),
                     ),
                   ),
                 ],
