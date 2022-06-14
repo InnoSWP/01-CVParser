@@ -146,19 +146,29 @@ class MainPageController extends GetxController {
       "Exporting",
       () async* {
         List<ParsedCV> parsedCVs = [];
-        var done = 0;
+        var current = 0;
 
         for (var index = 0; index != cvs.length; index++) {
           var cv = cvs[index];
           if (cv.isSelected) {
-            await _parseCv(index); // make sure that all cv's are parsed
-            parsedCVs.add(cv.item as ParsedCV);
-
-            done++;
+            // notify that we are parsing something
+            current++;
             yield ProgressDone(
-              done / selected,
-              "$done / $selected \n ${cv.item.filename}",
+              current / selected,
+              "$current / $selected \n ${cv.item.filename}",
             );
+
+            // make sure that all cv's are parsed
+            try {
+              await _parseCv(index);
+            } catch (e) {
+              yield ProgressDone(
+                current / selected,
+                "$current / $selected \n ${cv.item.filename} (with mock API)",
+              );
+              await _parseCv(index, mock: true);
+            }
+            parsedCVs.add(cv.item as ParsedCV);
           }
         }
 
@@ -250,7 +260,12 @@ class MainPageController extends GetxController {
     _asyncSafe(
       "Parsing results",
       () async* {
-        await _parseCv(index);
+        try {
+          await _parseCv(index);
+        } catch (e) {
+          yield ProgressDone(null, "fallback to the mock API");
+          await _parseCv(index, mock: true);
+        }
         _current.value = (cvs[index].item as ParsedCV);
       },
     );
@@ -325,7 +340,7 @@ class MainPageController extends GetxController {
   /// as it is just a subroutine function for [exportSelected] and [setCurrent]
   /// so this is the reason why we don't block it with [_busy] flag,
   /// but it uses it's own [_parsingCv]
-  Future<void> _parseCv(int index) async {
+  Future<void> _parseCv(int index, {bool mock = false}) async {
     assert(!_parsingCv);
     assert(_busy);
 
@@ -337,7 +352,7 @@ class MainPageController extends GetxController {
       if (tmp is NotParsedCV) {
         cvs[index].item = CVBase(tmp.filename); // mark it as processing
         try {
-          cvs[index].item = await tmp.parse(); // some async code
+          cvs[index].item = await tmp.parse(mock: mock); // some async code
         } catch (e) {
           cvs[index].item = tmp; // so it's not processing anymore
           rethrow;
