@@ -13,7 +13,7 @@ class PdfIconButton extends StatefulWidget {
   final bool isSelected;
   final String filename;
 
-  PdfIconButton(
+  const PdfIconButton(
       {Key? key,
       required this.index,
       required this.isSelected,
