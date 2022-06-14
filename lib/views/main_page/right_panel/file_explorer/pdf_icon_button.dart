@@ -6,9 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
-class PdfIconButton extends GetView<MainPageController> {
-  final keyLookup = Get.find<KeyListener>();
+import 'package:cvparser_b21_01/views/tooltip.dart' as my_tooltip;
 
+class PdfIconButton extends StatefulWidget {
   final int index;
   final bool isSelected;
   final String filename;
@@ -21,8 +21,18 @@ class PdfIconButton extends GetView<MainPageController> {
       : super(key: key);
 
   @override
+  State<PdfIconButton> createState() => _PdfIconButtonState();
+}
+
+class _PdfIconButtonState extends State<PdfIconButton> {
+  final controller = Get.find<MainPageController>();
+  final keyLookup = Get.find<KeyListener>();
+
+  var hovered = false;
+
+  @override
   Widget build(BuildContext context) {
-    final BoxDecoration decor = isSelected
+    final BoxDecoration decor = widget.isSelected
         ? BoxDecoration(
             color: const Color.fromARGB(10, 218, 225, 226),
             border: Border.all(
@@ -33,21 +43,24 @@ class PdfIconButton extends GetView<MainPageController> {
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      child: Tooltip(
-        // weak TODO: make tooltip more pleasant
-        // weak TODO: why selection on GestureDetector is too slow?!
-        // weak TODO: beautify select UX:
-        // - smooth animations of select/deselect,
-        // - accent on the tile under the cursor
-        // - maybe somewhere invert selection ?
-        message: filename,
+      child: MouseRegion(
+        onEnter: (event) {
+          setState(() {
+            hovered = true;
+          });
+        },
+        onExit: (event) {
+          setState(() {
+            hovered = false;
+          });
+        },
         child: GestureDetector(
-          onTapDown: (d) {
+          onPanDown: (d) {
             if (keyLookup.shift) {
               // range select
               controller.selectPoint ??= 0;
-              final start = min(controller.selectPoint!, index);
-              final stop = max(controller.selectPoint!, index);
+              final start = min(controller.selectPoint!, widget.index);
+              final stop = max(controller.selectPoint!, widget.index);
               for (int i = start; i <= stop; i++) {
                 controller.select(i);
               }
@@ -56,39 +69,43 @@ class PdfIconButton extends GetView<MainPageController> {
               if (!keyLookup.ctrl) {
                 controller.deselectAll();
               }
-              controller.switchSelect(index);
+              controller.switchSelect(widget.index);
             }
-            controller.selectPoint = index;
+            controller.selectPoint = widget.index;
           },
           onDoubleTap: () {
-            controller.setCurrent(index);
+            controller.setCurrent(widget.index);
           },
-          child: Container(
-            decoration: decor.copyWith(
-              borderRadius: const BorderRadius.all(
-                Radius.circular(8),
+          child: my_tooltip.Tooltip(
+            message: widget.filename,
+            child: Container(
+              decoration: decor.copyWith(
+                color: hovered ? const Color.fromARGB(10, 218, 225, 226) : null,
+                borderRadius: const BorderRadius.all(
+                  Radius.circular(8),
+                ),
               ),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: SvgPicture.asset(
-                    "icons/pdf.svg",
-                    width: 43,
-                    height: 52,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: SvgPicture.asset(
+                      "icons/pdf.svg",
+                      width: 43,
+                      height: 52,
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: Text(
-                    filename,
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.ellipsis,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                    child: Text(
+                      widget.filename,
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
