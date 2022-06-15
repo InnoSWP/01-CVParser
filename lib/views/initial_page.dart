@@ -85,7 +85,7 @@ class InitialPage extends GetView<InitialPageController>{
                       Column(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          Container(child: Icon(size: 350, color: Theme.of(context).colorScheme.primary, Icons.file_open_rounded)),
+                          Container(child: Icon(size: MediaQuery.of(context).size.height / 3.2, color: Theme.of(context).colorScheme.primary, Icons.file_open_rounded)),
                           //TODO add a button for adding CVs
                           const Center(child: Text("or drop CVs here", style: TextStyle(fontSize: 20,
                             fontFamily: "Merriweather",
