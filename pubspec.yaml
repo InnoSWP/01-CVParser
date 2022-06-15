@@ -36,6 +36,7 @@ flutter:
 
   assets:
       - icons/pdf.svg
+      - icons/icon.svg
 
   fonts:
     - family: Eczar
