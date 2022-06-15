@@ -18,12 +18,12 @@ class ContentArea extends StatelessWidget {
         Expanded(
           child: Container(
             padding: const EdgeInsets.fromLTRB(50, 0, 50, 50),
-            child: ParseResult(),
+            child: const ParseResult(),
           ),
         ),
         Container(
           padding: const EdgeInsets.fromLTRB(50, 0, 50, 10),
-          child: Footer(),
+          child: const Footer(),
         )
       ],
     );

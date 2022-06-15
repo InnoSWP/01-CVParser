@@ -15,11 +15,11 @@ class MainPage extends StatelessWidget {
           SizedBox(
               width: MediaQuery.of(context).size.width - 500,
               height: MediaQuery.of(context).size.height,
-              child: ContentArea()),
+              child: const ContentArea()),
           SizedBox(
               width: 500,
               height: MediaQuery.of(context).size.height,
-              child: RightPanel()),
+              child: const RightPanel()),
         ],
       ),
     );

@@ -26,7 +26,7 @@ class Contact extends StatelessWidget {
                 textAlign: TextAlign.start,
                 style: TextStyle(
                   height: 1.5,
-                  fontSize: 50,
+                  fontSize: 42,
                   fontFamily: "Eczar",
                   fontWeight: FontWeight.w400,
                   color: colorTextSmoothBlack,
@@ -37,7 +37,7 @@ class Contact extends StatelessWidget {
                 textAlign: TextAlign.start,
                 style: TextStyle(
                   height: 0.2,
-                  fontSize: 20.2,
+                  fontSize: 20,
                   fontFamily: "Eczar",
                   fontWeight: FontWeight.w400,
                   color: colorTextSmoothBlack,

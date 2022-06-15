@@ -16,11 +16,11 @@ class RightPanel extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          TopBar(),
+          const TopBar(),
           const SizedBox(height: 18.0),
           Expanded(child: FileExplorer()),
           const SizedBox(height: 18.0),
-          BottomBar(),
+          const BottomBar(),
         ],
       ),
     );
