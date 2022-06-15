@@ -36,7 +36,7 @@ class ParseResult extends GetView<MainPageController> {
                 child: Text(
                   "[ no results ]",
                   style: TextStyle(
-                    fontSize: 60,
+                    fontSize: 52,
                     fontFamily: "Eczar",
                     fontWeight: FontWeight.w400,
                     color: colorTextSmoothBlack,
