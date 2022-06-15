@@ -82,12 +82,15 @@ class _CardWidgetState extends State<CardWidget> {
                     (e) {
                       // make changes in the UI here for your company card
                       return Card(
+                        color: colorSurfaceSmoothGreenPlant,
+                        shadowColor: Colors.transparent,
                         child: Text(
                           e.match,
                           style: const TextStyle(
                             fontSize: 20,
                             fontFamily: 'Merriweather',
                             color: colorTextSmoothBlack,
+                            backgroundColor: Colors.transparent,
                           ),
                         ),
                       );
