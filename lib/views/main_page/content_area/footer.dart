@@ -35,17 +35,19 @@ class Footer extends GetView<MainPageController> {
               : Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
+                    Flexible(child:
                     Text(
                       controller.current!.filename,
-                      style: const TextStyle(
+                      style:  TextStyle(
                         height: 1.3,
-                        fontSize: 40,
+                        fontSize: MediaQuery.of(context).size.width / 50,
                         fontFamily: "Eczar",
                         fontWeight: FontWeight.w400,
                         color: colorSurfaceSmoothGreenPlant,
                         overflow: TextOverflow
-                            .ellipsis, // TODO: when a big filename is entered, this becomes overflowed
+                            .ellipsis,
                       ),
+                    ),
                     ),
                     ElevatedButton(
                       style: ButtonStyle(
