@@ -16,28 +16,29 @@ class FailDialog extends StatelessWidget {
     return Center(
       child: Card(
         child: SizedBox(
-          height: 200, // TODO: adaptive card
-          width: 400,
+          height: MediaQuery.of(context).size.height / 5,
+          width: MediaQuery.of(context).size.width / 5,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Text(
                 titleText,
-                style: const TextStyle(
-                  fontSize: 30,
+                style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.width / 60,
                   fontFamily: "Eczar",
                   fontWeight: FontWeight.w400,
                   color: colorTextSmoothBlack,
                 ),
               ),
-              Text(
-                details, // TODO: big comments trim
+              Flexible(child: Text(
+                details,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 20,
+                style: TextStyle(
+                  fontSize: MediaQuery.of(context).size.width / 75,
                   fontWeight: FontWeight.w400,
                   color: colorTextSmoothBlack,
                 ),
+              ),
               ),
             ],
           ),
