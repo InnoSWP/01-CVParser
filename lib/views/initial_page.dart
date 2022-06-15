@@ -87,12 +87,12 @@ class InitialPage extends GetView<InitialPageController> {
                         padding: const EdgeInsets.fromLTRB(15, 70, 15, 0),
                         child: SvgPicture.asset(
                           "icons/icon.svg",
-                          width: 400,
-                          height: 400,
+                          width: 300,
+                          height: 300,
                         ),
                       ),
                       Container(
-                          padding: const EdgeInsets.fromLTRB(15, 0, 15, 100),
+                          padding: const EdgeInsets.fromLTRB(15, 0, 15, 70),
                           child: Column(children: [
                             ElevatedButton(
                               onPressed: controller.uploadFilesManually,
