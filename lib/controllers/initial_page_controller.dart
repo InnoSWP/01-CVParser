@@ -40,7 +40,8 @@ class InitialPageController extends GetxController {
         cvs.add(
           RawPdfCV(
             filename: file.name,
-            readStream: file.readStream,
+            readStream: file.readStream!,
+            size: file.size,
           ),
         );
       }
@@ -49,7 +50,7 @@ class InitialPageController extends GetxController {
     }
   }
 
-  void onDropFiles(List<dynamic>? fhs) {
+  void onDropFiles(List<dynamic>? fhs) async {
     if (fhs != null) {
       List<RawPdfCV> cvs = [];
       for (final fh in fhs) {
@@ -58,6 +59,7 @@ class InitialPageController extends GetxController {
             RawPdfCV(
               filename: fh.name,
               readStream: dropzoneController.getFileStream(fh),
+              size: await dropzoneController.getFileSize(fh),
             ),
           );
         }

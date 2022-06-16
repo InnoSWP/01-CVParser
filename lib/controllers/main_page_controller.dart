@@ -77,7 +77,8 @@ class MainPageController extends GetxController {
                   // just because it's web, we cannot store file path,
                   // but we can get stream of filedata
                   filename: file.name,
-                  readStream: file.readStream,
+                  readStream: file.readStream!,
+                  size: file.size,
                 ),
                 isSelected: false,
               ),
@@ -160,15 +161,16 @@ class MainPageController extends GetxController {
 
             // make sure that all cv's are parsed
             try {
-              await _parseCv(index);
+              await _parseCv(index, mock: true);
+              parsedCVs.add(cv.item as ParsedCV);
             } catch (e) {
+              index--;
               yield ProgressDone(
                 current / selected,
-                "$current / $selected \n ${cv.item.filename} (with mock API)",
+                "$current / $selected \n ${cv.item.filename} failed to parse",
               );
-              await _parseCv(index, mock: true);
+              await Future.delayed(const Duration(milliseconds: 500));
             }
-            parsedCVs.add(cv.item as ParsedCV);
           }
         }
 
@@ -260,12 +262,7 @@ class MainPageController extends GetxController {
     _asyncSafe(
       "Parsing results",
       () async* {
-        try {
-          await _parseCv(index);
-        } catch (e) {
-          yield ProgressDone(null, "fallback to the mock API");
-          await _parseCv(index, mock: true);
-        }
+        await _parseCv(index, mock: true);
         _current.value = (cvs[index].item as ParsedCV);
       },
     );
@@ -376,6 +373,7 @@ class MainPageController extends GetxController {
       }
     } catch (e) {
       _parsingCv = false;
+      cvs.removeAt(index); // as now readStream is invalid
       rethrow;
     } finally {
       _parsingCv = false;
