@@ -80,11 +80,12 @@ class InitialPage extends GetView<InitialPageController> {
                     onLeave: controller.onDropzoneLeave,
                     onDropMultiple: controller.onDropFiles,
                   ),
-                  Column(
+                  Expanded(
+                      child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(15, 70, 15, 0),
+                        padding: const EdgeInsets.fromLTRB(15, 10, 15, 0),
                         child: SvgPicture.asset(
                           "icons/icon.svg",
                           width: 300,
@@ -92,7 +93,7 @@ class InitialPage extends GetView<InitialPageController> {
                         ),
                       ),
                       Container(
-                          padding: const EdgeInsets.fromLTRB(15, 0, 15, 70),
+                          padding: const EdgeInsets.fromLTRB(15, 0, 15, 10),
                           child: Column(children: [
                             ElevatedButton(
                               onPressed: controller.uploadFilesManually,
@@ -125,11 +126,9 @@ class InitialPage extends GetView<InitialPageController> {
                                 ),
                               ),
                             ),
-                          ]
-                          )
-                      ),
+                          ])),
                     ],
-                  )
+                  )),
                 ],
               ),
             ),
