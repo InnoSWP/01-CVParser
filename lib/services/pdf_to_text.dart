@@ -1,32 +1,25 @@
-import 'dart:convert';
-
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
-import 'package:http_parser/http_parser.dart';
+
+import 'package:syncfusion_flutter_pdf/pdf.dart';
 
 class PdfToText extends GetxService {
-  final _serviceUrl =
-      Uri.parse("https://mock-cv-parser-3.herokuapp.com/api/extract_pdf/");
+  Future<List<int>> _drain(Stream<List<int>> readStream) async {
+    final drained = <int>[];
+    await for (final bucket in readStream) {
+      drained.addAll(bucket);
+    }
+    return drained;
+  }
 
   Future<String> extractTextFromPdf(
     Stream<List<int>> bytesStream,
     int size,
   ) async {
-    final request = http.MultipartRequest('POST', _serviceUrl);
-    request.files.add(
-      http.MultipartFile(
-        'pdf_file',
-        bytesStream,
-        size,
-        filename: 'file.pdf',
-      ),
+    final PdfDocument document = PdfDocument(
+      inputBytes: await _drain(bytesStream),
     );
-    final response = await request.send();
-
-    if (response.statusCode != 200) {
-      throw response;
-    }
-
-    return jsonDecode(await response.stream.bytesToString())["body"];
+    String text = PdfTextExtractor(document).extractText();
+    document.dispose();
+    return text;
   }
 }
