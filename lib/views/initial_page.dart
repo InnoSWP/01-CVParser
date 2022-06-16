@@ -1,6 +1,7 @@
 import 'package:cvparser_b21_01/controllers/initial_page_controller.dart';
 import 'package:flutter_dropzone/flutter_dropzone.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:cvparser_b21_01/colors.dart';
 
@@ -79,33 +80,55 @@ class InitialPage extends GetView<InitialPageController> {
                     onLeave: controller.onDropzoneLeave,
                     onDropMultiple: controller.onDropFiles,
                   ),
-                  Column(
+                  Expanded(
+                      child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(15, 10, 15, 0),
+                        child: SvgPicture.asset(
+                          "icons/icon.svg",
+                          width: 300,
+                          height: 300,
+                        ),
+                      ),
                       Container(
-                        child: Icon(
-                          size: MediaQuery.of(context).size.height / 3.2,
-                          color: Theme.of(context).colorScheme.primary,
-                          Icons.file_open_rounded,
-                        ),
-                      ),
-                      ElevatedButton(
-                        onPressed: controller.uploadFilesManually,
-                        child: Text("upload files"),
-                      ),
-                      const Center(
-                        child: Text(
-                          "or drop CVs here",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontFamily: "Merriweather",
-                            fontWeight: FontWeight.w400,
-                            color: colorSecondaryGreenPlant,
-                          ),
-                        ),
-                      ),
+                          padding: const EdgeInsets.fromLTRB(15, 0, 15, 10),
+                          child: Column(children: [
+                            ElevatedButton(
+                              onPressed: controller.uploadFilesManually,
+                              style: ElevatedButton.styleFrom(
+                                primary: Theme.of(context)
+                                    .colorScheme
+                                    .secondary, // Background color
+                                fixedSize: const Size(300, 50),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10)),
+                              ),
+                              child: Text("ADD CVs",
+                                  style: TextStyle(
+                                    fontFamily: "Merriweather",
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSecondary,
+                                    fontSize: 20,
+                                  )),
+                            ),
+                            const Center(
+                              child: Text(
+                                "or drop CVs here",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontFamily: "Merriweather",
+                                  fontWeight: FontWeight.w400,
+                                  height: 1.8,
+                                  color: colorSecondaryGreenPlant,
+                                ),
+                              ),
+                            ),
+                          ])),
                     ],
-                  )
+                  )),
                 ],
               ),
             ),
