@@ -29,12 +29,13 @@ class FileExplorer extends GetView<MainPageController> {
           return ShouldRebuild<PdfIconButton>(
             shouldRebuild: (oldWidget, newWidget) =>
                 oldWidget.filename != newWidget.filename ||
-                oldWidget.isSelected != newWidget.isSelected,
+                oldWidget.isSelected != newWidget.isSelected ||
+                oldWidget.isParsed != newWidget.isParsed,
             child: PdfIconButton(
               index: index,
               isSelected: tile.isSelected,
               filename: tile.item.filename,
-              isParsed: tile.item is ParsedCV,
+              isParsed: tile.item.isParseCachedComplete(),
             ),
           );
         },

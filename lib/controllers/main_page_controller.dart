@@ -28,19 +28,15 @@ class MainPageController extends GetxController {
   /// Note: there can be only one sync/async worker that
   /// is working with the data inside this class
   bool _busy = false;
-  bool _parsingCv = false; // see [_parseCV] for more details
 
   /// Important: before modifying this data, firstly check the [_busy] flag,
   /// also it's supposed to be any kind modified only inside this file,
   /// any outer invocation must just read data
-  final cvs = <Selectable<CVBase>>[].obs;
+  final cvs = <Selectable<NotParsedCV>>[].obs;
   final _current = Rxn<ParsedCV>();
 
   /// used for range select
   int? selectPoint;
-
-  /// just not to go over cvs twice in [exportSelected]
-  int selected = 0;
 
   /// subscribe to the stream of key events
   late StreamSubscription<dynamic> _escListener;
@@ -99,7 +95,7 @@ class MainPageController extends GetxController {
   void deleteSelected() {
     _syncSafe(
       () {
-        var remaining = <Selectable<CVBase>>[];
+        var remaining = <Selectable<NotParsedCV>>[];
         for (var cv in cvs) {
           if (!cv.isSelected) {
             remaining.add(cv);
@@ -118,7 +114,6 @@ class MainPageController extends GetxController {
         for (var cv in cvs) {
           cv.isSelected = false;
         }
-        selected = 0;
         cvs.refresh();
       },
     );
@@ -148,6 +143,13 @@ class MainPageController extends GetxController {
       () async* {
         List<ParsedCV> parsedCVs = [];
         var current = 0;
+        var selected = 0;
+
+        for (final cv in cvs) {
+          if (cv.isSelected) {
+            selected++;
+          }
+        }
 
         for (var index = 0; index != cvs.length; index++) {
           var cv = cvs[index];
@@ -161,8 +163,7 @@ class MainPageController extends GetxController {
 
             // make sure that all cv's are parsed
             try {
-              await _parseCv(index, mock: true);
-              parsedCVs.add(cv.item as ParsedCV);
+              parsedCVs.add(await _parsedCv(index, mock: true));
             } catch (e) {
               index--;
               yield ProgressDone(
@@ -238,7 +239,6 @@ class MainPageController extends GetxController {
     _syncSafe(
       () {
         cvs[index].isSelected = true;
-        selected++;
         cvs.refresh();
       },
     );
@@ -251,7 +251,6 @@ class MainPageController extends GetxController {
         for (var cv in cvs) {
           cv.isSelected = true;
         }
-        selected = cvs.length;
         cvs.refresh();
       },
     );
@@ -262,8 +261,7 @@ class MainPageController extends GetxController {
     _asyncSafe(
       "Parsing results",
       () async* {
-        await _parseCv(index, mock: true);
-        _current.value = (cvs[index].item as ParsedCV);
+        _current.value = await _parsedCv(index, mock: true);
       },
     );
   }
@@ -273,7 +271,6 @@ class MainPageController extends GetxController {
     _syncSafe(
       () {
         cvs[index].isSelected = !cvs[index].isSelected;
-        selected += cvs[index].isSelected ? 1 : -1;
         cvs.refresh();
       },
     );
@@ -332,51 +329,19 @@ class MainPageController extends GetxController {
   /// 3. try to store the procession result into the same index
   ///
   /// Note: will fo nothing if the item was already parsed
-  ///
-  /// Note: this function is always invoked with [_busy] flag equals to true,
-  /// as it is just a subroutine function for [exportSelected] and [setCurrent]
-  /// so this is the reason why we don't block it with [_busy] flag,
-  /// but it uses it's own [_parsingCv]
-  Future<void> _parseCv(int index, {bool mock = false}) async {
-    assert(!_parsingCv);
-    assert(_busy);
-
-    _parsingCv = true;
+  /// Note2: will sync with the first invocation of itself
+  Future<ParsedCV> _parsedCv(int index, {bool mock = false}) async {
     try {
-      var tmp = cvs[index].item;
-
-      // The lazy approach itself
-      if (tmp is NotParsedCV) {
-        cvs[index].item = CVBase(tmp.filename); // mark it as processing
-        try {
-          cvs[index].item = await tmp.parse(mock: mock); // some async code
-        } catch (e) {
-          cvs[index].item = tmp; // so it's not processing anymore
-          rethrow;
-        }
-      } else if (tmp is ParsedCV) {
-        // it was already converted, so there is nothing to do
-      } else {
-        // if we entered here, then the type of tmp is CVBase,
-        // which is the indicator that someone is now working on it.
-        throw TypeError();
-
-        // Fatal: if you ever see this exception, means that the overall
-        // data protection logic (see flag [_busy]) does not work
-        // as only [_parseCV] ignores [_busy] flag and only it can be run
-        // concurrently on cvs
-        // but newertheless we expect only one instance of such futre to work
-        // on the [cvs] at the same time
-
-        // note that this thing actually would not be ever fired
-        // because now it is totally covered by [_parsingCv] flag
+      bool wasCached = !cvs[index].item.isParseCached();
+      final res = await cvs[index].item.parse(mock: mock);
+      // here cvs[index].item will be in state cache completed
+      if (wasCached) {
+        cvs.refresh();
       }
+      return res;
     } catch (e) {
-      _parsingCv = false;
       cvs.removeAt(index); // as now readStream is invalid
       rethrow;
-    } finally {
-      _parsingCv = false;
     }
   }
 
