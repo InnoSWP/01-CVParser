@@ -1,7 +1,6 @@
+import 'package:cvparser_b21_01/colors.dart';
 import 'package:cvparser_b21_01/datatypes/export.dart';
 import 'package:flutter/material.dart';
-
-import 'package:cvparser_b21_01/colors.dart';
 
 class CardWidget extends StatefulWidget {
   final String title;
@@ -40,7 +39,7 @@ class _CardWidgetState extends State<CardWidget> {
             });
           },
           child: Container(
-            width: 900,
+            width: 1350,
             height: 100,
             margin: const EdgeInsets.symmetric(vertical: 5),
             decoration: BoxDecoration(
@@ -55,7 +54,7 @@ class _CardWidgetState extends State<CardWidget> {
                   Text(
                     widget.title,
                     style: const TextStyle(
-                      fontSize: 60,
+                      fontSize: 52,
                       fontFamily: "Eczar",
                       fontWeight: FontWeight.w400,
                       color: colorTextSmoothBlack,
@@ -83,12 +82,15 @@ class _CardWidgetState extends State<CardWidget> {
                     (e) {
                       // make changes in the UI here for your company card
                       return Card(
+                        color: colorSurfaceSmoothGreenPlant,
+                        shadowColor: Colors.transparent,
                         child: Text(
                           e.match,
                           style: const TextStyle(
                             fontSize: 20,
                             fontFamily: 'Merriweather',
                             color: colorTextSmoothBlack,
+                            backgroundColor: Colors.transparent,
                           ),
                         ),
                       );

@@ -3,17 +3,15 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui';
 
-import 'package:cvparser_b21_01/colors.dart';
 import 'package:cvparser_b21_01/datatypes/export.dart';
 import 'package:cvparser_b21_01/services/file_saver.dart';
 import 'package:cvparser_b21_01/services/key_listener.dart';
+import 'package:cvparser_b21_01/views/dialogs/fail_dialog.dart';
+import 'package:cvparser_b21_01/views/dialogs/progress_dialog.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-// TODO: UI: + transfer progress percantage to the blocking popup
-
-// weak TODO: any action fail popup
+// TODO: implement search
 
 class MainPageController extends GetxController {
   final keyLookup = Get.find<KeyListener>();
@@ -36,154 +34,158 @@ class MainPageController extends GetxController {
   /// also it's supposed to be any kind modified only inside this file,
   /// any outer invocation must just read data
   final cvs = <Selectable<CVBase>>[].obs;
-  final _current = Rxn<int>();
-
-  CVEntries? get current => _current.value != null
-      ? (cvs[_current.value!].item as ParsedCV).data
-      : null;
+  final _current = Rxn<ParsedCV>();
 
   /// used for range select
   int? selectPoint;
 
+  /// just not to go over cvs twice in [exportSelected]
+  int selected = 0;
+
   /// subscribe to the stream of key events
   late StreamSubscription<dynamic> _escListener;
+
   late StreamSubscription<dynamic> _delListener;
+  ParsedCV? get current => _current.value;
 
   /// Creates native dialog for user to select files
-  Future<void> askUserToUploadPdfFiles() async {
-    if (_busy) {
-      return;
-    }
-    _busy = true;
+  void askUserToUploadPdfFiles() {
+    _asyncSafe(
+      "File uploader",
+      () async* {
+        yield ProgressDone(null, "waiting for user");
 
-    try {
-      FilePickerResult? picked = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-        allowedExtensions: ["pdf"], // TESTIT: what if not pdf
-        allowMultiple: true,
-        withReadStream: true,
-        withData: false,
-        lockParentWindow: true,
-      );
+        FilePickerResult? picked = await FilePicker.platform.pickFiles(
+          type: FileType.custom,
+          allowedExtensions: ["pdf"], // TESTIT: what if not pdf
+          allowMultiple: true,
+          withReadStream: true,
+          withData: false,
+          lockParentWindow: true,
+        );
 
-      // if cvs is not blocked and there is some input
-      if (picked != null) {
-        for (PlatformFile file in picked.files) {
-          // add an NotParsedCV
-          cvs.add(
-            Selectable(
-              item: RawPdfCV(
-                // just because it's web, we cannot store file path,
-                // but we can get stream of filedata
-                filename: file.name,
-                readStream: file.readStream,
+        // if cvs is not blocked and there is some input
+        if (picked != null) {
+          final len = picked.files.length;
+          var done = 0;
+
+          for (PlatformFile file in picked.files) {
+            // add an NotParsedCV
+            cvs.add(
+              Selectable(
+                item: RawPdfCV(
+                  // just because it's web, we cannot store file path,
+                  // but we can get stream of filedata
+                  filename: file.name,
+                  readStream: file.readStream,
+                ),
+                isSelected: false,
               ),
-              isSelected: false,
-            ),
-          );
+            );
+
+            done++;
+            yield ProgressDone(
+              done / len,
+              "$done / $len",
+            );
+          }
         }
-      }
-    } catch (e) {
-      _busy = false;
-      rethrow;
-    } finally {
-      _busy = false;
-    }
+      },
+    );
   }
 
   /// Tries to delete selected
   void deleteSelected() {
-    if (_busy) {
-      return;
-    } // no need to mark _busy because this is a synchronus function
-
-    var remaining = <Selectable<CVBase>>[];
-    for (var cv in cvs) {
-      if (!cv.isSelected) {
-        remaining.add(cv);
-      }
-    }
-    cvs.value = remaining;
-    selectPoint = null;
+    _syncSafe(
+      () {
+        var remaining = <Selectable<CVBase>>[];
+        for (var cv in cvs) {
+          if (!cv.isSelected) {
+            remaining.add(cv);
+          }
+        }
+        cvs.value = remaining;
+        selectPoint = null;
+      },
+    );
   }
 
   /// Tries to deselect all
   void deselectAll() {
-    if (_busy) {
-      return;
-    } // no need to mark _busy because this is a synchronus function
-
-    for (var cv in cvs) {
-      cv.isSelected = false;
-    }
-    cvs.refresh();
+    _syncSafe(
+      () {
+        for (var cv in cvs) {
+          cv.isSelected = false;
+        }
+        selected = 0;
+        cvs.refresh();
+      },
+    );
   }
 
-  /// Try to export selected
-  Future<void> exportSelected() async {
-    if (_busy) {
-      return;
-    }
-    _busy = true;
-
-    _dialog("Exporting");
-
-    try {
-      List<ParsedCV> parsedCVs = [];
-      for (var index = 0; index != cvs.length; index++) {
-        var cv = cvs[index];
-        if (cv.isSelected) {
-          await _parseCv(index); // make sure that all cv's are parsed
-          parsedCVs.add(cv.item as ParsedCV);
-        }
-      }
-
-      // export to json file and save it
-      {
+  void exportCurrent() {
+    _asyncSafe(
+      "Exporting",
+      () async* {
         // export to json string
         const encoder = JsonEncoder.withIndent("  ");
-        String encoded = encoder.convert(parsedCVs);
+        String encoded = encoder.convert(current);
 
         // save to file
         await fileSaver.saveJsonFile(
-          name: "bunch.json",
+          name: "single.json",
           bytes: Uint8List.fromList(encoded.codeUnits),
         );
-      }
-    } catch (e) {
-      _busy = false;
-      rethrow;
-    } finally {
-      _busy = false;
-      Get.back();
-    }
+      },
+    );
   }
 
-  Future<void> exportCurrent() async {
-    if (_busy) {
-      return;
-    }
-    _busy = true;
+  /// Try to export selected
+  void exportSelected() {
+    _asyncSafe(
+      "Exporting",
+      () async* {
+        List<ParsedCV> parsedCVs = [];
+        var current = 0;
 
-    _dialog("Exporting");
+        for (var index = 0; index != cvs.length; index++) {
+          var cv = cvs[index];
+          if (cv.isSelected) {
+            // notify that we are parsing something
+            current++;
+            yield ProgressDone(
+              current / selected,
+              "$current / $selected \n ${cv.item.filename}",
+            );
 
-    try {
-      // export to json string
-      const encoder = JsonEncoder.withIndent("  ");
-      String encoded = encoder.convert(current);
+            // make sure that all cv's are parsed
+            try {
+              await _parseCv(index);
+            } catch (e) {
+              yield ProgressDone(
+                current / selected,
+                "$current / $selected \n ${cv.item.filename} (with mock API)",
+              );
+              await _parseCv(index, mock: true);
+            }
+            parsedCVs.add(cv.item as ParsedCV);
+          }
+        }
 
-      // save to file
-      await fileSaver.saveJsonFile(
-        name: "single.json",
-        bytes: Uint8List.fromList(encoded.codeUnits),
-      );
-    } catch (e) {
-      _busy = false;
-      rethrow;
-    } finally {
-      _busy = false;
-      Get.back();
-    }
+        // export to json file and save it
+        {
+          // export to json string
+          const encoder = JsonEncoder.withIndent("  ");
+          String encoded = encoder.convert(parsedCVs);
+
+          // save to file
+          await fileSaver.saveJsonFile(
+            name: "bunch.json",
+            bytes: Uint8List.fromList(encoded.codeUnits),
+          );
+        }
+      },
+    );
   }
 
   @override
@@ -202,6 +204,7 @@ class MainPageController extends GetxController {
 
   @override
   void onInit() {
+    // setup keyboard listeners
     _escListener = keyLookup.escEventStream.listen((event) {
       if (event == KeyEventType.down) {
         deselectAll();
@@ -212,101 +215,117 @@ class MainPageController extends GetxController {
         deleteSelected();
       }
     });
+
+    // retrive data from route
+    if (Get.arguments != null) {
+      for (RawPdfCV cv in Get.arguments) {
+        cvs.add(
+          Selectable(
+            item: cv,
+            isSelected: false,
+          ),
+        );
+      }
+    }
+
     super.onInit();
   }
 
   /// Switches select of cv
   void select(int index) {
-    if (_busy) {
-      return;
-    } // no need to mark _busy because this is a synchronus function
-
-    cvs[index].isSelected = true;
-    cvs.refresh();
+    _syncSafe(
+      () {
+        cvs[index].isSelected = true;
+        selected++;
+        cvs.refresh();
+      },
+    );
   }
 
   /// Tries to select all
   void selectAll() {
-    if (_busy) {
-      return;
-    } // no need to mark _busy because this is a synchronus function
-
-    for (var cv in cvs) {
-      cv.isSelected = true;
-    }
-    cvs.refresh();
+    _syncSafe(
+      () {
+        for (var cv in cvs) {
+          cv.isSelected = true;
+        }
+        selected = cvs.length;
+        cvs.refresh();
+      },
+    );
   }
 
-  /// Tries to parse this CV and then set the [_current]
-  Future<void> setCurrent(int index) async {
-    if (_busy) {
-      return;
-    }
-    _busy = true;
-
-    _dialog("Loading content");
-
-    try {
-      await _parseCv(index);
-      _current.value = index;
-    } catch (e) {
-      _busy = false;
-      rethrow;
-    } finally {
-      _busy = false;
-      Get.back();
-    }
+  /// Tries to parse this CV and then set the [current]
+  void setCurrent(int index) {
+    _asyncSafe(
+      "Parsing results",
+      () async* {
+        try {
+          await _parseCv(index);
+        } catch (e) {
+          yield ProgressDone(null, "fallback to the mock API");
+          await _parseCv(index, mock: true);
+        }
+        _current.value = (cvs[index].item as ParsedCV);
+      },
+    );
   }
 
   /// Switches select of cv
   void switchSelect(int index) {
-    if (_busy) {
-      return;
-    } // no need to mark _busy because this is a synchronus function
-
-    cvs[index].isSelected = !cvs[index].isSelected;
-    cvs.refresh();
+    _syncSafe(
+      () {
+        cvs[index].isSelected = !cvs[index].isSelected;
+        selected += cvs[index].isSelected ? 1 : -1;
+        cvs.refresh();
+      },
+    );
   }
 
-  void _dialog(String text) {
+  /// Wrapper method to make it safe, see [_busy]
+  /// it also handles crushes of coroutines
+  /// and is responsible for blocking dialog popup
+  void _asyncSafe(
+    String dialogTitle,
+    Stream<ProgressDone> Function() coroutine,
+  ) {
+    if (_busy) {
+      return;
+    }
+    _busy = true;
+    final safeProgressStream = StreamController<ProgressDone>();
+
     Get.dialog(
-      barrierDismissible: false,
-      Center(
-        child: Card(
-          child: SizedBox(
-            height: 200,
-            width: 350,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  text,
-                  style: const TextStyle(
-                    fontSize: 30,
-                    fontFamily: "Eczar",
-                    fontWeight: FontWeight.w400,
-                    color: colorTextSmoothBlack,
-                  ),
-                ),
-                const Expanded(
-                  child: Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                ),
-                const Text(
-                  "please wait...",
-                  style: TextStyle(
-                    fontSize: 30,
-                    fontFamily: "Eczar",
-                    fontWeight: FontWeight.w400,
-                    color: colorTextSmoothBlack,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+      ProgressDialog(
+        titleText: dialogTitle,
+        progressStream: safeProgressStream.stream,
       ),
+      barrierDismissible: false, // make it blocking
+    );
+
+    finalize() {
+      _busy = false;
+      Get.back();
+      safeProgressStream.close();
+    }
+
+    safeProgressStream.add(ProgressDone(0, "please wait..."));
+    coroutine().listen(
+      safeProgressStream.add,
+      onDone: () {
+        safeProgressStream.add(ProgressDone(1, "done!"));
+        finalize();
+      },
+      onError: (e) {
+        finalize();
+        Get.dialog(
+          FailDialog(
+            titleText: "Action failed",
+            details: e.toString(),
+          ),
+        );
+      },
+      cancelOnError: true,
     );
   }
 
@@ -321,7 +340,7 @@ class MainPageController extends GetxController {
   /// as it is just a subroutine function for [exportSelected] and [setCurrent]
   /// so this is the reason why we don't block it with [_busy] flag,
   /// but it uses it's own [_parsingCv]
-  Future<void> _parseCv(int index) async {
+  Future<void> _parseCv(int index, {bool mock = false}) async {
     assert(!_parsingCv);
     assert(_busy);
 
@@ -333,7 +352,7 @@ class MainPageController extends GetxController {
       if (tmp is NotParsedCV) {
         cvs[index].item = CVBase(tmp.filename); // mark it as processing
         try {
-          cvs[index].item = await tmp.parse(); // some async code
+          cvs[index].item = await tmp.parse(mock: mock); // some async code
         } catch (e) {
           cvs[index].item = tmp; // so it's not processing anymore
           rethrow;
@@ -360,6 +379,25 @@ class MainPageController extends GetxController {
       rethrow;
     } finally {
       _parsingCv = false;
+    }
+  }
+
+  void _syncSafe(
+    void Function() func,
+  ) {
+    if (_busy) {
+      return;
+    } // no need to mark _busy because this is a synchronus function
+
+    try {
+      func();
+    } catch (e) {
+      Get.dialog(
+        FailDialog(
+          titleText: "Action failed",
+          details: e.toString(),
+        ),
+      );
     }
   }
 }

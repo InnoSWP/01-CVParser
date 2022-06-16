@@ -6,19 +6,13 @@ import 'package:get/get.dart';
 
 import 'file_explorer/pdf_icon_button.dart';
 
-class FileExplorer extends StatelessWidget {
-  final controller = Get.find<MainPageController>(); // observe [cvs]
+class FileExplorer extends GetView<MainPageController> {
   final keyLookup = Get.find<KeyListener>();
 
   FileExplorer({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // weak TODO: beautify select UX:
-    // - smooth animations of select/deselect,
-    // - accent on the tile under the cursor
-    // - select all becomes deselect all if all is selected
-    // - maybe somewhere insert selection ?
     // weak TODO: this big plus icon on no cvs
     return Obx(
       () => GridView.builder(

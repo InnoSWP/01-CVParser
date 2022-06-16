@@ -17,7 +17,7 @@ class RawPdfCV extends NotParsedCV {
         super(filename);
 
   @override
-  Future<ParsedCV> parse() async {
+  Future<ParsedCV> parse({bool mock = false}) async {
     // extract text
     String text = textExtracter.extractTextFromPdfBytes(
       await data.bytes,
@@ -25,22 +25,8 @@ class RawPdfCV extends NotParsedCV {
 
     // parse the text using iExtract API
     return ParsedCV(
-      // weak TODO: rm it as it is temporary because API is not responding
       filename: filename,
-      data: {
-        "Skills": [
-          CVMatch(match: "C++", sentence: "I love C++"),
-          CVMatch(match: "Java", sentence: "I had an experience in Java"),
-        ],
-        "Language": [
-          CVMatch(match: "Eng", sentence: "B2 english"),
-        ]
-      },
-    );
-
-    return ParsedCV(
-      filename: filename,
-      data: await cvParser.parseCV(text),
+      data: await cvParser.parseCV(text, mock: mock),
     );
   }
 }
