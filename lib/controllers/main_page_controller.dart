@@ -219,6 +219,25 @@ class MainPageController extends GetxController {
       }
     });
 
+    // setup a dummy worker that will iterate and parse CV's
+    Future(() async {
+      int index = 0;
+      while (true) {
+        if (cvs.isNotEmpty) {
+          index %= cvs.length;
+          if (!cvs[index].item.isParseCached()) {
+            try {
+              await _parsedCv(index, mock: true);
+            } catch (e) {}
+            index = 0;
+          } else {
+            index++;
+          }
+        }
+        await Future.delayed(const Duration(milliseconds: 16));
+      }
+    });
+
     // retrive data from route
     if (Get.arguments != null) {
       for (RawPdfCV cv in Get.arguments) {
