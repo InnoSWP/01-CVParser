@@ -320,7 +320,7 @@ class MainPageController extends GetxController {
 
     // retrive data from route
     if (Get.arguments != null) {
-      for (RawPdfCV cv in Get.arguments) {
+      for (NotParsedCV cv in Get.arguments) {
         cvs.add(
           Selectable(
             item: cv,
@@ -329,6 +329,11 @@ class MainPageController extends GetxController {
         );
       }
     }
+
+    // schedule it to the next frame when the view will be built
+    Future(() {
+      setCurrent(0);
+    });
 
     super.onInit();
   }

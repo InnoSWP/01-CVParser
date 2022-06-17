@@ -1,5 +1,6 @@
 import 'package:cvparser_b21_01/datatypes/export.dart';
 import 'package:cvparser_b21_01/views/dialogs/fail_dialog.dart';
+import 'package:cvparser_b21_01/views/dialogs/process_dialog.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_dropzone/flutter_dropzone.dart';
 import 'package:get/get.dart';
@@ -46,7 +47,7 @@ class InitialPageController extends GetxController {
         );
       }
 
-      Get.toNamed("/main", arguments: cvs);
+      gotoMain(cvs);
     }
   }
 
@@ -75,7 +76,34 @@ class InitialPageController extends GetxController {
         return;
       }
 
-      Get.toNamed("/main", arguments: cvs);
+      gotoMain(cvs);
     }
+  }
+
+  void gotoMain(List<RawPdfCV> cvs) async {
+    // parse first
+    Get.dialog(
+      const ProcessDialog(
+        titleText: "Redirecting",
+        details: "please wait ...",
+      ),
+      barrierDismissible: false,
+    );
+    try {
+      await cvs[0].parse();
+    } catch (e) {
+      Get.back();
+      Get.dialog(
+        const FailDialog(
+          titleText: "File parsing failed",
+          details: "failed to parse the first file",
+        ),
+      );
+      return;
+    }
+    Get.back();
+
+    // goto
+    Get.toNamed("/main", arguments: cvs);
   }
 }
