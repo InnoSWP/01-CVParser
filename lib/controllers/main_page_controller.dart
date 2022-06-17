@@ -251,6 +251,19 @@ class MainPageController extends GetxController {
     );
   }
 
+  /// Invertes selection
+  void invertSelection() {
+    _syncSafe(
+      () {
+        for (final cv in cvs) {
+          cv.isSelected = !cv.isSelected;
+        }
+        cvs.refresh();
+        // then filteredCvs will deselect undisplayed ones
+      },
+    );
+  }
+
   @override
   void onClose() async {
     await _escListener.cancel();
@@ -350,19 +363,6 @@ class MainPageController extends GetxController {
         for (final cv in cvs) {
           cv.isSelected = cv.item.isParseCachedComplete() &&
               cv.item.satisfies(fileExplorerQuery);
-        }
-        cvs.refresh();
-        // then filteredCvs will deselect undisplayed ones
-      },
-    );
-  }
-
-  /// Invertes selection
-  void invertSelection() {
-    _syncSafe(
-      () {
-        for (final cv in cvs) {
-          cv.isSelected = !cv.isSelected;
         }
         cvs.refresh();
         // then filteredCvs will deselect undisplayed ones
