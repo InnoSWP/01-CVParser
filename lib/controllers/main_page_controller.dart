@@ -466,6 +466,7 @@ class MainPageController extends GetxController {
       return res;
     } catch (e) {
       cvs.removeAt(index); // as now readStream is invalid
+      // TODO: show popup
       rethrow;
     }
   }
