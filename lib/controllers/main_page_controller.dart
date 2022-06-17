@@ -53,7 +53,7 @@ class MainPageController extends GetxController {
     ParsedCV? res = _current.value;
 
     // pass unfiltered
-    if (res == null || contentAreaQuery == null) {
+    if (res == null) {
       return res;
     }
 
