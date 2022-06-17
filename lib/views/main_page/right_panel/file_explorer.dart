@@ -33,10 +33,10 @@ class FileExplorer extends GetView<MainPageController> {
                   oldWidget.isSelected != newWidget.isSelected ||
                   oldWidget.isParsed != newWidget.isParsed,
               child: PdfIconButton(
-                index: index,
-                isSelected: tile.isSelected,
-                filename: tile.item.filename,
-                isParsed: tile.item.isParseCachedComplete(),
+                index: tile.index,
+                isSelected: tile.item.isSelected,
+                filename: tile.item.item.filename,
+                isParsed: tile.item.item.isParseCachedComplete(),
               ),
             );
           },

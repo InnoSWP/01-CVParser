@@ -5,6 +5,7 @@ import 'dart:ui';
 
 import 'package:async/async.dart';
 import 'package:cvparser_b21_01/datatypes/export.dart';
+import 'package:cvparser_b21_01/datatypes/misc/indexable.dart';
 import 'package:cvparser_b21_01/services/file_saver.dart';
 import 'package:cvparser_b21_01/services/key_listener.dart';
 import 'package:cvparser_b21_01/views/dialogs/fail_dialog.dart';
@@ -90,16 +91,23 @@ class MainPageController extends GetxController {
   }
 
   /// may be used by view to filter what it need to display
-  List<Selectable<NotParsedCV>> get filteredCvs {
-    final res = <Selectable<NotParsedCV>>[];
+  List<Indexable<Selectable<NotParsedCV>>> get filteredCvs {
+    final res = <Indexable<Selectable<NotParsedCV>>>[];
+    int index = 0;
     for (final packet in cvs) {
       final cv = packet.item;
       if (cv.satisfies(fileExplorerQuery)) {
-        res.add(packet);
+        res.add(
+          Indexable(
+            item: packet,
+            index: index,
+          ),
+        );
       } else {
         // whenever files become displayed, it deselects undisplayed ones
         packet.isSelected = false;
       }
+      index++;
     }
     return res;
   }
