@@ -18,7 +18,7 @@ class RawPdfCV extends NotParsedCV {
     required this.size,
   }) : super(filename);
 
-  Future<ParsedCV> _parse({bool mock = false}) async {
+  Future<ParsedCV> _parse() async {
     // extract text
     String text = await textExtracter.extractTextFromPdf(
       readStream, // will fail on the second call
@@ -28,7 +28,7 @@ class RawPdfCV extends NotParsedCV {
     // parse the text using iExtract API
     final res = ParsedCV(
       filename: filename,
-      data: await cvParser.parseCV(text, mock: mock),
+      data: await cvParser.parseCV(text),
     );
 
     cached = res;
@@ -52,9 +52,9 @@ class RawPdfCV extends NotParsedCV {
   }
 
   @override
-  Future<ParsedCV> parse({bool mock = false}) async {
+  Future<ParsedCV> parse() async {
     // check if it's already in process
-    future ??= _parse(mock: mock);
+    future ??= _parse();
     return await future!;
   }
 

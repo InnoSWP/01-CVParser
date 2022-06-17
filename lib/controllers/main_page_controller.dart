@@ -223,7 +223,7 @@ class MainPageController extends GetxController {
 
             // make sure that all cv's are parsed
             try {
-              parsedCVs.add(await _parsedCv(index, mock: true));
+              parsedCVs.add(await _parsedCv(index));
             } catch (e) {
               index--;
               yield ProgressDone(
@@ -291,7 +291,7 @@ class MainPageController extends GetxController {
             index %= cvs.length;
             if (!cvs[index].item.isParseCached()) {
               try {
-                await _parsedCv(index, mock: true);
+                await _parsedCv(index);
               } catch (e) {}
               index = 0;
             } else {
@@ -375,7 +375,7 @@ class MainPageController extends GetxController {
     _asyncSafe(
       "Parsing results",
       () async* {
-        _current.value = await _parsedCv(index, mock: true);
+        _current.value = await _parsedCv(index);
       },
     );
   }
@@ -455,10 +455,10 @@ class MainPageController extends GetxController {
   ///
   /// Note: will fo nothing if the item was already parsed
   /// Note2: will sync with the first invocation of itself
-  Future<ParsedCV> _parsedCv(int index, {bool mock = false}) async {
+  Future<ParsedCV> _parsedCv(int index) async {
     try {
       bool wasCached = !cvs[index].item.isParseCached();
-      final res = await cvs[index].item.parse(mock: mock);
+      final res = await cvs[index].item.parse();
       // here cvs[index].item will be in state cache completed
       if (wasCached) {
         cvs.refresh();

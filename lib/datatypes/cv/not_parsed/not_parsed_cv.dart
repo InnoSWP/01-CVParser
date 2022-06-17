@@ -17,7 +17,7 @@ class NotParsedCV extends CVBase {
     throw UnimplementedError();
   }
 
-  Future<ParsedCV> parse({bool mock = false}) async {
+  Future<ParsedCV> parse() async {
     throw UnimplementedError();
   }
 
