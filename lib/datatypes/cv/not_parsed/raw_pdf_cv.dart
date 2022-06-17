@@ -10,7 +10,7 @@ class RawPdfCV extends NotParsedCV {
   final Stream<List<int>> readStream;
   final int size;
   Future<ParsedCV>? future;
-  bool complete = false;
+  ParsedCV? cached;
 
   RawPdfCV({
     required filename,
@@ -31,7 +31,7 @@ class RawPdfCV extends NotParsedCV {
       data: await cvParser.parseCV(text, mock: mock),
     );
 
-    complete = true;
+    cached = res;
 
     return res;
   }
@@ -43,7 +43,12 @@ class RawPdfCV extends NotParsedCV {
 
   @override
   bool isParseCachedComplete() {
-    return complete;
+    return cached != null;
+  }
+
+  @override
+  ParsedCV immediateParse() {
+    return cached!;
   }
 
   @override
@@ -51,5 +56,32 @@ class RawPdfCV extends NotParsedCV {
     // check if it's already in process
     future ??= _parse(mock: mock);
     return await future!;
+  }
+
+  @override
+  bool satisfies(RegExp query) {
+    if (cached == null) {
+      return true;
+    }
+
+    for (final entry in cached!.data.entries) {
+      String label = entry.key;
+      for (final cvmatch in entry.value) {
+        String match = cvmatch.match;
+        String sentence = cvmatch.sentence;
+
+        String combine = """
+          filename: $filename
+          label: $label
+          match: $match
+          sentence: $sentence
+        """;
+
+        if (query.hasMatch(combine)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 }

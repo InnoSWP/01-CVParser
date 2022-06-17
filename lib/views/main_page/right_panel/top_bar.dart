@@ -11,28 +11,28 @@ class TopBar extends GetView<MainPageController> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-          TextField(
-            // TODO: fix styling
-            style: const TextStyle(color: colorSecondaryLightGreenPlant),
-            cursorColor: colorSecondaryLightGreenPlant,
-            decoration: InputDecoration(
-
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30.0),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30.0),
-                borderSide:
-                    const BorderSide(color: colorSecondaryLightGreenPlant),
-              ),
-              hintText: "Search",
-              hintStyle: const TextStyle(color: colorSecondaryLightGreenPlant),
-              prefixIcon: const Icon(Icons.search,
-                  color: colorSecondaryLightGreenPlant),
-              constraints: const BoxConstraints(maxHeight: 40, maxWidth: 450),
-              contentPadding: const EdgeInsets.all(0),
+        TextField(
+          // TODO: fix styling
+          onSubmitted: controller.updateFileExplorerQuery,
+          style: const TextStyle(color: colorSecondaryLightGreenPlant),
+          cursorColor: colorSecondaryLightGreenPlant,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(30.0),
             ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(30.0),
+              borderSide:
+                  const BorderSide(color: colorSecondaryLightGreenPlant),
+            ),
+            hintText: "Search",
+            hintStyle: const TextStyle(color: colorSecondaryLightGreenPlant),
+            prefixIcon:
+                const Icon(Icons.search, color: colorSecondaryLightGreenPlant),
+            constraints: const BoxConstraints(maxHeight: 40, maxWidth: 450),
+            contentPadding: const EdgeInsets.all(0),
           ),
+        ),
         const SizedBox(height: 18.0),
         ElevatedButton(
           style: ButtonStyle(

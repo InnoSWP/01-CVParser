@@ -14,32 +14,34 @@ class FileExplorer extends GetView<MainPageController> {
 
   @override
   Widget build(BuildContext context) {
-    // weak TODO: this big plus icon on no cvs
     return Obx(
-      () => GridView.builder(
-        itemCount: controller.cvs.length,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 4,
-          mainAxisSpacing: 1,
-          crossAxisSpacing: 1,
-          childAspectRatio: 1,
-        ),
-        itemBuilder: (context, index) {
-          final tile = controller.cvs[index];
-          return ShouldRebuild<PdfIconButton>(
-            shouldRebuild: (oldWidget, newWidget) =>
-                oldWidget.filename != newWidget.filename ||
-                oldWidget.isSelected != newWidget.isSelected ||
-                oldWidget.isParsed != newWidget.isParsed,
-            child: PdfIconButton(
-              index: index,
-              isSelected: tile.isSelected,
-              filename: tile.item.filename,
-              isParsed: tile.item.isParseCachedComplete(),
-            ),
-          );
-        },
-      ),
+      () {
+        final filteredCvs = controller.filteredCvs;
+        return GridView.builder(
+          itemCount: filteredCvs.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 4,
+            mainAxisSpacing: 1,
+            crossAxisSpacing: 1,
+            childAspectRatio: 1,
+          ),
+          itemBuilder: (context, index) {
+            final tile = filteredCvs[index];
+            return ShouldRebuild<PdfIconButton>(
+              shouldRebuild: (oldWidget, newWidget) =>
+                  oldWidget.filename != newWidget.filename ||
+                  oldWidget.isSelected != newWidget.isSelected ||
+                  oldWidget.isParsed != newWidget.isParsed,
+              child: PdfIconButton(
+                index: index,
+                isSelected: tile.isSelected,
+                filename: tile.item.filename,
+                isParsed: tile.item.isParseCachedComplete(),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }

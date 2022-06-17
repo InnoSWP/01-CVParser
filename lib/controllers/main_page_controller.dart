@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:async/async.dart';
 import 'package:cvparser_b21_01/datatypes/export.dart';
 import 'package:cvparser_b21_01/services/file_saver.dart';
 import 'package:cvparser_b21_01/services/key_listener.dart';
@@ -11,11 +12,16 @@ import 'package:cvparser_b21_01/views/dialogs/progress_dialog.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
 
-// TODO: implement search
+// TODO: refactor (separate services, rearrange datatypes (especially cv's))
 
 class MainPageController extends GetxController {
   final keyLookup = Get.find<KeyListener>();
   final fileSaver = Get.find<FileSaver>();
+
+  late final CancelableOperation dummyWorker;
+
+  RegExp fileExplorerQuery = RegExp("");
+  RegExp contentAreaQuery = RegExp("");
 
   /// Using lazy approach, we will initially upload cv's as [NotParsedCV],
   /// but on the first invocation it converts them to the [ParsedCV].
@@ -40,9 +46,63 @@ class MainPageController extends GetxController {
 
   /// subscribe to the stream of key events
   late StreamSubscription<dynamic> _escListener;
-
   late StreamSubscription<dynamic> _delListener;
-  ParsedCV? get current => _current.value;
+
+  /// get current applying search filter to it
+  ParsedCV? get current {
+    ParsedCV? res = _current.value;
+
+    // pass unfiltered
+    if (res == null || contentAreaQuery == null) {
+      return res;
+    }
+
+    // filter
+    CVEntries filteredEntries = {};
+
+    for (final entry in res.data.entries) {
+      String label = entry.key;
+      final filteredMatches = <CVMatch>[];
+      for (final cvmatch in entry.value) {
+        String match = cvmatch.match;
+        String sentence = cvmatch.sentence;
+
+        String combine = """
+          label: $label
+          match: $match
+          sentence: $sentence
+        """;
+
+        if (contentAreaQuery.hasMatch(combine)) {
+          filteredMatches.add(cvmatch);
+        }
+      }
+
+      if (filteredMatches.isNotEmpty) {
+        filteredEntries[label] = filteredMatches;
+      }
+    }
+
+    return ParsedCV(
+      filename: res.filename,
+      data: filteredEntries,
+    );
+  }
+
+  /// may be used by view to filter what it need to display
+  List<Selectable<NotParsedCV>> get filteredCvs {
+    final res = <Selectable<NotParsedCV>>[];
+    for (final packet in cvs) {
+      final cv = packet.item;
+      if (cv.satisfies(fileExplorerQuery)) {
+        res.add(packet);
+      } else {
+        // whenever files become displayed, it deselects undisplayed ones
+        packet.isSelected = false;
+      }
+    }
+    return res;
+  }
 
   /// Creates native dialog for user to select files
   void askUserToUploadPdfFiles() {
@@ -196,6 +256,8 @@ class MainPageController extends GetxController {
     await _escListener.cancel();
     await _delListener.cancel();
 
+    dummyWorker.cancel();
+
     // ya, it's ofcource better to track the actual future instances instead of
     // just flag [_busy], and cancel them when the actual class instance becomes
     // destroyed, but it's muuuch complex, moreover the class instance is
@@ -219,24 +281,29 @@ class MainPageController extends GetxController {
       }
     });
 
-    // setup a dummy worker that will iterate and parse CV's
-    Future(() async {
-      int index = 0;
-      while (true) {
-        if (cvs.isNotEmpty) {
-          index %= cvs.length;
-          if (!cvs[index].item.isParseCached()) {
-            try {
-              await _parsedCv(index, mock: true);
-            } catch (e) {}
-            index = 0;
-          } else {
-            index++;
+    // setup a dummy worker
+    dummyWorker = CancelableOperation.fromFuture(
+      Future(() async {
+        int index = 0;
+        while (true) {
+          // iterate and parse CV's
+          if (cvs.isNotEmpty) {
+            index %= cvs.length;
+            if (!cvs[index].item.isParseCached()) {
+              try {
+                await _parsedCv(index, mock: true);
+              } catch (e) {}
+              index = 0;
+            } else {
+              index++;
+            }
           }
+
+          // delay not to overload system
+          await Future.delayed(const Duration(milliseconds: 16));
         }
-        await Future.delayed(const Duration(milliseconds: 16));
-      }
-    });
+      }),
+    );
 
     // retrive data from route
     if (Get.arguments != null) {
@@ -263,12 +330,12 @@ class MainPageController extends GetxController {
     );
   }
 
-  /// Tries to select all
+  /// Select all that matches query
   void selectAll() {
     _syncSafe(
       () {
-        for (var cv in cvs) {
-          cv.isSelected = true;
+        for (final cv in cvs) {
+          cv.isSelected = cv.item.satisfies(fileExplorerQuery);
         }
         cvs.refresh();
       },
@@ -295,6 +362,16 @@ class MainPageController extends GetxController {
     );
   }
 
+  /// apply new search filter
+  void updateFileExplorerQuery(String text) {
+    try {
+      fileExplorerQuery = RegExp(text);
+    } catch (e) {
+      fileExplorerQuery = RegExp("");
+    }
+    cvs.refresh();
+  }
+
   /// Wrapper method to make it safe, see [_busy]
   /// it also handles crushes of coroutines
   /// and is responsible for blocking dialog popup
@@ -302,6 +379,7 @@ class MainPageController extends GetxController {
     String dialogTitle,
     Stream<ProgressDone> Function() coroutine,
   ) {
+    // TODO: cancellable
     if (_busy) {
       return;
     }
