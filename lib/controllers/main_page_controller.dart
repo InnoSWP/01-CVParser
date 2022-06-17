@@ -338,6 +338,34 @@ class MainPageController extends GetxController {
           cv.isSelected = cv.item.satisfies(fileExplorerQuery);
         }
         cvs.refresh();
+        // then filteredCvs will deselect undisplayed ones
+      },
+    );
+  }
+
+  /// Select parsed that matches query
+  void selectParsed() {
+    _syncSafe(
+      () {
+        for (final cv in cvs) {
+          cv.isSelected = cv.item.isParseCachedComplete() &&
+              cv.item.satisfies(fileExplorerQuery);
+        }
+        cvs.refresh();
+        // then filteredCvs will deselect undisplayed ones
+      },
+    );
+  }
+
+  /// Invertes selection
+  void invertSelection() {
+    _syncSafe(
+      () {
+        for (final cv in cvs) {
+          cv.isSelected = !cv.isSelected;
+        }
+        cvs.refresh();
+        // then filteredCvs will deselect undisplayed ones
       },
     );
   }
