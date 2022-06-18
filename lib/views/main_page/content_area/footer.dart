@@ -32,8 +32,8 @@ class Footer extends GetView<MainPageController> {
                     ),
                   ),
                 )
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              : Container(padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5), child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Flexible(child:
                     Text(
@@ -53,13 +53,18 @@ class Footer extends GetView<MainPageController> {
                       style: ButtonStyle(
                         fixedSize: MaterialStateProperty.all<Size>(
                             const Size(250, 35)),
+                        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                            RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            )),
                       ),
                       onPressed: controller.exportCurrent,
-                      child: const Text("EXPORT AS JSON"),
+                      child: const Text("EXPORT AS JSON", style: TextStyle(fontSize: 16, fontFamily: 'Merriweather', fontWeight: FontWeight.w600)),
                     ),
                   ],
                 ),
         ),
+      ),
       ),
     );
   }
