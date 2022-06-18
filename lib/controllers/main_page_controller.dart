@@ -3,7 +3,9 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:async/async.dart';
 import 'package:cvparser_b21_01/datatypes/export.dart';
+import 'package:cvparser_b21_01/datatypes/misc/indexable.dart';
 import 'package:cvparser_b21_01/services/file_saver.dart';
 import 'package:cvparser_b21_01/services/key_listener.dart';
 import 'package:cvparser_b21_01/views/dialogs/fail_dialog.dart';
@@ -11,11 +13,16 @@ import 'package:cvparser_b21_01/views/dialogs/progress_dialog.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
 
-// TODO: implement search
+// TODO: refactor (separate services, rearrange datatypes (especially cv's))
 
 class MainPageController extends GetxController {
   final keyLookup = Get.find<KeyListener>();
   final fileSaver = Get.find<FileSaver>();
+
+  late final CancelableOperation dummyWorker;
+
+  RegExp fileExplorerQuery = RegExp("");
+  RegExp contentAreaQuery = RegExp("");
 
   /// Using lazy approach, we will initially upload cv's as [NotParsedCV],
   /// but on the first invocation it converts them to the [ParsedCV].
@@ -28,25 +35,82 @@ class MainPageController extends GetxController {
   /// Note: there can be only one sync/async worker that
   /// is working with the data inside this class
   bool _busy = false;
-  bool _parsingCv = false; // see [_parseCV] for more details
 
   /// Important: before modifying this data, firstly check the [_busy] flag,
   /// also it's supposed to be any kind modified only inside this file,
   /// any outer invocation must just read data
-  final cvs = <Selectable<CVBase>>[].obs;
+  final cvs = <Selectable<NotParsedCV>>[].obs;
   final _current = Rxn<ParsedCV>();
 
   /// used for range select
   int? selectPoint;
 
-  /// just not to go over cvs twice in [exportSelected]
-  int selected = 0;
-
   /// subscribe to the stream of key events
   late StreamSubscription<dynamic> _escListener;
-
   late StreamSubscription<dynamic> _delListener;
-  ParsedCV? get current => _current.value;
+
+  /// get current applying search filter to it
+  ParsedCV? get current {
+    ParsedCV? res = _current.value;
+
+    // pass unfiltered
+    if (res == null) {
+      return res;
+    }
+
+    // filter
+    CVEntries filteredEntries = {};
+
+    for (final entry in res.data.entries) {
+      String label = entry.key;
+      final filteredMatches = <CVMatch>[];
+      for (final cvmatch in entry.value) {
+        String match = cvmatch.match;
+        String sentence = cvmatch.sentence;
+
+        String combine = """
+          label: $label
+          match: $match
+          sentence: $sentence
+        """;
+
+        if (contentAreaQuery.hasMatch(combine)) {
+          filteredMatches.add(cvmatch);
+        }
+      }
+
+      if (filteredMatches.isNotEmpty) {
+        filteredEntries[label] = filteredMatches;
+      }
+    }
+
+    return ParsedCV(
+      filename: res.filename,
+      data: filteredEntries,
+    );
+  }
+
+  /// may be used by view to filter what it need to display
+  List<Indexable<Selectable<NotParsedCV>>> get filteredCvs {
+    final res = <Indexable<Selectable<NotParsedCV>>>[];
+    int index = 0;
+    for (final packet in cvs) {
+      final cv = packet.item;
+      if (cv.satisfies(fileExplorerQuery)) {
+        res.add(
+          Indexable(
+            item: packet,
+            index: index,
+          ),
+        );
+      } else {
+        // whenever files become displayed, it deselects undisplayed ones
+        packet.isSelected = false;
+      }
+      index++;
+    }
+    return res;
+  }
 
   /// Creates native dialog for user to select files
   void askUserToUploadPdfFiles() {
@@ -77,7 +141,8 @@ class MainPageController extends GetxController {
                   // just because it's web, we cannot store file path,
                   // but we can get stream of filedata
                   filename: file.name,
-                  readStream: file.readStream,
+                  readStream: file.readStream!,
+                  size: file.size,
                 ),
                 isSelected: false,
               ),
@@ -98,7 +163,7 @@ class MainPageController extends GetxController {
   void deleteSelected() {
     _syncSafe(
       () {
-        var remaining = <Selectable<CVBase>>[];
+        var remaining = <Selectable<NotParsedCV>>[];
         for (var cv in cvs) {
           if (!cv.isSelected) {
             remaining.add(cv);
@@ -117,7 +182,6 @@ class MainPageController extends GetxController {
         for (var cv in cvs) {
           cv.isSelected = false;
         }
-        selected = 0;
         cvs.refresh();
       },
     );
@@ -147,6 +211,13 @@ class MainPageController extends GetxController {
       () async* {
         List<ParsedCV> parsedCVs = [];
         var current = 0;
+        var selected = 0;
+
+        for (final cv in cvs) {
+          if (cv.isSelected) {
+            selected++;
+          }
+        }
 
         for (var index = 0; index != cvs.length; index++) {
           var cv = cvs[index];
@@ -160,15 +231,15 @@ class MainPageController extends GetxController {
 
             // make sure that all cv's are parsed
             try {
-              await _parseCv(index);
+              parsedCVs.add(await _parsedCv(index));
             } catch (e) {
+              index--;
               yield ProgressDone(
                 current / selected,
-                "$current / $selected \n ${cv.item.filename} (with mock API)",
+                "$current / $selected \n ${cv.item.filename} failed to parse",
               );
-              await _parseCv(index, mock: true);
+              await Future.delayed(const Duration(milliseconds: 500));
             }
-            parsedCVs.add(cv.item as ParsedCV);
           }
         }
 
@@ -188,10 +259,25 @@ class MainPageController extends GetxController {
     );
   }
 
+  /// Invertes selection
+  void invertSelection() {
+    _syncSafe(
+      () {
+        for (final cv in cvs) {
+          cv.isSelected = !cv.isSelected;
+        }
+        cvs.refresh();
+        // then filteredCvs will deselect undisplayed ones
+      },
+    );
+  }
+
   @override
   void onClose() async {
     await _escListener.cancel();
     await _delListener.cancel();
+
+    dummyWorker.cancel();
 
     // ya, it's ofcource better to track the actual future instances instead of
     // just flag [_busy], and cancel them when the actual class instance becomes
@@ -216,9 +302,33 @@ class MainPageController extends GetxController {
       }
     });
 
+    // setup a dummy worker
+    dummyWorker = CancelableOperation.fromFuture(
+      Future(() async {
+        int index = 0;
+        while (true) {
+          // iterate and parse CV's
+          if (cvs.isNotEmpty) {
+            index %= cvs.length;
+            if (!cvs[index].item.isParseCached()) {
+              try {
+                await _parsedCv(index);
+              } catch (e) {}
+              index = 0;
+            } else {
+              index++;
+            }
+          }
+
+          // delay not to overload system
+          await Future.delayed(const Duration(milliseconds: 16));
+        }
+      }),
+    );
+
     // retrive data from route
     if (Get.arguments != null) {
-      for (RawPdfCV cv in Get.arguments) {
+      for (NotParsedCV cv in Get.arguments) {
         cvs.add(
           Selectable(
             item: cv,
@@ -228,6 +338,11 @@ class MainPageController extends GetxController {
       }
     }
 
+    // schedule it to the next frame when the view will be built
+    Future(() {
+      setCurrent(0);
+    });
+
     super.onInit();
   }
 
@@ -236,21 +351,34 @@ class MainPageController extends GetxController {
     _syncSafe(
       () {
         cvs[index].isSelected = true;
-        selected++;
         cvs.refresh();
       },
     );
   }
 
-  /// Tries to select all
+  /// Select all that matches query
   void selectAll() {
     _syncSafe(
       () {
-        for (var cv in cvs) {
-          cv.isSelected = true;
+        for (final cv in cvs) {
+          cv.isSelected = cv.item.satisfies(fileExplorerQuery);
         }
-        selected = cvs.length;
         cvs.refresh();
+        // then filteredCvs will deselect undisplayed ones
+      },
+    );
+  }
+
+  /// Select parsed that matches query
+  void selectParsed() {
+    _syncSafe(
+      () {
+        for (final cv in cvs) {
+          cv.isSelected = cv.item.isParseCachedComplete() &&
+              cv.item.satisfies(fileExplorerQuery);
+        }
+        cvs.refresh();
+        // then filteredCvs will deselect undisplayed ones
       },
     );
   }
@@ -260,13 +388,7 @@ class MainPageController extends GetxController {
     _asyncSafe(
       "Parsing results",
       () async* {
-        try {
-          await _parseCv(index);
-        } catch (e) {
-          yield ProgressDone(null, "fallback to the mock API");
-          await _parseCv(index, mock: true);
-        }
-        _current.value = (cvs[index].item as ParsedCV);
+        _current.value = await _parsedCv(index);
       },
     );
   }
@@ -276,10 +398,19 @@ class MainPageController extends GetxController {
     _syncSafe(
       () {
         cvs[index].isSelected = !cvs[index].isSelected;
-        selected += cvs[index].isSelected ? 1 : -1;
         cvs.refresh();
       },
     );
+  }
+
+  /// apply new search filter
+  void updateFileExplorerQuery(String text) {
+    try {
+      fileExplorerQuery = RegExp(text);
+    } catch (e) {
+      fileExplorerQuery = RegExp("");
+    }
+    cvs.refresh();
   }
 
   /// Wrapper method to make it safe, see [_busy]
@@ -289,6 +420,7 @@ class MainPageController extends GetxController {
     String dialogTitle,
     Stream<ProgressDone> Function() coroutine,
   ) {
+    // TODO: cancellable
     if (_busy) {
       return;
     }
@@ -335,50 +467,20 @@ class MainPageController extends GetxController {
   /// 3. try to store the procession result into the same index
   ///
   /// Note: will fo nothing if the item was already parsed
-  ///
-  /// Note: this function is always invoked with [_busy] flag equals to true,
-  /// as it is just a subroutine function for [exportSelected] and [setCurrent]
-  /// so this is the reason why we don't block it with [_busy] flag,
-  /// but it uses it's own [_parsingCv]
-  Future<void> _parseCv(int index, {bool mock = false}) async {
-    assert(!_parsingCv);
-    assert(_busy);
-
-    _parsingCv = true;
+  /// Note2: will sync with the first invocation of itself
+  Future<ParsedCV> _parsedCv(int index) async {
     try {
-      var tmp = cvs[index].item;
-
-      // The lazy approach itself
-      if (tmp is NotParsedCV) {
-        cvs[index].item = CVBase(tmp.filename); // mark it as processing
-        try {
-          cvs[index].item = await tmp.parse(mock: mock); // some async code
-        } catch (e) {
-          cvs[index].item = tmp; // so it's not processing anymore
-          rethrow;
-        }
-      } else if (tmp is ParsedCV) {
-        // it was already converted, so there is nothing to do
-      } else {
-        // if we entered here, then the type of tmp is CVBase,
-        // which is the indicator that someone is now working on it.
-        throw TypeError();
-
-        // Fatal: if you ever see this exception, means that the overall
-        // data protection logic (see flag [_busy]) does not work
-        // as only [_parseCV] ignores [_busy] flag and only it can be run
-        // concurrently on cvs
-        // but newertheless we expect only one instance of such futre to work
-        // on the [cvs] at the same time
-
-        // note that this thing actually would not be ever fired
-        // because now it is totally covered by [_parsingCv] flag
+      bool wasCached = !cvs[index].item.isParseCached();
+      final res = await cvs[index].item.parse();
+      // here cvs[index].item will be in state cache completed
+      if (wasCached) {
+        cvs.refresh();
       }
+      return res;
     } catch (e) {
-      _parsingCv = false;
+      cvs.removeAt(index); // as now readStream is invalid
+      // TODO: show popup
       rethrow;
-    } finally {
-      _parsingCv = false;
     }
   }
 

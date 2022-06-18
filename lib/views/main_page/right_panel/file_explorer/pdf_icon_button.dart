@@ -13,13 +13,15 @@ class PdfIconButton extends StatefulWidget {
   final int index;
   final bool isSelected;
   final String filename;
+  final bool isParsed;
 
-  const PdfIconButton(
-      {Key? key,
-      required this.index,
-      required this.isSelected,
-      required this.filename})
-      : super(key: key);
+  const PdfIconButton({
+    Key? key,
+    required this.index,
+    required this.isSelected,
+    required this.filename,
+    required this.isParsed,
+  }) : super(key: key);
 
   @override
   State<PdfIconButton> createState() => _PdfIconButtonState();
@@ -91,10 +93,17 @@ class _PdfIconButtonState extends State<PdfIconButton> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(10),
-                    child: SvgPicture.asset(
-                      "icons/pdf.svg",
-                      width: 43,
-                      height: 52,
+                    child: Stack(
+                      children: [
+                        SvgPicture.asset(
+                          "icons/pdf.svg",
+                          width: 43,
+                          height: 52,
+                        ),
+                        CircularProgressIndicator(
+                          color: widget.isParsed ? Colors.transparent : null,
+                        ),
+                      ],
                     ),
                   ),
                   Padding(
@@ -103,7 +112,8 @@ class _PdfIconButtonState extends State<PdfIconButton> {
                       widget.filename,
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(color: colorSecondaryLightGreenPlant),
+                      style:
+                          const TextStyle(color: colorSecondaryLightGreenPlant),
                     ),
                   ),
                 ],

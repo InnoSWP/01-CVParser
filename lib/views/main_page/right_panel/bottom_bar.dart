@@ -10,9 +10,18 @@ class BottomBar extends GetView<MainPageController> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        ElevatedButton(
-          onPressed: controller.exportSelected,
-          child: const Text("EXPORT SELECTED AS JSON"),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            ElevatedButton(
+              onPressed: controller.exportSelected,
+              child: const Text("EXPORT SELECTED AS JSON"),
+            ),
+            ElevatedButton(
+              onPressed: controller.deleteSelected,
+              child: const Text("DELETE SELECTED"),
+            ),
+          ],
         ),
         const SizedBox(height: 18.0),
         Row(
@@ -23,8 +32,12 @@ class BottomBar extends GetView<MainPageController> {
               child: const Text("SELECT ALL"),
             ),
             ElevatedButton(
-              onPressed: controller.deleteSelected,
-              child: const Text("DELETE SELECTED"),
+              onPressed: controller.selectParsed,
+              child: const Text("SELECT PARSED"),
+            ),
+            ElevatedButton(
+              onPressed: controller.invertSelection,
+              child: const Text("INVERT SELECTION"),
             ),
           ],
         ),
