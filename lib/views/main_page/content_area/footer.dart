@@ -53,23 +53,24 @@ class Footer extends GetView<MainPageController> {
                       ElevatedButton(
                         style: ButtonStyle(
                           backgroundColor: MaterialStateProperty.all(
-                              Theme.of(context).colorScheme.primary),
+                              Theme.of(context).colorScheme.onSurface),
                           fixedSize: MaterialStateProperty.all<Size>(
                               const Size(250, 35)),
                           shape:
                               MaterialStateProperty.all<RoundedRectangleBorder>(
                                   RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                                    borderRadius: BorderRadius.circular(6),
+                                    side: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
                           )),
                         ),
                         onPressed: controller.exportCurrent,
                         child: Text("EXPORT AS JSON",
                             style: TextStyle(
-                                fontSize: 16,
+                                fontSize: 15,
                                 fontFamily: 'Merriweather',
                                 fontWeight: FontWeight.w600,
                                 color:
-                                    Theme.of(context).colorScheme.onSurface)),
+                                    Theme.of(context).colorScheme.primary)),
                       ),
                     ],
                   ),
