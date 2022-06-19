@@ -22,7 +22,7 @@ class ContentArea extends StatelessWidget {
           ),
         ),
         Container(
-          padding: const EdgeInsets.fromLTRB(50, 0, 50, 35),
+          padding: const EdgeInsets.fromLTRB(50, 0, 50, 20),
           child: const Footer(),
         )
       ],
