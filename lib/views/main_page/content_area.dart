@@ -17,12 +17,12 @@ class ContentArea extends StatelessWidget {
             child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: const [Logo(), Contact()])),
         Expanded(
           child: Container(
-            padding: const EdgeInsets.fromLTRB(50, 0, 50, 50),
+            padding: const EdgeInsets.fromLTRB(50, 8, 50, 25),
             child: const ParseResult(),
           ),
         ),
         Container(
-          padding: const EdgeInsets.fromLTRB(50, 0, 50, 10),
+          padding: const EdgeInsets.fromLTRB(50, 0, 50, 35),
           child: const Footer(),
         )
       ],
