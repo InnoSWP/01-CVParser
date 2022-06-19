@@ -10,7 +10,7 @@ class Contact extends StatelessWidget {
   Widget build(BuildContext context) {
     return Flexible(
         child: SizedBox(
-            width: (MediaQuery.of(context).size.width > 1380) ? 505 : 370,
+            width: (MediaQuery.of(context).size.width > 1400) ? 505 : 370,
             height: 120,
             child: Row(
               children: [
@@ -49,9 +49,9 @@ class Contact extends StatelessWidget {
                         ),
                       ]),
                 ),
-                if (MediaQuery.of(context).size.width > 1380)
+                if (MediaQuery.of(context).size.width > 1400)
                   const SizedBox(width: 25, height: 110),
-                if (MediaQuery.of(context).size.width > 1380)
+                if (MediaQuery.of(context).size.width > 1400)
                   Container(
                     width: 110,
                     height: 110,

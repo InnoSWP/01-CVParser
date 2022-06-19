@@ -12,9 +12,9 @@ class Logo extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: const [
           Text(
-            'CVParser \niExtract',
+            'iExtract',
             style: TextStyle(
-              fontSize: 60,
+              fontSize: 80,
               fontFamily: 'Eczar',
               fontWeight: FontWeight.w600,
               color: colorPrimaryRedCaramelDark,
