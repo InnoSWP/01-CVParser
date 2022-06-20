@@ -87,7 +87,7 @@ class InitialPageController extends GetxController {
         titleText: "Redirecting",
         details: "please wait ...",
       ),
-      barrierDismissible: false,
+      barrierDismissible: false, // make it blocking
     );
     try {
       await cvs[0].parse();
