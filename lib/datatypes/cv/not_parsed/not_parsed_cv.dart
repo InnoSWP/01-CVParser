@@ -4,7 +4,24 @@ import '../parsed/parsed_cv.dart';
 class NotParsedCV extends CVBase {
   NotParsedCV(filename) : super(filename);
 
-  Future<ParsedCV> parse({bool mock = false}) async {
+  bool isParseCached() {
+    throw UnimplementedError();
+  }
+
+  bool isParseCachedComplete() {
+    throw UnimplementedError();
+  }
+
+  /// retrive from cache (works only if [isParseCachedComplete] returns true)
+  ParsedCV immediateParse() {
+    throw UnimplementedError();
+  }
+
+  Future<ParsedCV> parse() async {
+    throw UnimplementedError();
+  }
+
+  bool satisfies(RegExp query) {
     throw UnimplementedError();
   }
 }

@@ -10,9 +10,9 @@ class Footer extends GetView<MainPageController> {
   Widget build(BuildContext context) {
     return Container(
       width: 1350,
-      height: 50,
+      height: 60,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.secondary,
+        color: Theme.of(context).colorScheme.onSurface,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Padding(
@@ -27,37 +27,53 @@ class Footer extends GetView<MainPageController> {
                       fontSize: 40,
                       fontFamily: "Eczar",
                       fontWeight: FontWeight.w400,
-                      color: colorSurfaceSmoothGreenPlant,
+                      color: colorTextSmoothBlack,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 )
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Flexible(child:
-                    Text(
-                      controller.current!.filename,
-                      style:  TextStyle(
-                        height: 1.3,
-                        fontSize: MediaQuery.of(context).size.width / 50,
-                        fontFamily: "Eczar",
-                        fontWeight: FontWeight.w400,
-                        color: colorSurfaceSmoothGreenPlant,
-                        overflow: TextOverflow
-                            .ellipsis,
+              : Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          controller.current!.filename,
+                          style: TextStyle(
+                            height: 1.3,
+                            fontSize: MediaQuery.of(context).size.width / 50,
+                            fontFamily: "Eczar",
+                            fontWeight: FontWeight.w400,
+                            color: colorTextSmoothBlack,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
                       ),
-                    ),
-                    ),
-                    ElevatedButton(
-                      style: ButtonStyle(
-                        fixedSize: MaterialStateProperty.all<Size>(
-                            const Size(250, 35)),
+                      ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: MaterialStateProperty.all(
+                              Theme.of(context).colorScheme.onSurface),
+                          fixedSize: MaterialStateProperty.all<Size>(
+                              const Size(250, 35)),
+                          shape:
+                              MaterialStateProperty.all<RoundedRectangleBorder>(
+                                  RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(6),
+                                    side: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
+                          )),
+                        ),
+                        onPressed: controller.exportCurrent,
+                        child: Text("EXPORT AS JSON",
+                            style: TextStyle(
+                                fontSize: 15,
+                                fontFamily: 'Merriweather',
+                                fontWeight: FontWeight.w600,
+                                color:
+                                    Theme.of(context).colorScheme.primary)),
                       ),
-                      onPressed: controller.exportCurrent,
-                      child: const Text("EXPORT AS JSON"),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
         ),
       ),

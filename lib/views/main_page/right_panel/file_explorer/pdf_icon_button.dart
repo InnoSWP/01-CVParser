@@ -13,13 +13,15 @@ class PdfIconButton extends StatefulWidget {
   final int index;
   final bool isSelected;
   final String filename;
+  final bool isParsed;
 
-  const PdfIconButton(
-      {Key? key,
-      required this.index,
-      required this.isSelected,
-      required this.filename})
-      : super(key: key);
+  const PdfIconButton({
+    Key? key,
+    required this.index,
+    required this.isSelected,
+    required this.filename,
+    required this.isParsed,
+  }) : super(key: key);
 
   @override
   State<PdfIconButton> createState() => _PdfIconButtonState();
@@ -35,12 +37,14 @@ class _PdfIconButtonState extends State<PdfIconButton> {
   Widget build(BuildContext context) {
     final BoxDecoration decor = widget.isSelected
         ? BoxDecoration(
-            color: const Color.fromARGB(10, 218, 225, 226),
-            border: Border.all(
-              color: const Color.fromARGB(30, 218, 225, 226),
+      color: const Color.fromARGB(40, 77, 102, 88),
+      border: Border.all(
+        color: const Color.fromARGB(255, 77, 102, 88)
             ),
           )
-        : const BoxDecoration();
+        :  BoxDecoration(color: Theme.of(context).colorScheme.onSecondary, border: Border.all(
+      color: const Color.fromARGB(20, 77, 102, 88),
+    ),);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
@@ -83,7 +87,7 @@ class _PdfIconButtonState extends State<PdfIconButton> {
               decoration: decor.copyWith(
                 color: hovered ? const Color.fromARGB(10, 218, 225, 226) : null,
                 borderRadius: const BorderRadius.all(
-                  Radius.circular(8),
+                  Radius.circular(5),
                 ),
               ),
               child: Column(
@@ -91,10 +95,24 @@ class _PdfIconButtonState extends State<PdfIconButton> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.all(10),
-                    child: SvgPicture.asset(
-                      "icons/pdf.svg",
-                      width: 43,
-                      height: 52,
+                    child: Stack(
+                      children: [
+                        SvgPicture.asset(
+                          "icons/icon.svg",
+                          width: 60,
+                          height: 69,
+                          color: colorSecondaryGreenPlant,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(15, 10, 0, 0),
+                            child: Opacity(
+                              opacity: widget.isParsed ? 0.0 : 0.6,
+                              child: const CircularProgressIndicator(
+                                color: Colors.black,
+                            ),
+                          )
+                        )
+                      ],
                     ),
                   ),
                   Padding(
@@ -103,7 +121,8 @@ class _PdfIconButtonState extends State<PdfIconButton> {
                       widget.filename,
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(color: colorSecondaryLightGreenPlant),
+                      style:
+                          const TextStyle(color: colorTextSmoothBlack),
                     ),
                   ),
                 ],

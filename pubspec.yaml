@@ -14,7 +14,6 @@ dependencies:
 
   cupertino_icons: ^1.0.2
   file_picker: ^4.6.1
-  syncfusion_flutter_pdf: ^20.1.58-beta
   http: ^0.13.4
   flutter_svg: ^0.23.0+1
   get: ^4.6.5
@@ -22,6 +21,7 @@ dependencies:
   json_annotation: ^4.5.0
   file_saver: ^0.1.0
   flutter_dropzone: ^3.0.5
+  async: ^2.8.2
 
 dev_dependencies:
   flutter_test:
@@ -37,7 +37,7 @@ flutter:
   assets:
       - icons/pdf.svg
       - icons/icon.svg
-
+      - icons/pdf_not_loaded.svg
   fonts:
     - family: Eczar
       fonts:

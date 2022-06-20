@@ -11,42 +11,50 @@ class TopBar extends GetView<MainPageController> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-          TextField(
-            // TODO: fix styling
-            style: const TextStyle(color: colorSecondaryLightGreenPlant),
-            cursorColor: colorSecondaryLightGreenPlant,
-            decoration: InputDecoration(
-
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30.0),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30.0),
-                borderSide:
-                    const BorderSide(color: colorSecondaryLightGreenPlant),
-              ),
-              hintText: "Search",
-              hintStyle: const TextStyle(color: colorSecondaryLightGreenPlant),
-              prefixIcon: const Icon(Icons.search,
-                  color: colorSecondaryLightGreenPlant),
-              constraints: const BoxConstraints(maxHeight: 40, maxWidth: 450),
-              contentPadding: const EdgeInsets.all(0),
+        const SizedBox(height: 5.0),
+        TextField(
+          onSubmitted: controller.updateFileExplorerQuery,
+          style: const TextStyle(color: colorTextSmoothBlack),
+          cursorColor: colorTextSmoothBlack,
+          decoration: InputDecoration(
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
+              borderSide: const BorderSide(color: colorTextSmoothBlack, width: 1),
             ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
+              borderSide:
+                  const BorderSide(color: colorTextSmoothBlack, width: 2),
+            ),
+            hintText: "Search",
+            hintStyle: const TextStyle(color: colorTextSmoothBlack),
+            prefixIcon:
+                const Icon(Icons.search, color: colorTextSmoothBlack),
+            constraints: const BoxConstraints(maxHeight: 40, maxWidth: 450),
+            contentPadding: const EdgeInsets.all(0),
           ),
+        ),
         const SizedBox(height: 18.0),
         ElevatedButton(
           style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(
+                Theme.of(context).colorScheme.onSurface),
             textStyle: MaterialStateProperty.all<TextStyle>(
               const TextStyle(
-                fontSize: 20,
+                fontSize: 30,
                 fontFamily: "Merriweather",
                 fontWeight: FontWeight.w600,
               ),
             ),
-            fixedSize: MaterialStateProperty.all<Size>(const Size(250, 55)),
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+                  side: BorderSide(color: Theme.of(context).colorScheme.primary, width: 3),
+              borderRadius: BorderRadius.circular(10),
+            )),
+            fixedSize: MaterialStateProperty.all<Size>(const Size(340, 80)),
           ),
           onPressed: controller.askUserToUploadPdfFiles,
-          child: const Text("ADD RESUMES"),
+          child: const Text("ADD CVs"),
         ),
       ],
     );

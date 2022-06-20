@@ -1,3 +1,4 @@
+import 'package:cvparser_b21_01/datatypes/export.dart';
 import 'package:should_rebuild/should_rebuild.dart';
 import 'package:cvparser_b21_01/controllers/main_page_controller.dart';
 import 'package:cvparser_b21_01/services/key_listener.dart';
@@ -13,30 +14,34 @@ class FileExplorer extends GetView<MainPageController> {
 
   @override
   Widget build(BuildContext context) {
-    // weak TODO: this big plus icon on no cvs
     return Obx(
-      () => GridView.builder(
-        itemCount: controller.cvs.length,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 4,
-          mainAxisSpacing: 1,
-          crossAxisSpacing: 1,
-          childAspectRatio: 1,
-        ),
-        itemBuilder: (context, index) {
-          final tile = controller.cvs[index];
-          return ShouldRebuild<PdfIconButton>(
-            shouldRebuild: (oldWidget, newWidget) =>
-                oldWidget.filename != newWidget.filename ||
-                oldWidget.isSelected != newWidget.isSelected,
-            child: PdfIconButton(
-              index: index,
-              isSelected: tile.isSelected,
-              filename: tile.item.filename,
-            ),
-          );
-        },
-      ),
+      () {
+        final filteredCvs = controller.filteredCvs;
+        return GridView.builder(
+          itemCount: filteredCvs.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            mainAxisSpacing: 1,
+            crossAxisSpacing: 1,
+            childAspectRatio: 1,
+          ),
+          itemBuilder: (context, index) {
+            final tile = filteredCvs[index];
+            return ShouldRebuild<PdfIconButton>(
+              shouldRebuild: (oldWidget, newWidget) =>
+                  oldWidget.filename != newWidget.filename ||
+                  oldWidget.isSelected != newWidget.isSelected ||
+                  oldWidget.isParsed != newWidget.isParsed,
+              child: PdfIconButton(
+                index: tile.index,
+                isSelected: tile.item.isSelected,
+                filename: tile.item.item.filename,
+                isParsed: tile.item.item.isParseCachedComplete(),
+              ),
+            );
+          },
+        );
+      },
     );
   }
 }
