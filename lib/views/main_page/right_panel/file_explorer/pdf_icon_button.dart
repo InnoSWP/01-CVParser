@@ -37,12 +37,14 @@ class _PdfIconButtonState extends State<PdfIconButton> {
   Widget build(BuildContext context) {
     final BoxDecoration decor = widget.isSelected
         ? BoxDecoration(
-            color: const Color.fromARGB(10, 218, 225, 226),
-            border: Border.all(
-              color: const Color.fromARGB(30, 218, 225, 226),
+      color: const Color.fromARGB(40, 77, 102, 88),
+      border: Border.all(
+        color: const Color.fromARGB(255, 77, 102, 88)
             ),
           )
-        : const BoxDecoration();
+        :  BoxDecoration(color: Theme.of(context).colorScheme.onSecondary, border: Border.all(
+      color: const Color.fromARGB(20, 77, 102, 88),
+    ),);
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
@@ -85,7 +87,7 @@ class _PdfIconButtonState extends State<PdfIconButton> {
               decoration: decor.copyWith(
                 color: hovered ? const Color.fromARGB(10, 218, 225, 226) : null,
                 borderRadius: const BorderRadius.all(
-                  Radius.circular(8),
+                  Radius.circular(5),
                 ),
               ),
               child: Column(
@@ -96,16 +98,17 @@ class _PdfIconButtonState extends State<PdfIconButton> {
                     child: Stack(
                       children: [
                         SvgPicture.asset(
-                          "icons/pdf_not_loaded.svg",
-                          width: 43,
-                          height: 52,
+                          "icons/icon.svg",
+                          width: 60,
+                          height: 69,
+                          color: colorSecondaryGreenPlant,
                         ),
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(3, 10, 0, 0),
+                          padding: const EdgeInsets.fromLTRB(15, 10, 0, 0),
                             child: Opacity(
-                              opacity: widget.isParsed ? 0.0 : 0.5,
+                              opacity: widget.isParsed ? 0.0 : 0.6,
                               child: const CircularProgressIndicator(
-                                color: Colors.white,
+                                color: Colors.black,
                             ),
                           )
                         )
@@ -119,7 +122,7 @@ class _PdfIconButtonState extends State<PdfIconButton> {
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
                       style:
-                          const TextStyle(color: colorSecondaryLightGreenPlant),
+                          const TextStyle(color: colorTextSmoothBlack),
                     ),
                   ),
                 ],
