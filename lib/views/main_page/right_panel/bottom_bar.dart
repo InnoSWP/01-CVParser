@@ -14,10 +14,22 @@ class BottomBar extends GetView<MainPageController> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             ElevatedButton(
+              style: ButtonStyle(
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                )),
+              ),
               onPressed: controller.exportSelected,
               child: const Text("EXPORT SELECTED AS JSON"),
             ),
             ElevatedButton(
+              style: ButtonStyle(
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    )),
+              ),
               onPressed: controller.deleteSelected,
               child: const Text("DELETE SELECTED"),
             ),
@@ -28,14 +40,32 @@ class BottomBar extends GetView<MainPageController> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             ElevatedButton(
+              style: ButtonStyle(
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    )),
+              ),
               onPressed: controller.selectAll,
               child: const Text("SELECT ALL"),
             ),
             ElevatedButton(
+              style: ButtonStyle(
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    )),
+              ),
               onPressed: controller.selectParsed,
               child: const Text("SELECT PARSED"),
             ),
             ElevatedButton(
+              style: ButtonStyle(
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    )),
+              ),
               onPressed: controller.invertSelection,
               child: const Text("INVERT SELECTION"),
             ),

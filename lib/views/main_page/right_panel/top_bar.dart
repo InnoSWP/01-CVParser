@@ -18,10 +18,10 @@ class TopBar extends GetView<MainPageController> {
           cursorColor: colorSecondaryLightGreenPlant,
           decoration: InputDecoration(
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30.0),
+              borderRadius: BorderRadius.circular(10.0),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30.0),
+              borderRadius: BorderRadius.circular(10.0),
               borderSide:
                   const BorderSide(color: colorSecondaryLightGreenPlant),
             ),
@@ -43,6 +43,10 @@ class TopBar extends GetView<MainPageController> {
                 fontWeight: FontWeight.w600,
               ),
             ),
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            )),
             fixedSize: MaterialStateProperty.all<Size>(const Size(250, 55)),
           ),
           onPressed: controller.askUserToUploadPdfFiles,

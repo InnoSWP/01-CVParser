@@ -96,13 +96,19 @@ class _PdfIconButtonState extends State<PdfIconButton> {
                     child: Stack(
                       children: [
                         SvgPicture.asset(
-                          "icons/pdf.svg",
+                          "icons/pdf_not_loaded.svg",
                           width: 43,
                           height: 52,
                         ),
-                        CircularProgressIndicator(
-                          color: widget.isParsed ? Colors.transparent : null,
-                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(3, 10, 0, 0),
+                            child: Opacity(
+                              opacity: widget.isParsed ? 0.0 : 0.5,
+                              child: const CircularProgressIndicator(
+                                color: Colors.white,
+                            ),
+                          )
+                        )
                       ],
                     ),
                   ),
