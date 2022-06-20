@@ -20,7 +20,7 @@ class FileExplorer extends GetView<MainPageController> {
         return GridView.builder(
           itemCount: filteredCvs.length,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 4,
+            crossAxisCount: 3,
             mainAxisSpacing: 1,
             crossAxisSpacing: 1,
             childAspectRatio: 1,

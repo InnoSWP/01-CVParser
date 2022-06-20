@@ -12,7 +12,7 @@ class RightPanel extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18.0),
       width: 500,
-      color: Theme.of(context).colorScheme.secondary,
+      color: Theme.of(context).colorScheme.onSurface,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
