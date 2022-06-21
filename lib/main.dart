@@ -40,23 +40,21 @@ class CVParserApp extends StatelessWidget {
       title: "CV Parser",
       theme: mainTheme,
       initialBinding: ServicesBinding(),
-      initialRoute: "/initial",
-      getPages: [
-        GetPage(
-          name: "/initial",
-          page: () => const InitialPage(),
-          bindings: [
-            InitialPageBinding(),
-          ],
-        ),
-        GetPage(
-          name: "/main",
-          page: () => const MainPage(),
-          bindings: [
-            MainPageBinding(),
-          ],
-        ),
-      ],
+      onGenerateRoute: (settings) {
+        if (settings.name == "/main" && settings.arguments != null) {
+          return GetPageRoute(
+            settings: settings,
+            page: () => const MainPage(),
+            binding: MainPageBinding(),
+          );
+        } else {
+          return GetPageRoute(
+            settings: settings.copyWith(name: "/initial"),
+            page: () => const InitialPage(),
+            binding: InitialPageBinding(),
+          );
+        }
+      },
     );
   }
 }

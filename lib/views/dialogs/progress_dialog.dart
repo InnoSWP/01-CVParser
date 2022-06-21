@@ -19,47 +19,51 @@ class ProgressDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: progressStream,
-      builder: (context, snapshot) {
-        final data = snapshot.data as ProgressDone;
-        return Center(
-          child: Card(
-            child: SizedBox(
-              height: MediaQuery.of(context).size.height / 5,
-              width: MediaQuery.of(context).size.width / 5,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Text(
-                    titleText,
-                    style:  TextStyle(
-                      fontSize: MediaQuery.of(context).size.width / 60,
-                      fontFamily: "Eczar",
-                      fontWeight: FontWeight.w400,
-                      color: colorTextSmoothBlack,
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: StreamBuilder(
+        stream: progressStream,
+        builder: (context, snapshot) {
+          final data = snapshot.data as ProgressDone;
+          return Center(
+            child: Card(
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height / 5,
+                width: MediaQuery.of(context).size.width / 5,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Text(
+                      titleText,
+                      style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width / 60,
+                        fontFamily: "Eczar",
+                        fontWeight: FontWeight.w400,
+                        color: colorTextSmoothBlack,
+                      ),
                     ),
-                  ),
-                  Center(
-                    child: CircularProgressIndicator(
-                      value: data.percentage,
+                    Center(
+                      child: CircularProgressIndicator(
+                        value: data.percentage,
+                      ),
                     ),
-                  ),
-                  Flexible(child: Text(
-                    data.comments,
-                    textAlign: TextAlign.center,
-                    style:  TextStyle(
-                      fontSize: MediaQuery.of(context).size.width / 75,
-                      fontWeight: FontWeight.w400,
-                      color: colorTextSmoothBlack,
-                    ),
-                  )),
-                ],
+                    Flexible(
+                        child: Text(
+                      data.comments,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: MediaQuery.of(context).size.width / 75,
+                        fontWeight: FontWeight.w400,
+                        color: colorTextSmoothBlack,
+                      ),
+                    )),
+                  ],
+                ),
               ),
             ),
-          ),
-        );
-      },
+          );
+        },
+      ),
     );
   }
 }

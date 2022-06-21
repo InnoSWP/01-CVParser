@@ -1,14 +1,12 @@
-name: deploy_web
+name: preview_web
 
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-    types: [ synchronize ]
+    types: [ opened ]
 
 jobs:
-  deploy_web:
+  preview_web:
     runs-on: ubuntu-latest
     steps:
       - name: Fetch repo
@@ -26,4 +24,3 @@ jobs:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT }}"
           projectId: cv-parser-ca402
-          channelId: live
