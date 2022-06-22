@@ -74,8 +74,7 @@ class InitialPage extends GetView<InitialPageController> {
                   onLeave: controller.onDropzoneLeave,
                   onDropMultiple: controller.onDropFiles,
                 ),
-                Expanded(
-                    child: Column(
+                Column(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Padding(
@@ -129,7 +128,7 @@ class InitialPage extends GetView<InitialPageController> {
                           ),
                         ])),
                   ],
-                )),
+                ),
               ],
             ),
           ),
