@@ -476,6 +476,7 @@ class MainPageController extends GetxController {
       }
       return res;
     } catch (e) {
+      // TODO: sync this point (a wery dangerous thing)
       cvs.removeAt(index); // as now readStream is invalid
       // TODO: show popup
       rethrow;
