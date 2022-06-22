@@ -4,7 +4,10 @@
 ## Super Linter GitHub Actions ##
 #################################
 #################################
-name: Lint Code Base
+
+# The only difference from the regular lint is that it lints all the codebase
+
+name: Master Lint Code Base
 
 #
 # Documentation:
@@ -15,8 +18,9 @@ name: Lint Code Base
 # Start the job on all push #
 #############################
 on:
-  push:
-    branches-ignore: [master, main]
+  pull_request:
+    branches: [ master, main ]
+    types: [ opened ]
 
 ###############
 # Set the Job #
@@ -36,10 +40,7 @@ jobs:
       # Checkout the code base #
       ##########################
       - name: Checkout Code
-        uses: actions/checkout@v3
-        with:
-          # Full git history is needed to get a proper list of changed files within `super-linter`
-          fetch-depth: 0
+        uses: actions/checkout@v2
     
       - name: Install flutter
         run: sudo snap install flutter --classic
@@ -53,6 +54,6 @@ jobs:
       - name: Lint Code Base
         uses: github/super-linter@v4
         env:
-          VALIDATE_ALL_CODEBASE: false
+          VALIDATE_ALL_CODEBASE: true
           DEFAULT_BRANCH: master
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
