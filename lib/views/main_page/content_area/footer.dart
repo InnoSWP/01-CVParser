@@ -33,7 +33,8 @@ class Footer extends GetView<MainPageController> {
                   ),
                 )
               : Container(
-                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -59,8 +60,10 @@ class Footer extends GetView<MainPageController> {
                           shape:
                               MaterialStateProperty.all<RoundedRectangleBorder>(
                                   RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(6),
-                                    side: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
+                            borderRadius: BorderRadius.circular(6),
+                            side: BorderSide(
+                                color: Theme.of(context).colorScheme.primary,
+                                width: 2),
                           )),
                         ),
                         onPressed: controller.exportCurrent,
@@ -69,8 +72,7 @@ class Footer extends GetView<MainPageController> {
                                 fontSize: 15,
                                 fontFamily: 'Merriweather',
                                 fontWeight: FontWeight.w600,
-                                color:
-                                    Theme.of(context).colorScheme.primary)),
+                                color: Theme.of(context).colorScheme.primary)),
                       ),
                     ],
                   ),

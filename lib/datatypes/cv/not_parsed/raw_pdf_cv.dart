@@ -1,7 +1,6 @@
 import 'package:cvparser_b21_01/datatypes/export.dart';
 import 'package:cvparser_b21_01/services/i_extract.dart';
 import 'package:cvparser_b21_01/services/pdf_to_text.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
 
 class RawPdfCV extends NotParsedCV {

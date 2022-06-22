@@ -43,6 +43,12 @@ jobs:
         with:
           # Full git history is needed to get a proper list of changed files within `super-linter`
           fetch-depth: 0
+    
+    - name: Install flutter
+      run: sudo snap install flutter --classic
+    
+    - name: Fetch dependencies
+      run: flutter pub get
 
       ################################
       # Run Linter against code base #
