@@ -10,6 +10,8 @@ jobs:
     steps:
       - name: Fetch Repo
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
