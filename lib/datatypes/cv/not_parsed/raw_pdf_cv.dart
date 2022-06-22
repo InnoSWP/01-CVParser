@@ -59,28 +59,7 @@ class RawPdfCV extends NotParsedCV {
 
   @override
   bool satisfies(RegExp query) {
-    if (cached == null) {
-      return true;
-    }
-
-    for (final entry in cached!.data.entries) {
-      String label = entry.key;
-      for (final cvmatch in entry.value) {
-        String match = cvmatch.match;
-        String sentence = cvmatch.sentence;
-
-        String combine = """
-          filename: $filename
-          label: $label
-          match: $match
-          sentence: $sentence
-        """;
-
-        if (query.hasMatch(combine)) {
-          return true;
-        }
-      }
-    }
-    return false;
+    if (cached == null) return true;
+    return cached!.satisfies(query);
   }
 }
