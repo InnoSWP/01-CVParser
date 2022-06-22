@@ -365,3 +365,4 @@ hs_err_pid*
 !/gradle/wrapper/gradle-wrapper.jar
 
 # End of https://www.toptal.com/developers/gitignore/api/flutter,dart,visualstudiocode,intellij,androidstudio,firebase
+.vscode/launch.json
