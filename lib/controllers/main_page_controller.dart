@@ -311,7 +311,9 @@ class MainPageController extends GetxController {
           if (cvs.isNotEmpty) {
             index %= cvs.length;
             if (!cvs[index].item.isParseCached()) {
-              await _parsedCv(index);
+              try {
+                await _parsedCv(index);
+              } catch (e) {}
               index = 0;
             } else {
               index++;
