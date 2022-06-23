@@ -1,4 +1,5 @@
 import 'package:cvparser_b21_01/datatypes/export.dart';
+import 'package:cvparser_b21_01/services/i_extract.dart';
 import 'package:cvparser_b21_01/views/dialogs/fail_dialog.dart';
 import 'package:cvparser_b21_01/views/dialogs/process_dialog.dart';
 import 'package:file_picker/file_picker.dart';
@@ -10,8 +11,64 @@ class InitialPageController extends GetxController {
 
   final isDropzoneHovered = false.obs;
 
+  void gotoMain(List<RawPdfCV> cvs) async {
+    // parse first
+    Get.dialog(
+      const ProcessDialog(
+        titleText: "Redirecting",
+        details: "please wait ...",
+      ),
+      barrierDismissible: false, // make it blocking
+    );
+    try {
+      await cvs[0].parse();
+    } catch (e) {
+      Get.back();
+      Get.dialog(
+        const FailDialog(
+          titleText: "File parsing failed",
+          details: "failed to parse the first file",
+        ),
+      );
+      return;
+    }
+    Get.back();
+
+    // goto
+    Get.toNamed("/main", arguments: cvs);
+  }
+
   void instantiateDropzoneController(DropzoneViewController ctrl) {
     dropzoneController = ctrl;
+  }
+
+  void onDropFiles(List<dynamic>? fhs) async {
+    if (fhs != null) {
+      List<RawPdfCV> cvs = [];
+      for (final fh in fhs) {
+        if (fh.name.toString().endsWith(".pdf")) {
+          cvs.add(
+            RawPdfCV(
+              filename: fh.name,
+              readStream: dropzoneController.getFileStream(fh),
+              size: await dropzoneController.getFileSize(fh),
+            ),
+          );
+        }
+      }
+
+      if (cvs.isEmpty) {
+        Get.dialog(
+          const FailDialog(
+            titleText: "File uploading failed",
+            details: "please provide at least one pdf file",
+          ),
+        );
+        return;
+      }
+
+      gotoMain(cvs);
+    }
   }
 
   void onDropzoneHover() {
@@ -49,61 +106,5 @@ class InitialPageController extends GetxController {
 
       gotoMain(cvs);
     }
-  }
-
-  void onDropFiles(List<dynamic>? fhs) async {
-    if (fhs != null) {
-      List<RawPdfCV> cvs = [];
-      for (final fh in fhs) {
-        if (fh.name.toString().endsWith(".pdf")) {
-          cvs.add(
-            RawPdfCV(
-              filename: fh.name,
-              readStream: dropzoneController.getFileStream(fh),
-              size: await dropzoneController.getFileSize(fh),
-            ),
-          );
-        }
-      }
-
-      if (cvs.isEmpty) {
-        Get.dialog(
-          const FailDialog(
-            titleText: "File uploading failed",
-            details: "please provide at least one pdf file",
-          ),
-        );
-        return;
-      }
-
-      gotoMain(cvs);
-    }
-  }
-
-  void gotoMain(List<RawPdfCV> cvs) async {
-    // parse first
-    Get.dialog(
-      const ProcessDialog(
-        titleText: "Redirecting",
-        details: "please wait ...",
-      ),
-      barrierDismissible: false, // make it blocking
-    );
-    try {
-      await cvs[0].parse();
-    } catch (e) {
-      Get.back();
-      Get.dialog(
-        const FailDialog(
-          titleText: "File parsing failed",
-          details: "failed to parse the first file",
-        ),
-      );
-      return;
-    }
-    Get.back();
-
-    // goto
-    Get.toNamed("/main", arguments: cvs);
   }
 }
