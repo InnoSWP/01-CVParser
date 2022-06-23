@@ -35,7 +35,16 @@ class InitialPageController extends GetxController {
     Get.back();
 
     // goto
-    Get.toNamed("/main", arguments: cvs);
+    Get.toNamed(
+      "/main",
+      arguments: cvs,
+      parameters: Get.parameters.map(
+        (key, value) => MapEntry(
+          key,
+          value.toString(),
+        ),
+      ),
+    );
   }
 
   void instantiateDropzoneController(DropzoneViewController ctrl) {
