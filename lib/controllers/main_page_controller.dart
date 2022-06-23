@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui';
 
-import 'package:async/async.dart';
 import 'package:cvparser_b21_01/datatypes/export.dart';
 import 'package:cvparser_b21_01/datatypes/misc/indexable.dart';
 import 'package:cvparser_b21_01/services/file_saver.dart';
@@ -19,7 +18,8 @@ class MainPageController extends GetxController {
   final keyLookup = Get.find<KeyListener>();
   final fileSaver = Get.find<FileSaver>();
 
-  late final CancelableOperation dummyWorker;
+  late final Future<void> dummyWorker;
+  late final Future<void> garbageCollector; // removes failed to parse cv's
 
   RegExp fileExplorerQuery = RegExp("");
   RegExp contentAreaQuery = RegExp("");
@@ -40,6 +40,8 @@ class MainPageController extends GetxController {
   /// also it's supposed to be any kind modified only inside this file,
   /// any outer invocation must just read data
   final cvs = <Selectable<NotParsedCV>>[].obs;
+
+  /// the content to be displayed on the left
   final _current = Rxn<ParsedCV>();
 
   /// used for range select
@@ -209,39 +211,42 @@ class MainPageController extends GetxController {
     _asyncSafe(
       "Exporting",
       () async* {
-        List<ParsedCV> parsedCVs = [];
-        var current = 0;
-        var selected = 0;
+        final parsedCVs = <ParsedCV>[];
+        final selected = <NotParsedCV>[];
 
+        // synchronously collect all that we need to process
+        // to make sure that while we parsing a cv
+        // no one can change the list that we were working on
         for (final cv in cvs) {
           if (cv.isSelected) {
-            selected++;
+            selected.add(cv.item);
           }
         }
 
-        for (var index = 0; index != cvs.length; index++) {
-          var cv = cvs[index];
-          if (cv.isSelected) {
-            // notify that we are parsing something
-            current++;
-            yield ProgressDone(
-              current / selected,
-              "$current / $selected \n ${cv.item.filename}",
-            );
+        // process
+        for (var index = 0; index != selected.length; index++) {
+          // iterate
+          var cv = selected[index];
 
-            // make sure that all cv's are parsed
-            try {
-              parsedCVs.add(await _parsedCv(index));
-            } catch (e) {
-              index--;
-              yield ProgressDone(
-                current / selected,
-                "$current / $selected \n ${cv.item.filename} failed to parse",
-              );
-              await Future.delayed(const Duration(milliseconds: 500));
-            }
+          // notify that we are parsing something
+          yield ProgressDone(
+            (index + 1) / selected.length,
+            "${index + 1} / ${selected.length} \n ${cv.filename}",
+          );
+
+          // make sure that all cv's are parsed
+          try {
+            parsedCVs.add(await _parsedCv(cv));
+          } catch (e) {
+            // no need to add cv's that cannot be parsed
           }
         }
+
+        // notify that we are parsing something
+        yield ProgressDone(
+          null,
+          "saving as a file...",
+        );
 
         // export to json file and save it
         {
@@ -259,7 +264,7 @@ class MainPageController extends GetxController {
     );
   }
 
-  /// Invertes selection
+  /// Inverts selection
   void invertSelection() {
     _syncSafe(
       () {
@@ -276,8 +281,6 @@ class MainPageController extends GetxController {
   void onClose() async {
     await _escListener.cancel();
     await _delListener.cancel();
-
-    dummyWorker.cancel();
 
     // ya, it's ofcource better to track the actual future instances instead of
     // just flag [_busy], and cancel them when the actual class instance becomes
@@ -303,28 +306,53 @@ class MainPageController extends GetxController {
     });
 
     // setup a dummy worker
-    dummyWorker = CancelableOperation.fromFuture(
-      Future(() async {
-        int index = 0;
-        while (true) {
-          // iterate and parse CV's
-          if (cvs.isNotEmpty) {
-            index %= cvs.length;
-            if (!cvs[index].item.isParseCached()) {
-              try {
-                await _parsedCv(index);
-              } catch (e) {}
-              index = 0;
-            } else {
-              index++;
+    dummyWorker = Future(() async {
+      int index = 0;
+      while (true) {
+        // iterate and parse CV's
+        // also it stops parsing if the _busy is set,
+        // but if a work was already started, it will be done even with _busy
+        if (cvs.isNotEmpty && !_busy) {
+          index %= cvs.length;
+          if (!cvs[index].item.isParseCached()) {
+            try {
+              await _parsedCv(cvs[index].item);
+            } catch (e) {
+              // so the item will be removed by the garbageCollector
             }
+            index = 0;
+          } else {
+            index++;
           }
-
-          // delay not to overload system
-          await Future.delayed(const Duration(milliseconds: 16));
         }
-      }),
-    );
+
+        // delay not to overload system
+        await Future.delayed(const Duration(milliseconds: 16));
+      }
+    });
+
+    // remove failed cv's
+    garbageCollector = Future(() async {
+      int index = 0;
+      while (true) {
+        if (cvs.isNotEmpty) {
+          index %= cvs.length;
+          if (cvs[index].item.isParseCachedFailed()) {
+            // Note: it is not async safe, so the methods like export selected
+            // must first synchronously take it's own list of items
+            // and only then operate on it
+            cvs.removeAt(index);
+            // TODO: show snackbar/mark red
+            index = 0;
+          } else {
+            index++;
+          }
+        }
+
+        // delay not to overload system
+        await Future.delayed(const Duration(milliseconds: 16));
+      }
+    });
 
     // retrive data from route
     if (Get.arguments != null) {
@@ -388,7 +416,7 @@ class MainPageController extends GetxController {
     _asyncSafe(
       "Parsing results",
       () async* {
-        _current.value = await _parsedCv(index);
+        _current.value = await _parsedCv(cvs[index].item);
       },
     );
   }
@@ -461,28 +489,16 @@ class MainPageController extends GetxController {
     );
   }
 
-  /// This function will create a future that will:
-  /// 1. take the element at index
-  /// 2. try to parse it
-  /// 3. try to store the procession result into the same index
-  ///
-  /// Note: will fo nothing if the item was already parsed
-  /// Note2: will sync with the first invocation of itself
-  Future<ParsedCV> _parsedCv(int index) async {
-    try {
-      bool wasCached = !cvs[index].item.isParseCached();
-      final res = await cvs[index].item.parse();
-      // here cvs[index].item will be in state cache completed
-      if (wasCached) {
-        cvs.refresh();
-      }
-      return res;
-    } catch (e) {
-      // TODO: sync this point (a wery dangerous thing)
-      cvs.removeAt(index); // as now readStream is invalid
-      // TODO: show popup
-      rethrow;
+  /// This is a wrapper of item.parse(),
+  /// so it will notify UI to redraw if some changes has happened
+  Future<ParsedCV> _parsedCv(NotParsedCV cv) async {
+    bool wasNotCached = !cv.isParseCached();
+    final res = await cv.parse();
+    // here cvs[index].item will be in state cache completed
+    if (wasNotCached) {
+      cvs.refresh();
     }
+    return res;
   }
 
   void _syncSafe(

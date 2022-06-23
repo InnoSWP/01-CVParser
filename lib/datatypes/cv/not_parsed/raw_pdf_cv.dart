@@ -10,6 +10,7 @@ class RawPdfCV extends NotParsedCV {
   final int size;
   Future<ParsedCV>? future;
   ParsedCV? cached;
+  bool failed = false;
 
   RawPdfCV({
     required filename,
@@ -18,21 +19,25 @@ class RawPdfCV extends NotParsedCV {
   }) : super(filename);
 
   Future<ParsedCV> _parse() async {
-    // extract text
-    String text = await textExtracter.extractTextFromPdf(
-      readStream, // will fail on the second call
-      size,
-    );
+    try {
+      // extract text
+      String text = await textExtracter.extractTextFromPdf(
+        readStream, // will fail on the second call
+        size,
+      );
 
-    // parse the text using iExtract API
-    final res = ParsedCV(
-      filename: filename,
-      data: await cvParser.parseCV(text),
-    );
+      // parse the text using iExtract API
+      final res = ParsedCV(
+        filename: filename,
+        data: await cvParser.parseCV(text),
+      );
 
-    cached = res;
-
-    return res;
+      cached = res;
+      return res;
+    } catch (e) {
+      failed = true;
+      rethrow;
+    }
   }
 
   @override
@@ -43,6 +48,11 @@ class RawPdfCV extends NotParsedCV {
   @override
   bool isParseCachedComplete() {
     return cached != null;
+  }
+
+  @override
+  bool isParseCachedFailed() {
+    return failed;
   }
 
   @override
