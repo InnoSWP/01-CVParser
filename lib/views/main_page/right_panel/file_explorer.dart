@@ -1,4 +1,3 @@
-import 'package:cvparser_b21_01/datatypes/export.dart';
 import 'package:should_rebuild/should_rebuild.dart';
 import 'package:cvparser_b21_01/controllers/main_page_controller.dart';
 import 'package:cvparser_b21_01/services/key_listener.dart';

@@ -26,4 +26,26 @@ class ParsedCV extends CVBase {
   }) : super(filename);
 
   Map<String, dynamic> toJson() => _$ParsedCVToJson(this);
+
+  bool satisfies(RegExp query) {
+    for (final entry in data.entries) {
+      String label = entry.key;
+      for (final cvmatch in entry.value) {
+        String match = cvmatch.match;
+        String sentence = cvmatch.sentence;
+
+        String combine = """
+          filename: $filename
+          label: $label
+          match: $match
+          sentence: $sentence
+        """;
+
+        if (query.hasMatch(combine)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
 }

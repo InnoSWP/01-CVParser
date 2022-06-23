@@ -12,6 +12,10 @@ class NotParsedCV extends CVBase {
     throw UnimplementedError();
   }
 
+  bool isParseCachedFailed() {
+    throw UnimplementedError();
+  }
+
   /// retrive from cache (works only if [isParseCachedComplete] returns true)
   ParsedCV immediateParse() {
     throw UnimplementedError();

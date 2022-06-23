@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import 'colors.dart' as my_colors;
+import 'services/i_extract.dart';
 
 void main() {
   runApp(const CVParserApp());
@@ -41,15 +42,42 @@ class CVParserApp extends StatelessWidget {
       theme: mainTheme,
       initialBinding: ServicesBinding(),
       onGenerateRoute: (settings) {
-        if (settings.name == "/main" && settings.arguments != null) {
+        final cvParser = Get.find<IExtract>();
+
+        var uri = Uri.parse(settings.name ?? "");
+
+        // setup correct api parameter
+        switch (uri.queryParameters['api']) {
+          case 'mock':
+            cvParser.mock = true;
+            break;
+          case 'iExtract':
+            cvParser.mock = false;
+            break;
+          default:
+            // save all the parameters and add api=mock
+            cvParser.mock = true;
+            final newParams = <String, String>{};
+            newParams.addAll(uri.queryParameters);
+            newParams['api'] = 'mock';
+            uri = uri.replace(queryParameters: newParams);
+            break;
+        }
+
+        // update global parameters handler
+        Get.parameters = uri.queryParameters;
+
+        // route
+        if (uri.path == "/main" && settings.arguments != null) {
           return GetPageRoute(
-            settings: settings,
+            settings: settings.copyWith(name: uri.toString()),
             page: () => const MainPage(),
             binding: MainPageBinding(),
           );
         } else {
+          uri = uri.replace(path: "/initial");
           return GetPageRoute(
-            settings: settings.copyWith(name: "/initial"),
+            settings: settings.copyWith(name: uri.toString()),
             page: () => const InitialPage(),
             binding: InitialPageBinding(),
           );

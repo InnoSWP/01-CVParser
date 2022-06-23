@@ -10,7 +10,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 
 import 'package:flutter/material.dart';
 
@@ -658,10 +657,11 @@ class TooltipState extends State<Tooltip> with SingleTickerProviderStateMixin {
     _pressActivated = true;
     final bool tooltipCreated = ensureTooltipVisible();
     if (tooltipCreated && _enableFeedback) {
-      if (_triggerMode == TooltipTriggerMode.longPress)
+      if (_triggerMode == TooltipTriggerMode.longPress) {
         Feedback.forLongPress(context);
-      else
+      } else {
         Feedback.forTap(context);
+      }
     }
   }
 
@@ -767,9 +767,7 @@ class _TooltipPositionDelegate extends SingleChildLayoutDelegate {
     required this.target,
     required this.verticalOffset,
     required this.preferBelow,
-  })  : assert(target != null),
-        assert(verticalOffset != null),
-        assert(preferBelow != null);
+  });
 
   /// The offset of the target the tooltip is positioned near in the global
   /// coordinate system.
