@@ -14,7 +14,9 @@ class ContentArea extends StatelessWidget {
       children: [
         Container(
             padding: const EdgeInsets.fromLTRB(50, 8, 50, 0),
-            child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: const [Logo(), Contact()])),
+            child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: const [Logo(), Contact()])),
         Expanded(
           child: Container(
             padding: const EdgeInsets.fromLTRB(50, 8, 50, 25),

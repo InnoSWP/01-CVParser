@@ -30,15 +30,16 @@ class FailDialog extends StatelessWidget {
                   color: colorTextSmoothBlack,
                 ),
               ),
-              Flexible(child: Text(
-                details,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: MediaQuery.of(context).size.width / 75,
-                  fontWeight: FontWeight.w400,
-                  color: colorTextSmoothBlack,
+              Flexible(
+                child: Text(
+                  details,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: MediaQuery.of(context).size.width / 75,
+                    fontWeight: FontWeight.w400,
+                    color: colorTextSmoothBlack,
+                  ),
                 ),
-              ),
               ),
             ],
           ),

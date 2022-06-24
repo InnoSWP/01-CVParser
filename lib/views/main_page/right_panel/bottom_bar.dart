@@ -20,12 +20,14 @@ class BottomBar extends GetView<MainPageController> {
                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
-                      side: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
+                  side: BorderSide(
+                      color: Theme.of(context).colorScheme.primary, width: 2),
                 )),
                 fixedSize: MaterialStateProperty.all<Size>(const Size(300, 50)),
               ),
               onPressed: controller.exportSelected,
-              child: const Text("EXPORT SELECTED AS JSON", style: TextStyle(fontWeight: FontWeight.w600)),
+              child: const Text("EXPORT SELECTED AS JSON",
+                  style: TextStyle(fontWeight: FontWeight.w600)),
             ),
             ElevatedButton(
               style: ButtonStyle(
@@ -33,12 +35,13 @@ class BottomBar extends GetView<MainPageController> {
                     Theme.of(context).colorScheme.primary),
                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    )),
+                  borderRadius: BorderRadius.circular(10),
+                )),
                 fixedSize: MaterialStateProperty.all<Size>(const Size(50, 50)),
               ),
               onPressed: controller.selectAll,
-              child: Icon(Icons.library_add_check_rounded, color: Theme.of(context).colorScheme.onSurface),
+              child: Icon(Icons.library_add_check_rounded,
+                  color: Theme.of(context).colorScheme.onSurface),
             ),
             ElevatedButton(
               style: ButtonStyle(
@@ -46,12 +49,13 @@ class BottomBar extends GetView<MainPageController> {
                     Theme.of(context).colorScheme.primary),
                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    )),
+                  borderRadius: BorderRadius.circular(10),
+                )),
                 fixedSize: MaterialStateProperty.all<Size>(const Size(50, 50)),
               ),
               onPressed: controller.deleteSelected,
-              child: Icon(Icons.delete_outline, color: Theme.of(context).colorScheme.onSurface),
+              child: Icon(Icons.delete_outline,
+                  color: Theme.of(context).colorScheme.onSurface),
             ),
           ],
         ),
@@ -65,12 +69,15 @@ class BottomBar extends GetView<MainPageController> {
                     Theme.of(context).colorScheme.primary),
                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    )),
+                  borderRadius: BorderRadius.circular(10),
+                )),
                 fixedSize: MaterialStateProperty.all<Size>(const Size(250, 50)),
               ),
               onPressed: controller.invertSelection,
-              child: Text("INVERT SELECTION", style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontWeight: FontWeight.w600)),
+              child: Text("INVERT SELECTION",
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurface,
+                      fontWeight: FontWeight.w600)),
             ),
             ElevatedButton(
               style: ButtonStyle(
@@ -78,13 +85,17 @@ class BottomBar extends GetView<MainPageController> {
                     Theme.of(context).colorScheme.onSurface),
                 shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                      side: BorderSide(color: Theme.of(context).colorScheme.primary, width: 2),
-                    )),
+                  borderRadius: BorderRadius.circular(10),
+                  side: BorderSide(
+                      color: Theme.of(context).colorScheme.primary, width: 2),
+                )),
                 fixedSize: MaterialStateProperty.all<Size>(const Size(175, 50)),
               ),
               onPressed: controller.selectParsed,
-              child: Text("SELECT PARSED", style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w600)),
+              child: Text("SELECT PARSED",
+                  style: TextStyle(
+                      color: Theme.of(context).colorScheme.primary,
+                      fontWeight: FontWeight.w600)),
             ),
           ],
         ),
