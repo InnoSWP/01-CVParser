@@ -1,12 +1,13 @@
-name: preview_web
+name: Preview Web
 
 on:
   pull_request:
-    branches: [ "main" ]
+    branches: [ main ]
     types: [ opened ]
 
 jobs:
-  preview_web:
+  build:
+    name: Preview Web
     runs-on: ubuntu-latest
     steps:
       - name: Fetch repo
