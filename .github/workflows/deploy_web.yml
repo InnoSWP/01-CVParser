@@ -1,14 +1,12 @@
-name: deploy_web
+name: Deploy Web
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
-    types: [ synchronize ]
+    branches: [ main ]
 
 jobs:
-  deploy_web:
+  build:
+    name: Deploy Web
     runs-on: ubuntu-latest
     steps:
       - name: Fetch repo

@@ -19,7 +19,8 @@ class TopBar extends GetView<MainPageController> {
           decoration: InputDecoration(
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.0),
-              borderSide: const BorderSide(color: colorTextSmoothBlack, width: 1),
+              borderSide:
+                  const BorderSide(color: colorTextSmoothBlack, width: 1),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.0),
@@ -28,8 +29,7 @@ class TopBar extends GetView<MainPageController> {
             ),
             hintText: "Search",
             hintStyle: const TextStyle(color: colorTextSmoothBlack),
-            prefixIcon:
-                const Icon(Icons.search, color: colorTextSmoothBlack),
+            prefixIcon: const Icon(Icons.search, color: colorTextSmoothBlack),
             constraints: const BoxConstraints(maxHeight: 40, maxWidth: 450),
             contentPadding: const EdgeInsets.all(0),
           ),
@@ -48,7 +48,8 @@ class TopBar extends GetView<MainPageController> {
             ),
             shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                 RoundedRectangleBorder(
-                  side: BorderSide(color: Theme.of(context).colorScheme.primary, width: 3),
+              side: BorderSide(
+                  color: Theme.of(context).colorScheme.primary, width: 3),
               borderRadius: BorderRadius.circular(10),
             )),
             fixedSize: MaterialStateProperty.all<Size>(const Size(340, 80)),

@@ -37,14 +37,15 @@ class _PdfIconButtonState extends State<PdfIconButton> {
   Widget build(BuildContext context) {
     final BoxDecoration decor = widget.isSelected
         ? BoxDecoration(
-      color: const Color.fromARGB(40, 77, 102, 88),
-      border: Border.all(
-        color: const Color.fromARGB(255, 77, 102, 88)
-            ),
+            color: const Color.fromARGB(40, 77, 102, 88),
+            border: Border.all(color: const Color.fromARGB(255, 77, 102, 88)),
           )
-        :  BoxDecoration(color: Theme.of(context).colorScheme.onSecondary, border: Border.all(
-      color: const Color.fromARGB(20, 77, 102, 88),
-    ),);
+        : BoxDecoration(
+            color: Theme.of(context).colorScheme.onSecondary,
+            border: Border.all(
+              color: const Color.fromARGB(20, 77, 102, 88),
+            ),
+          );
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
@@ -104,14 +105,13 @@ class _PdfIconButtonState extends State<PdfIconButton> {
                           color: colorSecondaryGreenPlant,
                         ),
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(15, 10, 0, 0),
+                            padding: const EdgeInsets.fromLTRB(15, 10, 0, 0),
                             child: Opacity(
                               opacity: widget.isParsed ? 0.0 : 0.6,
                               child: const CircularProgressIndicator(
                                 color: Colors.black,
-                            ),
-                          )
-                        )
+                              ),
+                            ))
                       ],
                     ),
                   ),
@@ -121,8 +121,7 @@ class _PdfIconButtonState extends State<PdfIconButton> {
                       widget.filename,
                       textAlign: TextAlign.center,
                       overflow: TextOverflow.ellipsis,
-                      style:
-                          const TextStyle(color: colorTextSmoothBlack),
+                      style: const TextStyle(color: colorTextSmoothBlack),
                     ),
                   ),
                 ],

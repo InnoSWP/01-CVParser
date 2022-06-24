@@ -1,4 +1,4 @@
-name: Lint Code Base
+name: Format Code Base
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
 
 jobs:
   build:
-    name: Lint Code Base
+    name: Format Code Base
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -18,5 +18,5 @@ jobs:
       - name: Fetch dependencies
         run: flutter pub get
 
-      - name: Lint Code Base
-        run: flutter analyze
+      - name: Format Code Base
+        run: flutter format --set-exit-if-changed .
