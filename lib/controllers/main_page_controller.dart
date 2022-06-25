@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:cvparser_b21_01/controllers/notifications_overlay_controller.dart';
 import 'package:cvparser_b21_01/datatypes/export.dart';
 import 'package:cvparser_b21_01/datatypes/misc/indexable.dart';
 import 'package:cvparser_b21_01/services/file_saver.dart';
@@ -337,12 +338,15 @@ class MainPageController extends GetxController {
       while (true) {
         if (cvs.isNotEmpty) {
           index %= cvs.length;
-          if (cvs[index].item.isParseCachedFailed()) {
+          final cv = cvs[index].item;
+          if (cv.isParseCachedFailed()) {
             // Note: it is not async safe, so the methods like export selected
             // must first synchronously take it's own list of items
             // and only then operate on it
             cvs.removeAt(index);
-            // TODO: show snackbar/mark red
+            Get.find<NotificationsOverlayController>().notify(
+              "File \"${cv.filename}\" was removed because it cannot be parsed",
+            );
             index = 0;
           } else {
             index++;
