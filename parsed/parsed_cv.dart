@@ -1,6 +1,4 @@
-import 'package:json_annotation/json_annotation.dart';
-
-import '../cv_base.dart';
+import 'cv_base.dart';
 import 'cv_entries.dart';
 
 part 'parsed_cv.g.dart';
@@ -16,7 +14,6 @@ part 'parsed_cv.g.dart';
 /// for reasoning see [iExtract] service [parseCV] method docs)
 /// + also the filename is even not in json itself
 
-@JsonSerializable(createFactory: false)
 class ParsedCV extends CVBase {
   final CVEntries data;
 
@@ -34,12 +31,8 @@ class ParsedCV extends CVBase {
         String match = cvmatch.match;
         String sentence = cvmatch.sentence;
 
-        String combine = """
-          filename: $filename
-          label: $label
-          match: $match
-          sentence: $sentence
-        """;
+        String combine =
+            """filename: $filename\nlabel: $label\nmatch: $match\nsentence: $sentence""";
 
         if (query.hasMatch(combine)) {
           return true;
