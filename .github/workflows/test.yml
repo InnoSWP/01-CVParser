@@ -19,4 +19,4 @@ jobs:
         run: dart pub get
 
       - name: Run Tests
-        run: test.sh
+        run: ./test.sh
