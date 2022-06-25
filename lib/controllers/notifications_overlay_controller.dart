@@ -7,12 +7,12 @@ class NotificationsOverlayController extends GetxController {
   List<MapEntry<int, String>> get entries =>
       notifications.entries.toList().reversed.toList();
 
+  void close(int id) {
+    notifications.remove(id);
+  }
+
   void notify(String msg) {
     notifications[latest] = msg;
     latest++;
-  }
-
-  void close(int id) {
-    notifications.remove(id);
   }
 }
