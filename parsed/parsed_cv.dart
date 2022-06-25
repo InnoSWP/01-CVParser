@@ -1,8 +1,6 @@
 import 'cv_base.dart';
 import 'cv_entries.dart';
 
-part 'parsed_cv.g.dart';
-
 /// Use this datatype to represent iExtract CV parse result
 /// both with assigning it to the filename from where data was taken.
 
@@ -21,8 +19,6 @@ class ParsedCV extends CVBase {
     required filename,
     required this.data,
   }) : super(filename);
-
-  Map<String, dynamic> toJson() => _$ParsedCVToJson(this);
 
   bool satisfies(RegExp query) {
     for (final entry in data.entries) {
