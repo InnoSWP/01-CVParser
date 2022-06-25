@@ -70,17 +70,17 @@ RegExp generateRegExp(String querry) {
     str_tmp = querry;
   } else {
     if (fnPattern.hasMatch(querry)) {
-      str_tmp += "filename:.*" + fnPattern.stringMatch(querry)!.trim() + ".*\n";
+      str_tmp += "filename: " + fnPattern.stringMatch(querry)!.trim() + "\n";
     }
     if (lblPattern.hasMatch(querry)) {
-      str_tmp += "label:.*" + lblPattern.stringMatch(querry)!.trim() + ".*\n";
+      str_tmp += "label: " + lblPattern.stringMatch(querry)!.trim() + "\n";
     }
     if (matchPattern.hasMatch(querry)) {
-      str_tmp += "match:.*" + matchPattern.stringMatch(querry)!.trim() + ".*\n";
+      str_tmp += "match: " + matchPattern.stringMatch(querry)!.trim() + "\n";
     }
     if (sentencePattern.hasMatch(querry)) {
       str_tmp +=
-          "sentence:.*" + sentencePattern.stringMatch(querry)!.trim() + ".*\n";
+          "sentence: " + sentencePattern.stringMatch(querry)!.trim() + "\n";
     }
   }
   RegExp regExp = RegExp(str_tmp, unicode: true, caseSensitive: false);

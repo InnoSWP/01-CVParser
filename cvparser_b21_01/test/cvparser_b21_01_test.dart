@@ -1,8 +1,7 @@
-import 'parsed/cv_match.dart';
-import 'parsed/parsed_cv.dart';
-import "package:test/test.dart";
-
-import 'search.dart';
+import 'package:cvparser_b21_01/search.dart';
+import 'package:test/test.dart';
+import 'package:cvparser_b21_01/parsed/parsed_cv.dart';
+import 'package:cvparser_b21_01/parsed/cv_match.dart';
 
 ParsedCV createBetterParsedCV(String filename, List<String> labels,
     List<List<String>> matches, List<List<String>> sentences) {
@@ -91,44 +90,18 @@ List<ParsedCV> getTestCVs() {
   return tests;
 }
 
-List<String> getFileNames(List<ParsedCV> a) {
-  var output = <String>[];
+String getNames(List<ParsedCV> a) {
+  String out = "";
   for (var elem in a) {
-    output.add(elem.filename);
+    out += "${elem.filename} ";
   }
-  return output;
+  return out;
 }
 
-int main() {
-  var testCVs = getTestCVs();
-
-  print(getFileNames(filterCVs(testCVs, "sentence: scum master")));
-
-  test("filter match in specific label ", () {
-    expect(getFileNames(filterCVs(testCVs, "label: csskill match: java")),
-        ["file1", "file4", "file5"]);
+void main() {
+  var data = getTestCVs();
+  // print(getNames(filterCVs(data, "c#")));
+  test("simple search test", () {
+    expect(filterCVs(data, "c#"), [data[0], data[1]]);
   });
-
-  test("filter with logical or '|'", () {
-    expect(getFileNames(filterCVs(testCVs, "match: java | label: emails")),
-        ["file1", "file2", "file4", "file5"]);
-  });
-
-  test("specific search with logical & (and)", () {
-    expect(
-        getFileNames(filterCVs(testCVs,
-            "label: CsSkill match: flutter & label: language match: english")),
-        ["file2"]);
-  });
-
-  test("filename search", () {
-    expect(getFileNames(filterCVs(testCVs, "filename: file")),
-        ["file1", "file2", "file3", "file4", "file5"]);
-  });
-
-  // test("sentence search", () {
-  //   expect(
-  //       getFileNames(filterCVs(testCVs, "sentence: scum master")), ["file5"]);
-  // });
-  return 0;
 }
