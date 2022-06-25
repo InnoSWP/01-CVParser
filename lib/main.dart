@@ -1,5 +1,6 @@
 import 'package:cvparser_b21_01/bindings/initial_page_binding.dart';
 import 'package:cvparser_b21_01/bindings/main_page_binding.dart';
+import 'package:cvparser_b21_01/bindings/notifications_overlay_binding.dart';
 import 'package:cvparser_b21_01/bindings/services_binding.dart';
 import 'package:cvparser_b21_01/views/initial_page.dart';
 import 'package:cvparser_b21_01/views/main_page.dart';
@@ -8,6 +9,7 @@ import 'package:get/get.dart';
 
 import 'colors.dart' as my_colors;
 import 'services/i_extract.dart';
+import 'views/root.dart';
 
 void main() {
   runApp(const CVParserApp());
@@ -40,7 +42,12 @@ class CVParserApp extends StatelessWidget {
     return GetMaterialApp(
       title: "CV Parser",
       theme: mainTheme,
-      initialBinding: ServicesBinding(),
+      initialBinding: BindingsBuilder(
+        () {
+          ServicesBinding().dependencies();
+          NotificationsOverlayBinding().dependencies();
+        },
+      ),
       onGenerateRoute: (settings) {
         final cvParser = Get.find<IExtract>();
 
@@ -82,6 +89,9 @@ class CVParserApp extends StatelessWidget {
             binding: InitialPageBinding(),
           );
         }
+      },
+      builder: (context, content) {
+        return ApplicationRoot(child: content!);
       },
     );
   }

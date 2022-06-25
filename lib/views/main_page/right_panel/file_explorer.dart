@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 
 import 'file_explorer/pdf_icon_button.dart';
 
+// TODO: add/remove element animations
 class FileExplorer extends GetView<MainPageController> {
   final keyLookup = Get.find<KeyListener>();
 
