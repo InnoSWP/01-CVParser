@@ -1,8 +1,7 @@
 name: Sonar
 on:
-  pull_request:
-    branches: [ main ]
-    types: [ opened ]
+  push:
+    branches-ignore: [ main ]
 
 jobs:
   build:
