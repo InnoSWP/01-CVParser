@@ -1,3 +1,3 @@
-pub global activate coverage &&
-pub run test --coverage="coverage" &&
-pub global run coverage:format_coverage --lcov --in=coverage --out=coverage/lcov.info --packages=.packages --report-on=lib
+flutter test --coverage &&
+lcov --remove coverage/lcov.info 'lib/parsed/*' -o coverage/new_lcov.info &&
+genhtml coverage/new_lcov.info --output=coverage

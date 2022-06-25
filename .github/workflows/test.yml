@@ -12,12 +12,16 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v2
     
-      - name: Install dart
-        uses: dart-lang/setup-dart@v1.3
+      - name: Install flutter
+        run: sudo snap install flutter --classic
       
       - name: Fetch dependencies
-        run: dart pub get
+        run: flutter pub get
 
+      - name: Install tools for tests
+        run: |
+          sudo apt install lcov
+      
       - name: Run Tests
         run: |
           chmod +rwx test.sh
