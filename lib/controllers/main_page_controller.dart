@@ -52,6 +52,9 @@ class MainPageController extends GetxController {
   late StreamSubscription<dynamic> _escListener;
   late StreamSubscription<dynamic> _delListener;
 
+  /// needed for workers
+  bool closed = false;
+
   /// get current applying search filter to it
   ParsedCV? get current {
     ParsedCV? res = _current.value;
@@ -282,6 +285,7 @@ class MainPageController extends GetxController {
   void onClose() async {
     await _escListener.cancel();
     await _delListener.cancel();
+    closed = true;
 
     // ya, it's ofcource better to track the actual future instances instead of
     // just flag [_busy], and cancel them when the actual class instance becomes
@@ -306,10 +310,13 @@ class MainPageController extends GetxController {
       }
     });
 
+    // prepare for workers
+    closed = false;
+
     // setup a dummy worker
     dummyWorker = Future(() async {
       int index = 0;
-      while (true) {
+      while (!closed) {
         // iterate and parse CV's
         // also it stops parsing if the _busy is set,
         // but if a work was already started, it will be done even with _busy
@@ -318,6 +325,12 @@ class MainPageController extends GetxController {
           if (!cvs[index].item.isParseCached()) {
             try {
               await _parsedCv(cvs[index].item);
+              if (closed) {
+                return;
+              }
+              Get.find<NotificationsOverlayController>().notify(
+                "File \"${cvs[index].item.filename}\" was parsed",
+              );
             } catch (e) {
               // so the item will be removed by the garbageCollector
             }
@@ -325,6 +338,8 @@ class MainPageController extends GetxController {
           } else {
             index++;
           }
+        } else {
+          index = 0;
         }
 
         // delay not to overload system
@@ -335,7 +350,7 @@ class MainPageController extends GetxController {
     // remove failed cv's
     garbageCollector = Future(() async {
       int index = 0;
-      while (true) {
+      while (!closed) {
         if (cvs.isNotEmpty) {
           index %= cvs.length;
           final cv = cvs[index].item;
@@ -351,6 +366,8 @@ class MainPageController extends GetxController {
           } else {
             index++;
           }
+        } else {
+          index = 0;
         }
 
         // delay not to overload system

@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 
 import 'notifications_overlay/notification_card.dart';
 
-// TODO: animations for closing
 class NotificationsOverlay extends GetView<NotificationsOverlayController> {
   const NotificationsOverlay({
     Key? key,
@@ -16,16 +15,18 @@ class NotificationsOverlay extends GetView<NotificationsOverlayController> {
       width: 490,
       height: 195,
       child: Obx(
-        () => ListView.builder(
-          controller: controller.scrollController,
+        () => ListView(
+          physics: const NeverScrollableScrollPhysics(),
           shrinkWrap: true,
-          itemCount: controller.notifications.length,
-          itemBuilder: (context, index) {
-            return NotificationCard(
-              msg: controller.notifications[index],
-              onClose: () => controller.close(index),
-            );
-          },
+          children: controller.entries
+              .map(
+                (e) => NotificationCard(
+                  key: ValueKey(e.key),
+                  msg: e.value,
+                  onClose: () => controller.close(e.key),
+                ),
+              )
+              .toList(),
         ),
       ),
     );

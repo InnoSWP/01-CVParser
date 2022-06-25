@@ -1,4 +1,3 @@
-import 'package:cvparser_b21_01/controllers/notifications_overlay_controller.dart';
 import 'package:cvparser_b21_01/datatypes/export.dart';
 import 'package:cvparser_b21_01/views/dialogs/fail_dialog.dart';
 import 'package:cvparser_b21_01/views/dialogs/process_dialog.dart';

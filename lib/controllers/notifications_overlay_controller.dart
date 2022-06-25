@@ -1,20 +1,18 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class NotificationsOverlayController extends GetxController {
-  final scrollController = ScrollController();
-  final notifications = <String>[].obs;
+  final notifications = <int, String>{}.obs; // unique id -> String msg
+  var latest = 0;
+
+  List<MapEntry<int, String>> get entries =>
+      notifications.entries.toList().reversed.toList();
 
   void notify(String msg) {
-    notifications.add(msg);
-    scrollController.animateTo(
-      scrollController.position.maxScrollExtent + 50,
-      duration: const Duration(milliseconds: 500),
-      curve: Curves.fastOutSlowIn,
-    );
+    notifications[latest] = msg;
+    latest++;
   }
 
-  void close(int index) {
-    notifications.removeAt(index);
+  void close(int id) {
+    notifications.remove(id);
   }
 }
