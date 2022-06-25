@@ -3,7 +3,7 @@ name: Preview Web
 on:
   pull_request:
     branches: [ main ]
-    types: [ synchronize ]
+    types: [ open, synchronize ]
 
 jobs:
   build:
