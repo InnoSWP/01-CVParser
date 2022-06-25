@@ -328,9 +328,6 @@ class MainPageController extends GetxController {
               if (closed) {
                 return;
               }
-              Get.find<NotificationsOverlayController>().notify(
-                "File \"${cvs[index].item.filename}\" was parsed",
-              );
             } catch (e) {
               // so the item will be removed by the garbageCollector
             }
