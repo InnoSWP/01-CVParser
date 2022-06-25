@@ -1,7 +1,7 @@
-name: Sonar
+name: Sonar Dev
 on:
   push:
-    branches: [ main ]
+    branches: [ develop ]
 
 jobs:
   build:
@@ -13,5 +13,5 @@ jobs:
           fetch-depth: 0
       - uses: sonarsource/sonarqube-scan-action@master
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_DEV_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
