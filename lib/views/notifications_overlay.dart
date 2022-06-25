@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 
 import 'notifications_overlay/notification_card.dart';
 
+// TODO: add/remove element animations
 class NotificationsOverlay extends GetView<NotificationsOverlayController> {
   const NotificationsOverlay({
     Key? key,
