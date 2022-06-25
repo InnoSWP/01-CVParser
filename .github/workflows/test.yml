@@ -1,0 +1,22 @@
+name: Test Search Feature
+
+on:
+  push:
+    branches: [ search ]
+
+jobs:
+  build:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+    
+      - name: Install dart
+        uses: dart-lang/setup-dart@v1.3
+      
+      - name: Fetch dependencies
+        run: dart pub get
+
+      - name: Run Tests
+        run: test.sh
