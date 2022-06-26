@@ -54,7 +54,7 @@ class _CardWidgetState extends State<CardWidget> {
                   Text(
                     widget.title,
                     style: const TextStyle(
-                      fontSize: 52,
+                      fontSize: 24,
                       fontFamily: "Eczar",
                       fontWeight: FontWeight.w400,
                       color: colorTextSmoothBlack,

@@ -60,45 +60,67 @@ class BottomBar extends GetView<MainPageController> {
           ],
         ),
         const SizedBox(height: 18.0),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(
-                    Theme.of(context).colorScheme.primary),
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                )),
-                fixedSize: MaterialStateProperty.all<Size>(const Size(250, 50)),
+        ElevatedButton(
+          style: ButtonStyle(
+            backgroundColor: MaterialStateProperty.all(
+                Theme.of(context).colorScheme.onSurface),
+            textStyle: MaterialStateProperty.all<TextStyle>(
+              const TextStyle(
+                fontSize: 30,
+                fontFamily: "Merriweather",
+                fontWeight: FontWeight.w600,
               ),
-              onPressed: controller.invertSelection,
-              child: Text("INVERT SELECTION",
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurface,
-                      fontWeight: FontWeight.w600)),
             ),
-            ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(
-                    Theme.of(context).colorScheme.onSurface),
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                RoundedRectangleBorder(
                   side: BorderSide(
-                      color: Theme.of(context).colorScheme.primary, width: 2),
+                      color: Theme.of(context).colorScheme.primary, width: 3),
+                  borderRadius: BorderRadius.circular(10),
                 )),
-                fixedSize: MaterialStateProperty.all<Size>(const Size(175, 50)),
-              ),
-              onPressed: controller.selectParsed,
-              child: Text("SELECT PARSED",
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.w600)),
-            ),
-          ],
+            fixedSize: MaterialStateProperty.all<Size>(const Size(340, 80)),
+          ),
+          onPressed: controller.askUserToUploadPdfFiles,
+          child: const Text("UPLOAD MORE"),
         ),
+        // Row(
+        //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        //   children: [
+        //     ElevatedButton(
+        //       style: ButtonStyle(
+        //         backgroundColor: MaterialStateProperty.all(
+        //             Theme.of(context).colorScheme.primary),
+        //         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+        //             RoundedRectangleBorder(
+        //           borderRadius: BorderRadius.circular(10),
+        //         )),
+        //         fixedSize: MaterialStateProperty.all<Size>(const Size(250, 50)),
+        //       ),
+        //       onPressed: controller.invertSelection,
+        //       child: Text("INVERT SELECTION",
+        //           style: TextStyle(
+        //               color: Theme.of(context).colorScheme.onSurface,
+        //               fontWeight: FontWeight.w600)),
+        //     ),
+        //     ElevatedButton(
+        //       style: ButtonStyle(
+        //         backgroundColor: MaterialStateProperty.all(
+        //             Theme.of(context).colorScheme.onSurface),
+        //         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+        //             RoundedRectangleBorder(
+        //           borderRadius: BorderRadius.circular(10),
+        //           side: BorderSide(
+        //               color: Theme.of(context).colorScheme.primary, width: 2),
+        //         )),
+        //         fixedSize: MaterialStateProperty.all<Size>(const Size(175, 50)),
+        //       ),
+        //       onPressed: controller.selectParsed,
+        //       child: Text("SELECT PARSED",
+        //           style: TextStyle(
+        //               color: Theme.of(context).colorScheme.primary,
+        //               fontWeight: FontWeight.w600)),
+        //     ),
+        //   ],
+        // ),
       ],
     );
   }
