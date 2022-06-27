@@ -4,9 +4,6 @@
 # The Web-platform which helps you to parse your CV into JSON format
 Our platform was designed for helping Innopolis Admission Team for choose new aplicant. With right filtering and viewing, which our platfrom provide, they can choose the best one. 
 
-# Demo video 
-[Click [here] if you want to watch the video](https://drive.google.com/file/d/1NlFxSv5u5Yoc_tJSou4jfvychnqyA0wh/view?usp=sharing)
-
 
 # Our team
 
@@ -14,6 +11,18 @@ Our platform was designed for helping Innopolis Admission Team for choose new ap
 2) Konstantin Fedorov - UX Developer;
 3) Vitaly Mahonin - UI Developer;
 4) David Eje - Core Developer.
+
+
+# Demo video 
+
+[Click here if you want to watch the video](https://drive.google.com/file/d/1NlFxSv5u5Yoc_tJSou4jfvychnqyA0wh/view?usp=sharing)
+
+
+# How to use it
+
+Just open the link [here](https://cv-parser-ca402.web.app/#/) and use our latest stable version. 
+Upload your CVs and you view them. You can search by names of files, by words in the PDFs. 
+Also, you can select and delete all. 
 
 
 # Links
@@ -39,6 +48,17 @@ Link to the [Figma](https://www.figma.com/file/3KFQasXCKhXR4oCExWReoT/01-CVParse
 8) Adaptive design for screen with different sizes(from 13' to 30')
 9) Ability to export one or more JSON at once
 10) Uploading PDFs file by file
+11) Searching by labels and mathes
+
+
+# Frameworks or technology
+
+We use the Flutter Web for our project. Also we write some backend on Jango for mock API
+
+
+# Liseince
+
+TBD
 
 
 # Contacts
