@@ -5,7 +5,7 @@
 Our platform was designed for helping Innopolis Admission Team for choose new aplicant. With right filtering and viewing, which our platfrom provide, they can choose the best one. 
 
 # Demo video 
-[![Watch the video]()](https://drive.google.com/file/d/1NlFxSv5u5Yoc_tJSou4jfvychnqyA0wh/view?usp=sharing)
+[Click [here] if you want to watch the video](https://drive.google.com/file/d/1NlFxSv5u5Yoc_tJSou4jfvychnqyA0wh/view?usp=sharing)
 
 
 # Our team
