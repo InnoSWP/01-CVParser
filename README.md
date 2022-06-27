@@ -56,15 +56,15 @@ Link to the [Figma](https://www.figma.com/file/3KFQasXCKhXR4oCExWReoT/01-CVParse
 We use the Flutter Web for our project. Also we write some backend on Jango for mock API
 
 
-# Liseince
-
-MIT License
-Copyright (c) 2022 CVParser
-
-
 # Contacts
 If you have any questions regarding to our project contact us by: 
 1) n.grigorenko@innopolis.university
 2) k.fedorov@innopolis.university
 3) v.mahonin@innopolis.university
 4) d.edje@innopolis.university
+
+
+# Liseince
+
+MIT License
+Copyright (c) 2022 CVParser
