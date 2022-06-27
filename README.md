@@ -1,8 +1,11 @@
 [![Quality Gate Status](https://ead1-188-130-155-152.eu.ngrok.io/api/project_badges/measure?project=CV-Parser&metric=alert_status&token=squ_06f678c156cb40b9802bf8851850cf92737ee307)](https://ead1-188-130-155-152.eu.ngrok.io/dashboard?id=CV-Parser)
 
 # CVParser Project powered by iExtract
-
 # The Web-platform which helps you to parse your CV into JSON format
+Our platform was designed for helping Innopolis Admission Team for choose new aplicant. With right filtering and viewing, which our platfrom provide, they can choose the best one. 
+
+# Demo video 
+[![Watch the video]()](https://drive.google.com/file/d/1NlFxSv5u5Yoc_tJSou4jfvychnqyA0wh/view?usp=sharing)
 
 
 # Our team
