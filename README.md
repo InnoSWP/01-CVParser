@@ -58,7 +58,8 @@ We use the Flutter Web for our project. Also we write some backend on Jango for 
 
 # Liseince
 
-TBD
+MIT License
+Copyright (c) 2022 CVParser
 
 
 # Contacts
