@@ -21,33 +21,37 @@ class CardWidget extends StatefulWidget {
 class _CardWidgetState extends State<CardWidget> {
   // responsible for toggle
   bool _showData = false;
-  bool aboba = true;
-
   @override
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 10.0),
-        // list card containing country name
+        const SizedBox(height: 5.0),
         GestureDetector(
           onTap: () {
             setState(() {
               _showData = !_showData;
-              aboba = !aboba;
             });
           },
           child: Container(
             width: 1350,
-            height: 100,
-            margin: const EdgeInsets.symmetric(vertical: 5),
+            height: 80,
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.onSecondary,
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: !_showData
+                  ? BorderRadius.circular(10)
+                  : const BorderRadius.only(
+                      topLeft: Radius.circular(10),
+                      bottomLeft: Radius.circular(0),
+                      topRight: Radius.circular(10),
+                      bottomRight: Radius.circular(0),
+                    ),
             ),
+            margin: !_showData
+                ?  const EdgeInsets.fromLTRB(0, 0, 0, 10) : const EdgeInsets.fromLTRB(0, 0, 0, 0),
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(15, 2, 5, 5),
+              padding: const EdgeInsets.fromLTRB(15, 2, 5, 0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -60,7 +64,7 @@ class _CardWidgetState extends State<CardWidget> {
                       color: colorTextSmoothBlack,
                     ),
                   ),
-                  if (aboba)
+                  if (!_showData)
                     const Icon(Icons.keyboard_arrow_down_rounded,
                         size: 55, color: colorSecondaryGreenPlant)
                   else
@@ -75,24 +79,42 @@ class _CardWidgetState extends State<CardWidget> {
         // this is the company card which is toggling based upon the bool
         _showData
             ? Container(
-                padding: const EdgeInsets.fromLTRB(30, 0, 0, 0),
+                decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(0),
+                      bottomLeft: Radius.circular(10),
+                      topRight: Radius.circular(0),
+                      bottomRight: Radius.circular(10),
+                    ),
+                    color: colorSecondaryLightGreenPlant),
+                padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
+                margin: const EdgeInsets.fromLTRB(0, 0, 0, 10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: widget.elements.map(
                     (e) {
                       // make changes in the UI here for your company card
                       return Card(
-                        color: colorSurfaceSmoothGreenPlant,
+                        color: colorSecondaryLightGreenPlant,
                         shadowColor: Colors.transparent,
-                        child: Text(
-                          e.match,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontFamily: 'Merriweather',
-                            color: colorTextSmoothBlack,
-                            backgroundColor: Colors.transparent,
+                        child: Column(children: [
+                          SizedBox(
+                            width: 1350,
+                            child: Text(
+                              e.match,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontFamily: 'Merriweather',
+                                color: colorTextSmoothBlack,
+                                backgroundColor: Colors.transparent,
+                              ),
+                            ),
                           ),
-                        ),
+                          Container(
+                              height: 1,
+                              color: const Color.fromARGB(35, 77, 102, 88),
+                              margin: const EdgeInsets.fromLTRB(0, 20, 30, 10)),
+                        ]),
                       );
                     },
                   ).toList(),
