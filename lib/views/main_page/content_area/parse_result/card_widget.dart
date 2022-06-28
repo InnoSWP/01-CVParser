@@ -49,7 +49,8 @@ class _CardWidgetState extends State<CardWidget> {
                     ),
             ),
             margin: !_showData
-                ?  const EdgeInsets.fromLTRB(0, 0, 0, 10) : const EdgeInsets.fromLTRB(0, 0, 0, 0),
+                ? const EdgeInsets.fromLTRB(0, 0, 0, 10)
+                : const EdgeInsets.fromLTRB(0, 0, 0, 0),
             child: Padding(
               padding: const EdgeInsets.fromLTRB(15, 2, 5, 0),
               child: Row(
