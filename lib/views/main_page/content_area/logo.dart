@@ -7,20 +7,31 @@ class Logo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
+      padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: const [
           Text(
-            'iExtract',
+            '                       iExtract',
             style: TextStyle(
-              fontSize: 80,
+              fontSize: 24,
               fontFamily: 'Eczar',
               fontWeight: FontWeight.w600,
               color: colorPrimaryRedCaramelDark,
               height: 0.9,
             ),
           ),
+          Text(
+            'CVParser',
+            style: TextStyle(
+              fontSize: 56,
+              fontFamily: 'Eczar',
+              fontWeight: FontWeight.w600,
+              color: colorPrimaryRedCaramelDark,
+              height: 0.7,
+            ),
+          )
         ],
       ),
     );

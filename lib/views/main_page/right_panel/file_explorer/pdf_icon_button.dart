@@ -38,7 +38,7 @@ class _PdfIconButtonState extends State<PdfIconButton> {
     final BoxDecoration decor = widget.isSelected
         ? BoxDecoration(
             color: const Color.fromARGB(40, 77, 102, 88),
-            border: Border.all(color: const Color.fromARGB(255, 77, 102, 88)),
+            border: Border.all(color: const Color.fromARGB(255, 174, 73, 33)),
           )
         : BoxDecoration(
             color: Theme.of(context).colorScheme.onSecondary,
