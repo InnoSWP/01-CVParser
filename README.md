@@ -1,4 +1,4 @@
-[![Quality Gate Status](https://ead1-188-130-155-152.eu.ngrok.io/api/project_badges/measure?project=CV-Parser&metric=alert_status&token=squ_06f678c156cb40b9802bf8851850cf92737ee307)](https://ead1-188-130-155-152.eu.ngrok.io/dashboard?id=CV-Parser)
+[![Quality Gate Status](https://8444-188-130-155-154.eu.ngrok.io/api/project_badges/measure?project=CV-Parser&metric=alert_status&token=squ_9fd308d8376a374ed879810cd16108be9d2536de)](https://8444-188-130-155-154.eu.ngrok.io/dashboard?id=CV-Parser)
 
 # CVParser Project powered by iExtract
 # The Web-platform which helps you to parse your CV into JSON format
