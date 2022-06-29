@@ -1,4 +1,4 @@
-part 'cv_match.g.dart';
+// part 'cv_match.g.dart';
 
 class CVMatch {
   final String match;
@@ -9,8 +9,8 @@ class CVMatch {
     required this.sentence,
   });
 
-  factory CVMatch.fromJson(Map<String, dynamic> json) =>
-      _$CVMatchFromJson(json);
+  // factory CVMatch.fromJson(Map<String, dynamic> json) =>
+  //     _$CVMatchFromJson(json);
 
-  Map<String, dynamic> toJson() => _$CVMatchToJson(this);
+  // Map<String, dynamic> toJson() => _$CVMatchToJson(this);
 }
