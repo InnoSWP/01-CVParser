@@ -1,0 +1,28 @@
+name: Test Search Feature
+
+on:
+  push:
+    branches: [ search ]
+
+jobs:
+  build:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+    
+      - name: Install flutter
+        run: sudo snap install flutter --classic
+      
+      - name: Fetch dependencies
+        run: flutter pub get
+
+      - name: Install tools for tests
+        run: |
+          sudo apt install lcov
+      
+      - name: Run Tests
+        run: |
+          chmod +rwx test.sh
+          ./test.sh
