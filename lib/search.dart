@@ -9,7 +9,7 @@ List<ParsedCV> filterCVs(List<ParsedCV> data, String querry) {
 
     for (int j = 1; j < andQuerry.length; j++) {
       curAndBin =
-          andList(curAndBin, findCVs(data, generateRegExp(andQuerry[i])));
+          andList(curAndBin, findCVs(data, generateRegExp(andQuerry[j])));
     }
     if (binOutput.isEmpty) {
       binOutput = curAndBin;
@@ -57,30 +57,30 @@ List<bool> findCVs(List<ParsedCV> data, RegExp querry) {
 
 RegExp generateRegExp(String querry) {
   RegExp fnPattern =
-      new RegExp(r"(?<=filename:)(.*?)(?=label:|match:|sentence:|$)");
+      RegExp(r"(?<=filename:)(.*?)(?=label:|match:|sentence:|$)");
   RegExp lblPattern =
-      new RegExp(r"(?<=label:)(.*?)(?=filename:|match:|sentence:|$)");
+      RegExp(r"(?<=label:)(.*?)(?=filename:|match:|sentence:|$)");
   RegExp matchPattern =
-      new RegExp(r"(?<=match:)(.*?)(?=filename:|label:|sentence:|$)");
+      RegExp(r"(?<=match:)(.*?)(?=filename:|label:|sentence:|$)");
   RegExp sentencePattern =
-      new RegExp(r"(?<=sentence:)(.*?)(?=filename:|label:|match:|$)");
+      RegExp(r"(?<=sentence:)(.*?)(?=filename:|label:|match:|$)");
 
   var str_tmp = "";
-  if (!(new RegExp("filename:|label:|match:|sentence:")).hasMatch(querry)) {
-    str_tmp = querry;
+  if (!(RegExp("filename:|label:|match:|sentence:")).hasMatch(querry)) {
+    str_tmp = querry.trim();
   } else {
     if (fnPattern.hasMatch(querry)) {
-      str_tmp += "filename:.*" + fnPattern.stringMatch(querry)!.trim() + ".*\n";
+      str_tmp += "filename:.*${fnPattern.stringMatch(querry)!.trim()}.*\n";
     }
     if (lblPattern.hasMatch(querry)) {
-      str_tmp += "label:.*" + lblPattern.stringMatch(querry)!.trim() + ".*\n";
+      str_tmp += "label:.*${lblPattern.stringMatch(querry)!.trim()}.*\n";
     }
     if (matchPattern.hasMatch(querry)) {
-      str_tmp += "match:.*" + matchPattern.stringMatch(querry)!.trim() + ".*\n";
+      str_tmp += "match:.*${matchPattern.stringMatch(querry)!.trim()}.*\n";
     }
     if (sentencePattern.hasMatch(querry)) {
       str_tmp +=
-          "sentence:.*" + sentencePattern.stringMatch(querry)!.trim() + ".*\n";
+          "sentence:.*${sentencePattern.stringMatch(querry)!.trim()}.*\n";
     }
   }
   RegExp regExp = RegExp(str_tmp, unicode: true, caseSensitive: false);
