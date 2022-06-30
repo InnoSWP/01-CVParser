@@ -7,6 +7,7 @@ class CVsFilter
   static final RegExp lblPattern = RegExp(r"(?<=label:)(.*?)(?=filename:|match:|sentence:|$)");
   static final RegExp matchPattern = RegExp(r"(?<=match:)(.*?)(?=filename:|label:|sentence:|$)");
   static final RegExp sentencePattern = RegExp(r"(?<=sentence:)(.*?)(?=filename:|label:|match:|$)");
+  static const List<String> bannedSymbols = [r"\",r"+",r"*.","[","]"];
 
   List<NotParsedCV> allCVs;
   String query;
@@ -43,6 +44,11 @@ class CVsFilter
         strTmp +=
         "sentence:.*${sentencePattern.stringMatch(querry)!.trim()}.*\n";
       }
+    }
+    for (var elem in bannedSymbols) {
+        if (strTmp.contains(elem)){
+          strTmp = strTmp.replaceAll(elem, r"\"+elem);
+        }
     }
     RegExp regExp = RegExp(strTmp, unicode: true, caseSensitive: false);
     return regExp;
@@ -118,7 +124,7 @@ class CVsFilter
       }
       else if (!allCVs[i].isParseCachedComplete())
       {
-          output.add(allCVs[i]);
+        output.add(allCVs[i]);
       }
     }
     for (var i = 0; i < allNotParsedCVs.length; i++)

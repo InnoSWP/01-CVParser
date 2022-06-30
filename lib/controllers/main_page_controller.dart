@@ -102,7 +102,8 @@ class MainPageController extends GetxController {
   List<Indexable<Selectable<NotParsedCV>>> get filteredCvs {
     final res = <Indexable<Selectable<NotParsedCV>>>[];
     int index = 0;
-    var tmp = CVsFilter(cvs.map((element) => element.item).toList(), searchQuerry);
+    var tmp =
+        CVsFilter(cvs.map((element) => element.item).toList(), searchQuerry);
     var filtered = tmp.getFiltered();
     for (final packet in cvs) {
       final cv = packet.item;
@@ -411,7 +412,9 @@ class MainPageController extends GetxController {
     _syncSafe(
       () {
         for (final cv in cvs) {
-          var tmp = CVsFilter(cvs.map((element) => element.item).toList(), searchQuerry).getFiltered();
+          var tmp = CVsFilter(
+                  cvs.map((element) => element.item).toList(), searchQuerry)
+              .getFiltered();
 
           cv.isSelected = tmp.contains(cv.item);
         }
@@ -426,7 +429,9 @@ class MainPageController extends GetxController {
     _syncSafe(
       () {
         for (final cv in cvs) {
-          var tmp = CVsFilter(cvs.map((element) => element.item).toList(), searchQuerry).getFiltered();
+          var tmp = CVsFilter(
+                  cvs.map((element) => element.item).toList(), searchQuerry)
+              .getFiltered();
           cv.item.isParseCachedComplete() && tmp.contains(cv.item);
         }
         cvs.refresh();
