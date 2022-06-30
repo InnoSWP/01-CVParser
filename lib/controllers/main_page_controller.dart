@@ -10,6 +10,7 @@ import 'package:cvparser_b21_01/services/file_saver.dart';
 import 'package:cvparser_b21_01/services/key_listener.dart';
 import 'package:cvparser_b21_01/views/dialogs/fail_dialog.dart';
 import 'package:cvparser_b21_01/views/dialogs/progress_dialog.dart';
+import 'package:cvparser_b21_01/services/search.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
 
@@ -22,7 +23,8 @@ class MainPageController extends GetxController {
   late final Future<void> dummyWorker;
   late final Future<void> garbageCollector; // removes failed to parse cv's
 
-  RegExp fileExplorerQuery = RegExp("");
+  // List<NotParsedCV> filteredCVs = [];
+  String searchQuerry = "";
   RegExp contentAreaQuery = RegExp("");
 
   /// Using lazy approach, we will initially upload cv's as [NotParsedCV],
@@ -100,9 +102,11 @@ class MainPageController extends GetxController {
   List<Indexable<Selectable<NotParsedCV>>> get filteredCvs {
     final res = <Indexable<Selectable<NotParsedCV>>>[];
     int index = 0;
+    var tmp = CVsFilter(cvs.map((element) => element.item).toList(), searchQuerry);
+    var filtered = tmp.getFiltered();
     for (final packet in cvs) {
       final cv = packet.item;
-      if (cv.satisfies(fileExplorerQuery)) {
+      if (filtered.contains(cv)) {
         res.add(
           Indexable(
             item: packet,
@@ -407,7 +411,9 @@ class MainPageController extends GetxController {
     _syncSafe(
       () {
         for (final cv in cvs) {
-          cv.isSelected = cv.item.satisfies(fileExplorerQuery);
+          var tmp = CVsFilter(cvs.map((element) => element.item).toList(), searchQuerry).getFiltered();
+
+          cv.isSelected = tmp.contains(cv.item);
         }
         cvs.refresh();
         // then filteredCvs will deselect undisplayed ones
@@ -420,8 +426,8 @@ class MainPageController extends GetxController {
     _syncSafe(
       () {
         for (final cv in cvs) {
-          cv.isSelected = cv.item.isParseCachedComplete() &&
-              cv.item.satisfies(fileExplorerQuery);
+          var tmp = CVsFilter(cvs.map((element) => element.item).toList(), searchQuerry).getFiltered();
+          cv.item.isParseCachedComplete() && tmp.contains(cv.item);
         }
         cvs.refresh();
         // then filteredCvs will deselect undisplayed ones
@@ -452,9 +458,9 @@ class MainPageController extends GetxController {
   /// apply new search filter
   void updateFileExplorerQuery(String text) {
     try {
-      fileExplorerQuery = RegExp(text);
+      searchQuerry = text;
     } catch (e) {
-      fileExplorerQuery = RegExp("");
+      searchQuerry = "";
     }
     cvs.refresh();
   }
