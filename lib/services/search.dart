@@ -1,24 +1,25 @@
 import 'package:cvparser_b21_01/datatypes/export.dart';
 
-
-class CVsFilter
-{
-  static final RegExp fnPattern = RegExp(r"(?<=filename:)(.*?)(?=label:|match:|sentence:|$)");
-  static final RegExp lblPattern = RegExp(r"(?<=label:)(.*?)(?=filename:|match:|sentence:|$)");
-  static final RegExp matchPattern = RegExp(r"(?<=match:)(.*?)(?=filename:|label:|sentence:|$)");
-  static final RegExp sentencePattern = RegExp(r"(?<=sentence:)(.*?)(?=filename:|label:|match:|$)");
-  static const List<String> bannedSymbols = [r"\",r"+",r"*.","[","]"];
+class CVsFilter {
+  static final RegExp fnPattern =
+      RegExp(r"(?<=filename:)(.*?)(?=label:|match:|sentence:|$)");
+  static final RegExp lblPattern =
+      RegExp(r"(?<=label:)(.*?)(?=filename:|match:|sentence:|$)");
+  static final RegExp matchPattern =
+      RegExp(r"(?<=match:)(.*?)(?=filename:|label:|sentence:|$)");
+  static final RegExp sentencePattern =
+      RegExp(r"(?<=sentence:)(.*?)(?=filename:|label:|match:|$)");
+  static const List<String> bannedSymbols = [r"\", r"+", r"*.", "[", "]"];
 
   List<NotParsedCV> allCVs;
   String query;
   var allParsedCVs = <ParsedCV>[];
   var allNotParsedCVs = <NotParsedCV>[];
 
-  CVsFilter(this.allCVs,this.query)
-  {
-
+  CVsFilter(this.allCVs, this.query) {
     for (var i = 0; i < allCVs.length; i++) {
-      if (allCVs[i].isParseCachedComplete() && (allCVs[i] as RawPdfCV).cached!=null) {
+      if (allCVs[i].isParseCachedComplete() &&
+          (allCVs[i] as RawPdfCV).cached != null) {
         allParsedCVs.add((allCVs[i] as RawPdfCV).cached!);
       } else {
         allNotParsedCVs.add(allCVs[i]);
@@ -42,13 +43,13 @@ class CVsFilter
       }
       if (sentencePattern.hasMatch(querry)) {
         strTmp +=
-        "sentence:.*${sentencePattern.stringMatch(querry)!.trim()}.*\n";
+            "sentence:.*${sentencePattern.stringMatch(querry)!.trim()}.*\n";
       }
     }
     for (var elem in bannedSymbols) {
-        if (strTmp.contains(elem)){
-          strTmp = strTmp.replaceAll(elem, r"\"+elem);
-        }
+      if (strTmp.contains(elem)) {
+        strTmp = strTmp.replaceAll(elem, r"\" + elem);
+      }
     }
     RegExp regExp = RegExp(strTmp, unicode: true, caseSensitive: false);
     return regExp;
@@ -78,7 +79,7 @@ class CVsFilter
     }
     return filtered;
   }
-  
+
   List<bool> andList(List<bool> a, List<bool> b) {
     var output = List.generate(a.length, (index) => false);
     for (var i = 0; i < a.length; i++) {
@@ -98,7 +99,7 @@ class CVsFilter
     }
     return output;
   }
-  
+
   List<bool> findCVs(List<ParsedCV> data, RegExp querry) {
     var output = List.generate(data.length, (index) => false);
     for (var i = 0; i < data.length; i++) {
@@ -113,27 +114,20 @@ class CVsFilter
     if (query.isEmpty) {
       return allCVs;
     }
-    var parsedFiltered =_filterCVs(allParsedCVs, query);
+    var parsedFiltered = _filterCVs(allParsedCVs, query);
 
     var output = <NotParsedCV>[];
-    for (var i = 0; i < allCVs.length; i++)
-    {
-      if (allCVs[i].isParseCachedComplete() && parsedFiltered.contains(allCVs[i].immediateParse()))
-      {
+    for (var i = 0; i < allCVs.length; i++) {
+      if (allCVs[i].isParseCachedComplete() &&
+          parsedFiltered.contains(allCVs[i].immediateParse())) {
         output.add(allCVs[i]);
-      }
-      else if (!allCVs[i].isParseCachedComplete())
-      {
+      } else if (!allCVs[i].isParseCachedComplete()) {
         output.add(allCVs[i]);
       }
     }
-    for (var i = 0; i < allNotParsedCVs.length; i++)
-    {
+    for (var i = 0; i < allNotParsedCVs.length; i++) {
       output.add(allNotParsedCVs[i]);
     }
     return output;
   }
 }
-
-
-
