@@ -1,5 +1,3 @@
-import 'package:cvparser_b21_01/datatypes/cv/parsed/parsed_cv.dart';
-import 'package:cvparser_b21_01/datatypes/cv/not_parsed/not_parsed_cv.dart';
 import 'package:cvparser_b21_01/datatypes/export.dart';
 
 
