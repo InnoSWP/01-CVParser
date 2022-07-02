@@ -54,7 +54,7 @@ class CVsFilter {
     RegExp regEx;
     try {
       regEx = RegExp(strTmp, unicode: true, caseSensitive: false);
-    } on Exception catch (e) {
+    } on Exception {
       regEx = RegExp("");
     }
     return regEx;
