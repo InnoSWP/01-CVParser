@@ -464,8 +464,7 @@ class MainPageController extends GetxController {
   /// apply new search filter
   void updateFileExplorerQuery(String text) {
     try {
-      // searchQuerry = text;
-      searchQuerry = "";
+      searchQuerry = text;
     } catch (e) {
       searchQuerry = "";
     }
