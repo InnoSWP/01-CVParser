@@ -34,12 +34,8 @@ class ParsedCV extends CVBase {
         String match = cvmatch.match;
         String sentence = cvmatch.sentence;
 
-        String combine = """
-          filename: $filename
-          label: $label
-          match: $match
-          sentence: $sentence
-        """;
+        String combine =
+            """filename: $filename\nlabel: $label\nmatch: $match\nsentence: $sentence""";
 
         if (query.hasMatch(combine)) {
           return true;
