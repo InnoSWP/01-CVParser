@@ -51,8 +51,13 @@ class CVsFilter {
         strTmp = strTmp.replaceAll(elem, r"\" + elem);
       }
     }
-    RegExp regExp = RegExp(strTmp, unicode: true, caseSensitive: false);
-    return regExp;
+    RegExp regEx;
+    try {
+      regEx = RegExp(strTmp, unicode: true, caseSensitive: false);
+    } on Exception catch (e) {
+      regEx = RegExp("");
+    }
+    return regEx;
   }
 
   List<ParsedCV> _filterCVs(List<ParsedCV> data, String query) {
