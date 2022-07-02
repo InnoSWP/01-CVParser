@@ -432,7 +432,8 @@ class MainPageController extends GetxController {
           var tmp = CVsFilter(
                   cvs.map((element) => element.item).toList(), searchQuerry)
               .getFiltered();
-          cv.item.isParseCachedComplete() && tmp.contains(cv.item);
+          cv.isSelected =
+              cv.item.isParseCachedComplete() && tmp.contains(cv.item);
         }
         cvs.refresh();
         // then filteredCvs will deselect undisplayed ones
@@ -463,7 +464,8 @@ class MainPageController extends GetxController {
   /// apply new search filter
   void updateFileExplorerQuery(String text) {
     try {
-      searchQuerry = text;
+      // searchQuerry = text;
+      searchQuerry = "";
     } catch (e) {
       searchQuerry = "";
     }
