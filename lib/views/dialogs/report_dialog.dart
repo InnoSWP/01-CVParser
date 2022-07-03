@@ -15,6 +15,7 @@ class ReportDialog extends StatelessWidget {
       onWillPop: () async => false,
       child: Center(
         child: Card(
+          color: colorPrimaryLightRedCaramel,
           child: SizedBox(
             height: MediaQuery.of(context).size.height / 3,
             width: MediaQuery.of(context).size.width / 3,
@@ -43,14 +44,15 @@ class ReportDialog extends StatelessWidget {
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10.0),
                       borderSide: const BorderSide(
-                          color: colorPrimaryRedCaramel, width: 1),
+                          color: colorPrimaryRedCaramel, width: 3),
                     ),
+                    hintText: "Text...",
                     hintStyle: const TextStyle(color: colorTextSmoothBlack),
                     constraints: const BoxConstraints(
                       maxHeight: 400,
                       maxWidth: 450,
                     ),
-                    contentPadding: const EdgeInsets.all(0),
+                    contentPadding: const EdgeInsets.all(10),
                   ),
                 ),
               ],
