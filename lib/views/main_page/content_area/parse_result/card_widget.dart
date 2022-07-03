@@ -2,9 +2,12 @@ import 'package:cvparser_b21_01/colors.dart';
 import 'package:cvparser_b21_01/datatypes/export.dart';
 import 'package:flutter/material.dart';
 
+import 'card_widget/cv_match_line.dart';
+
 class CardWidget extends StatefulWidget {
   final String title;
   final List<CVMatch> elements;
+  final void Function(CVMatch context)? onMakeReportRequested;
 
   // right now it only accepts title, but you can add more
   // arguments to be accepted by this widget
@@ -12,6 +15,7 @@ class CardWidget extends StatefulWidget {
     Key? key,
     required this.title,
     required this.elements,
+    this.onMakeReportRequested,
   }) : super(key: key);
 
   @override
@@ -92,33 +96,20 @@ class _CardWidgetState extends State<CardWidget> {
                 margin: const EdgeInsets.fromLTRB(0, 0, 0, 10),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: widget.elements.map(
-                    (e) {
-                      // make changes in the UI here for your company card
-                      return Card(
-                        color: colorSecondaryLightGreenPlant,
-                        shadowColor: Colors.transparent,
-                        child: Column(children: [
-                          SizedBox(
-                            width: 1350,
-                            child: Text(
-                              e.match,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontFamily: 'Merriweather',
-                                color: colorTextSmoothBlack,
-                                backgroundColor: Colors.transparent,
-                              ),
-                            ),
-                          ),
-                          Container(
-                              height: 1,
-                              color: const Color.fromARGB(35, 77, 102, 88),
-                              margin: const EdgeInsets.fromLTRB(0, 20, 30, 10)),
-                        ]),
-                      );
-                    },
-                  ).toList(),
+                  children: widget.elements
+                      .map(
+                        // make changes in the UI here for your company card
+                        (e) => CVMatchLine(
+                          match: e.match,
+                          reported: e.reported,
+                          onMakeReportRequested: () {
+                            if (widget.onMakeReportRequested != null) {
+                              widget.onMakeReportRequested!(e);
+                            }
+                          },
+                        ),
+                      )
+                      .toList(),
                 ),
               )
             : const SizedBox() // else blank

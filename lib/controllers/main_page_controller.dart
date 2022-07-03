@@ -6,11 +6,14 @@ import 'dart:ui';
 import 'package:cvparser_b21_01/controllers/notifications_overlay_controller.dart';
 import 'package:cvparser_b21_01/datatypes/export.dart';
 import 'package:cvparser_b21_01/datatypes/misc/indexable.dart';
+import 'package:cvparser_b21_01/datatypes/report.dart';
 import 'package:cvparser_b21_01/services/file_saver.dart';
 import 'package:cvparser_b21_01/services/key_listener.dart';
+import 'package:cvparser_b21_01/services/reports.dart';
 import 'package:cvparser_b21_01/views/dialogs/fail_dialog.dart';
 import 'package:cvparser_b21_01/views/dialogs/progress_dialog.dart';
 import 'package:cvparser_b21_01/services/search.dart';
+import 'package:cvparser_b21_01/views/dialogs/report_dialog.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:get/get.dart';
 
@@ -19,6 +22,7 @@ import 'package:get/get.dart';
 class MainPageController extends GetxController {
   final keyLookup = Get.find<KeyListener>();
   final fileSaver = Get.find<FileSaver>();
+  final reporter = Get.find<Reports>();
 
   late final Future<void> dummyWorker;
   late final Future<void> garbageCollector; // removes failed to parse cv's
@@ -469,6 +473,43 @@ class MainPageController extends GetxController {
       searchQuerry = "";
     }
     cvs.refresh();
+  }
+
+  /// show dialog with
+  void makeReport(CVMatch context, String label) {
+    if (_busy) {
+      return;
+    }
+    _busy = true;
+
+    Get.dialog(
+      ReportDialog(
+        onTextSubmitted: (reason) {
+          _busy = false;
+          Get.back();
+
+          _asyncSafe(
+            "Uploading report...",
+            () async* {
+              yield ProgressDone(null, "in process");
+
+              await reporter.makeReport(
+                Report.fromCVMatch(
+                  label: label,
+                  reason: reason,
+                  cvmatch: context,
+                ),
+              );
+
+              // update check button
+              // _current
+              // _current.refresh();
+            },
+          );
+        },
+      ),
+      barrierDismissible: false, // make it blocking
+    );
   }
 
   /// Wrapper method to make it safe, see [_busy]
