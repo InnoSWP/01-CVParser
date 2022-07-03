@@ -66,7 +66,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '228944062100',
     projectId: 'cv-parser-ca402',
     storageBucket: 'cv-parser-ca402.appspot.com',
-    iosClientId: '228944062100-5nb2lp06inhk42glnniskejaa3dg0bsv.apps.googleusercontent.com',
+    iosClientId:
+        '228944062100-5nb2lp06inhk42glnniskejaa3dg0bsv.apps.googleusercontent.com',
     iosBundleId: 'com.example.cvparserB2101',
   );
 
@@ -76,7 +77,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '228944062100',
     projectId: 'cv-parser-ca402',
     storageBucket: 'cv-parser-ca402.appspot.com',
-    iosClientId: '228944062100-5nb2lp06inhk42glnniskejaa3dg0bsv.apps.googleusercontent.com',
+    iosClientId:
+        '228944062100-5nb2lp06inhk42glnniskejaa3dg0bsv.apps.googleusercontent.com',
     iosBundleId: 'com.example.cvparserB2101',
   );
 }
