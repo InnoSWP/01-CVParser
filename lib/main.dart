@@ -4,14 +4,25 @@ import 'package:cvparser_b21_01/bindings/notifications_overlay_binding.dart';
 import 'package:cvparser_b21_01/bindings/services_binding.dart';
 import 'package:cvparser_b21_01/views/initial_page.dart';
 import 'package:cvparser_b21_01/views/main_page.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import 'package:flutter/services.dart' as flutter_services;
 
 import 'colors.dart' as my_colors;
 import 'services/i_extract.dart';
 import 'views/root.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  flutter_services.SystemChrome.setPreferredOrientations([
+    flutter_services.DeviceOrientation.landscapeLeft,
+  ]);
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const CVParserApp());
 }
 

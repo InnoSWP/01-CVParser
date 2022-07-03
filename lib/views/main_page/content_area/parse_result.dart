@@ -19,6 +19,8 @@ class ParseResult extends GetView<MainPageController> {
               CardWidget(
                 title: entry.key,
                 elements: entry.value,
+                onMakeReportRequested: (match) =>
+                    controller.makeReport(match, entry.key),
               ),
             );
           }
